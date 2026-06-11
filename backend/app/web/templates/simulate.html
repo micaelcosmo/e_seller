@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Pagamento (simulado){% endblock %}
+{% block content %}
+  <h1>Pagamento simulado</h1>
+  <p class="muted">Ambiente de demonstração — nenhum pagamento real é feito.</p>
+  <div class="card">
+    <p>Pedido: <code>{{ reference }}</code></p>
+    <form method="post" action="/pay/confirm/{{ reference }}" style="display:inline">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+      <input type="hidden" name="decision" value="approved">
+      <button type="submit">Aprovar pagamento</button>
+    </form>
+    &nbsp;
+    <form method="post" action="/pay/confirm/{{ reference }}" style="display:inline">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+      <input type="hidden" name="decision" value="rejected">
+      <button class="ghost" type="submit">Recusar</button>
+    </form>
+  </div>
+{% endblock %}

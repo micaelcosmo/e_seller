@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}e_seller{% endblock %}</title>
+  <style>
+    :root { --bg:#0f1226; --card:#1a1f3a; --ink:#eef; --accent:#7c5cff; --muted:#9aa; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, Segoe UI, Roboto, sans-serif;
+           background: var(--bg); color: var(--ink); }
+    header { padding: 18px 24px; background: #12152e; border-bottom: 1px solid #2a2f55; }
+    header a { color: var(--ink); text-decoration: none; font-weight: 700; }
+    main { max-width: 920px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
+    .card { background: var(--card); border:1px solid #2a2f55; border-radius: 14px; padding: 16px; }
+    .price { color: var(--accent); font-weight: 800; font-size: 1.2rem; }
+    .muted { color: var(--muted); font-size:.9rem; }
+    input, button { font: inherit; }
+    input[type=email] { width:100%; padding:10px; border-radius:10px; border:1px solid #2a2f55;
+                        background:#0d1024; color:var(--ink); margin:8px 0; }
+    button { cursor:pointer; background: var(--accent); color:#fff; border:0;
+             padding:10px 14px; border-radius:10px; font-weight:700; }
+    button.ghost { background:#2a2f55; }
+    .tag { display:inline-block; background:#2a2f55; color:#cdf; padding:2px 8px;
+           border-radius:999px; font-size:.75rem; }
+    a.link { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header><a href="/">📚 e_seller</a> &nbsp; <span class="muted">demo</span>
+    &nbsp;·&nbsp; <a class="link" href="/docs">API /docs</a>
+    &nbsp;·&nbsp; <a class="link" href="/recuperar-senha">Esqueceu a senha?</a></header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer style="text-align:center;padding:1rem 0 2rem;color:#9aa;font-size:.85rem">
+    <a class="link" href="/privacidade">Privacidade</a> &nbsp;·&nbsp;
+    <a class="link" href="/termos">Termos de uso</a>
+  </footer>
+</body>
+</html>

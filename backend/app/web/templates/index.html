@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}e_seller — loja{% endblock %}
+{% block content %}
+  {% if featured %}
+  <section style="margin-bottom:32px">
+    <h2 style="color:var(--accent);margin-bottom:12px">⭐ Em Destaque</h2>
+    <div class="grid">
+      {% for product in featured %}
+        <div class="card" style="border-color:var(--accent);border-width:2px">
+          <div class="tag">destaque</div>
+          <h3><a class="link" href="/produto/{{ product.slug }}">{{ product.title }}</a></h3>
+          <p class="muted">{{ product.description }}</p>
+          <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
+          <form method="post" action="/comprar">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+            <input type="hidden" name="slug" value="{{ product.slug }}">
+            <input type="email" name="email" placeholder="seu@email.com" required>
+            <button type="submit">Comprar</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+  <hr style="border-color:#2a2f55;margin-bottom:32px">
+  {% endif %}
+
+  <h1>E-books à venda</h1>
+  <p class="muted">Demo do fluxo: comprar → pagar (simulado) → baixar.</p>
+  <div style="margin-bottom:20px">
+    <input
+      id="search-input"
+      type="search"
+      placeholder="Buscar e-book..."
+      style="width:100%;max-width:400px;padding:10px;border-radius:10px;
+             border:1px solid #2a2f55;background:#0d1024;color:#eef;font:inherit"
+      oninput="searchProducts(this.value)"
+    >
+  </div>
+  <div id="products-grid" class="grid">
+    {% if not products %}
+      <p id="empty-msg">Nenhum e-book publicado ainda.</p>
+    {% endif %}
+    {% for product in products %}
+      <div class="card">
+        <div class="tag">{{ product.author }}</div>
+        <h3><a class="link" href="/produto/{{ product.slug }}">{{ product.title }}</a></h3>
+        <p class="muted">{{ product.description }}</p>
+        <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
+        <form method="post" action="/comprar">
+          <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+          <input type="hidden" name="slug" value="{{ product.slug }}">
+          <input type="email" name="email" placeholder="seu@email.com" required>
+          <button type="submit">Comprar</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+  <div id="pagination-bar" style="display:none;margin-top:20px;text-align:center;gap:12px;justify-content:center;align-items:center">
+    <button id="btn-prev" onclick="changePage(-1)"
+      style="padding:8px 18px;border-radius:8px;border:1px solid #2a2f55;background:#0d1024;color:#eef;cursor:pointer">
+      ← Anterior
+    </button>
+    <span id="page-indicator" style="color:#aab;font-size:.9rem"></span>
+    <button id="btn-next" onclick="changePage(1)"
+      style="padding:8px 18px;border-radius:8px;border:1px solid #2a2f55;background:#0d1024;color:#eef;cursor:pointer">
+      Próxima →
+    </button>
+  </div>
+<script>
+  var _PAGE_SIZE = 20;
+  var _currentPage = 1;
+  var _currentQuery = '';
+  var _hasNext = false;
+  var _debounce = null;
+  function searchProducts(q) {
+    clearTimeout(_debounce);
+    _debounce = setTimeout(function() { _currentPage = 1; _doSearch(q, 1); }, 300);
+  }
+  function changePage(delta) {
+    var next = _currentPage + delta;
+    if (next < 1) { return; }
+    if (delta > 0 && !_hasNext) { return; }
+    _doSearch(_currentQuery, next);
+  }
+  function _doSearch(q, page) {
+    _currentQuery = q || '';
+    _currentPage = page || 1;
+    var url = '/api/v1/products?page_size=' + _PAGE_SIZE + '&page=' + _currentPage;
+    if (_currentQuery.trim()) { url += '&q=' + encodeURIComponent(_currentQuery.trim()); }
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(items) {
+        _renderGrid(items);
+        _hasNext = items.length >= _PAGE_SIZE;
+        _updatePagination();
+      })
+      .catch(function() {});
+  }
+  function _updatePagination() {
+    var bar = document.getElementById('pagination-bar');
+    var btnPrev = document.getElementById('btn-prev');
+    var btnNext = document.getElementById('btn-next');
+    var indicator = document.getElementById('page-indicator');
+    var visible = _currentPage > 1 || _hasNext;
+    bar.style.display = visible ? 'flex' : 'none';
+    btnPrev.disabled = _currentPage <= 1;
+    btnNext.disabled = !_hasNext;
+    indicator.textContent = 'Página ' + _currentPage;
+  }
+  function _cardHtml(p) {
+    var price = parseFloat(p.price).toFixed(2).replace('.', ',');
+    return '<div class="card">' +
+      '<div class="tag">' + (p.author || '') + '</div>' +
+      '<h3><a class="link" href="/produto/' + p.slug + '">' + p.title + '</a></h3>' +
+      '<p class="muted">' + (p.description || '') + '</p>' +
+      '<p class="price">R$ ' + price + '</p>' +
+      '</div>';
+  }
+  function _renderGrid(items) {
+    var grid = document.getElementById('products-grid');
+    if (!items || items.length === 0) {
+      grid.innerHTML = '<p class="muted">Nenhum resultado encontrado.</p>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < items.length; i++) { html += _cardHtml(items[i]); }
+    grid.innerHTML = html;
+  }
+</script>
+{% endblock %}

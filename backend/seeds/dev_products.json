@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Python na Prática",
+    "slug": "python-na-pratica",
+    "author": "Equipe e_seller",
+    "description": "Um guia direto ao ponto para programar em Python.",
+    "price": "39.90",
+    "file_name": "python-na-pratica.txt",
+    "status": "published",
+    "authors": ["Equipe e_seller"],
+    "publisher": "e_seller Press",
+    "series": "Fundamentos",
+    "tags": ["python", "iniciante"]
+  },
+  {
+    "title": "FastAPI do Zero",
+    "slug": "fastapi-do-zero",
+    "author": "Equipe e_seller",
+    "description": "Construindo APIs modernas com FastAPI e SQLAlchemy.",
+    "price": "49.90",
+    "file_name": "fastapi-do-zero.txt",
+    "status": "published",
+    "authors": ["Equipe e_seller"],
+    "publisher": "e_seller Press",
+    "series": "Fundamentos",
+    "tags": ["python", "fastapi", "api"]
+  },
+  {
+    "title": "Arquitetura Limpa na Web",
+    "slug": "arquitetura-limpa-web",
+    "author": "Equipe e_seller",
+    "description": "SOLID, camadas e testes em aplicações web.",
+    "price": "59.90",
+    "file_name": "arquitetura-limpa-web.txt",
+    "status": "published",
+    "authors": ["Equipe e_seller"],
+    "publisher": "e_seller Press",
+    "series": "Engenharia",
+    "tags": ["arquitetura", "solid", "testes"]
+  },
+  {
+    "title": "Rascunho (não publicado)",
+    "slug": "rascunho-oculto",
+    "author": "Equipe e_seller",
+    "description": "Este não deve aparecer na vitrine.",
+    "price": "9.90",
+    "file_name": "rascunho.txt",
+    "status": "draft"
+  }
+]

@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
+    hooks:
+      # Lint
+      - id: ruff
+        args: [--fix]
+        files: ^backend/(app|tests)/
+      # Format
+      - id: ruff-format
+        files: ^backend/(app|tests)/
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.22.0
+    hooks:
+      - id: gitleaks

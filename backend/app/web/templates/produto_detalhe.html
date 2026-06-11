@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ product.title }} — e_seller{% endblock %}
+{% block content %}
+<style>
+  .detail-hero { display: flex; gap: 32px; margin-bottom: 32px; flex-wrap: wrap; }
+  .detail-info { flex: 1; min-width: 260px; }
+  .detail-info h1 { margin-bottom: 4px; font-size: 1.6rem; }
+  .detail-info .author { color: var(--muted); margin-bottom: 16px; }
+  .detail-info .price { font-size: 2rem; color: var(--accent); font-weight: 800; margin-bottom: 20px; }
+  .buy-form input[type=email] { width: 100%; max-width: 320px; }
+  .buy-form button { margin-top: 8px; padding: 12px 24px; }
+  .reviews-section h2 { margin-bottom: 16px; }
+  .review-card { background: var(--card); border: 1px solid #2a2f55; border-radius: 12px;
+                 padding: 14px 16px; margin-bottom: 12px; }
+  .review-card .stars { color: #f5c518; font-size: 1rem; margin-bottom: 4px; }
+  .review-card .author { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+  .no-reviews { color: var(--muted); font-style: italic; }
+</style>
+
+<a class="link" href="/" style="font-size:.9rem">← Voltar à loja</a>
+
+<div class="detail-hero" style="margin-top:20px">
+  <div class="detail-info">
+    <h1>{{ product.title }}</h1>
+    <p class="author">por {{ product.author or "Autor desconhecido" }}</p>
+    <p class="muted">{{ product.description }}</p>
+    <div class="price">R$ {{ "%.2f"|format(product.price) }}</div>
+    <div class="buy-form">
+      <form method="post" action="/comprar">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+        <input type="hidden" name="slug" value="{{ product.slug }}">
+        <input type="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+        <button type="submit">Comprar agora</button>
+      </form>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:.85rem">
+      {{ product.review_count }} avaliação{{ "" if product.review_count == 1 else "ões" }}
+    </p>
+  </div>
+</div>
+
+<section class="reviews-section">
+  <h2>Avaliações</h2>
+  {% if reviews %}
+    {% for review in reviews %}
+      <div class="review-card">
+        <div class="stars">{{ "★" * review.rating }}{{ "☆" * (5 - review.rating) }}</div>
+        <p style="margin:4px 0">{{ review.comment }}</p>
+        <p class="author">{{ review.author }} · {{ review.created_at[:10] if review.created_at else "" }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="no-reviews">Nenhuma avaliação aprovada ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

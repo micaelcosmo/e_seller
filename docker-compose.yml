@@ -1,0 +1,99 @@
+# Orquestração do e_seller (tudo em Docker).
+# Serviços: db (Postgres) + backend + report + 2 túneis Cloudflare (sem login).
+# restart: unless-stopped → recupera sozinho após reboot (com Docker iniciando no boot).
+# Portas não-padrão 48xxx (ver .spec/unit/infra/ports.md).
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-e_seller}
+      POSTGRES_USER: ${POSTGRES_USER:-e_seller}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-e_seller_dev}
+    ports:
+      - "48432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-e_seller}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      # Postgres async via psycopg3 (wheel binário cp314; leve, sem compilar) — BE-01.
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://e_seller:e_seller_dev@db:5432/e_seller2}
+      STORAGE_DIR: ${STORAGE_DIR:-/app/storage/ebooks}
+      BASE_URL: ${BASE_URL:-http://localhost:48080}
+      PAYMENT_PROVIDER: ${PAYMENT_PROVIDER:-fake}
+      DOWNLOAD_TTL_DAYS: ${DOWNLOAD_TTL_DAYS:-7}
+      DOWNLOAD_MAX: ${DOWNLOAD_MAX:-5}
+      DB_SLOW_QUERY_MS: ${DB_SLOW_QUERY_MS:-500}
+    ports:
+      - "48080:8000"
+    volumes:
+      - backend_data:/app/data
+      - ebook_files:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  report:
+    build: ./report
+    restart: unless-stopped
+    environment:
+      BACKLOG_PATH: /app/backlog.json
+    ports:
+      - "48088:8000"
+    volumes:
+      - ./report/backlog.json:/app/backlog.json:ro
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "48173:80"
+
+  app-tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    # --metrics expõe GET /ready em 127.0.0.1:2000 para o healthcheck
+    command: tunnel --no-autoupdate --metrics 127.0.0.1:2000 --url http://frontend:80
+    depends_on:
+      - frontend
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:2000/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  report-tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    # --metrics expõe GET /ready em 127.0.0.1:2001 para o healthcheck
+    command: tunnel --no-autoupdate --metrics 127.0.0.1:2001 --url http://report:8000
+    depends_on:
+      - report
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:2001/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  pgdata:
+  backend_data:
+  ebook_files:

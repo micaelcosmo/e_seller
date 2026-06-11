@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Política de Privacidade — e_seller{% endblock %}
+{% block content %}
+<h1>Política de Privacidade</h1>
+<p class="muted">Última atualização: 2026-06-10 · Vigência: 2026-06-10</p>
+
+<h2>1. Quem somos</h2>
+<p>O <strong>e_seller</strong> é um portal de venda de e-books operado como serviço digital.
+Para dúvidas sobre privacidade, entre em contato pelo e-mail informado na plataforma.</p>
+
+<h2>2. Dados que coletamos</h2>
+<ul>
+  <li><strong>Cadastro:</strong> nome completo, e-mail e senha (armazenada como hash PBKDF2).</li>
+  <li><strong>Compra:</strong> dados de perfil fiscal (CPF/CNPJ, endereço) para nota fiscal, e dados de pagamento processados pelo Mercado Pago.</li>
+  <li><strong>Acesso:</strong> endereço IP, data/hora e identificador de requisição (correlation-id) nos logs de sistema.</li>
+</ul>
+
+<h2>3. Finalidade do tratamento (LGPD Art. 9)</h2>
+<ul>
+  <li>Autenticação e identificação do usuário.</li>
+  <li>Processamento de pedidos e entrega de e-books.</li>
+  <li>Emissão de notas fiscais e cumprimento de obrigações legais.</li>
+  <li>Suporte e comunicação sobre seus pedidos.</li>
+</ul>
+
+<h2>4. Base legal</h2>
+<p>Tratamos seus dados com fundamento no <strong>contrato</strong> (Art. 7, V, LGPD) —
+necessário para a entrega do serviço — e na <strong>obrigação legal</strong> (Art. 7, II) para fins fiscais.</p>
+
+<h2>5. Compartilhamento de dados</h2>
+<p>Seus dados são compartilhados apenas com o <strong>Mercado Pago</strong> para processamento de pagamento,
+conforme a política de privacidade desse serviço. Não vendemos dados a terceiros.</p>
+
+<h2>6. Retenção e exclusão</h2>
+<p>Dados de cadastro são retidos enquanto a conta estiver ativa. Ao solicitar a exclusão da conta
+(disponível em <em>Minha conta &gt; Excluir conta</em>), seu e-mail é substituído por um hash irreversível,
+os dados pessoais são apagados e a conta é desativada (<em>LGPD Art. 18, VI</em>). Dados fiscais podem ser
+retidos pelo prazo legal exigido pela Receita Federal.</p>
+
+<h2>7. Seus direitos (LGPD Art. 18)</h2>
+<ul>
+  <li>Confirmação e acesso aos seus dados.</li>
+  <li>Correção de dados incompletos ou incorretos.</li>
+  <li>Exclusão dos dados tratados com base no consentimento.</li>
+  <li>Portabilidade (mediante solicitação).</li>
+  <li>Revogação do consentimento.</li>
+</ul>
+<p>Para exercer seus direitos, acesse <em>Minha conta</em> ou entre em contato conosco.</p>
+
+<h2>8. Segurança</h2>
+<p>Utilizamos HTTPS, hashing de senhas (PBKDF2), tokens JWT de curta duração e
+rate limiting para proteger os dados. Logs são estruturados e acessíveis apenas a operadores autorizados.</p>
+
+<p style="margin-top:2rem"><a class="link" href="/">← Voltar à loja</a> &nbsp;·&nbsp;
+<a class="link" href="/termos">Termos de uso</a></p>
+{% endblock %}

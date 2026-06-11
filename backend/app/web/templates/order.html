@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Pedido {{ order.reference }}{% endblock %}
+{% block content %}
+  <h1>Seu pedido</h1>
+  <div class="card">
+    <p>Referência: <code>{{ order.reference }}</code></p>
+    <p>Status: <span class="tag">{{ order.status.value }}</span></p>
+    <p class="price">Total: R$ {{ "%.2f"|format(order.amount) }}</p>
+
+    {% if order.status.value == "paid" %}
+      <h3>Downloads liberados</h3>
+      {% for grant in grants %}
+        <p><a class="link" href="/api/v1/download/{{ grant.token }}">⬇️ Baixar e-book</a>
+           <span class="muted">(expira em {{ grant.expires_at }}, limite {{ grant.max_downloads }})</span></p>
+      {% endfor %}
+    {% elif order.status.value == "failed" %}
+      <p>Pagamento recusado. <a class="link" href="/">Voltar à loja</a></p>
+    {% else %}
+      <p class="muted">Aguardando confirmação do pagamento…</p>
+    {% endif %}
+  </div>
+  <p style="margin-top:16px"><a class="link" href="/">← Voltar à loja</a></p>
+{% endblock %}

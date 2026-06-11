@@ -1,0 +1,15 @@
+# Banco SQLite local (dev)
+*.db
+e_seller.db
+
+# Arquivos de e-book entregues (volume protegido local)
+storage/
+
+# Ferramentas baixadas localmente (cloudflared etc.)
+.tools/
+
+# Caches
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+.venv/

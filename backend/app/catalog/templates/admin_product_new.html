@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Novo E-book — e_seller Admin</title>
+<style>
+  body { font-family: sans-serif; max-width: 700px; margin: 2rem auto; padding: 0 1rem }
+  .tabs { display: flex; gap: .5rem; margin-bottom: 1rem }
+  .tab {
+    padding: .4rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #f5f5f5;
+  }
+  .tab.active { background: #7c5cff; color: #fff; border-color: #7c5cff }
+  .panel { display: none }
+  .panel.active { display: block }
+  input, textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: .5rem;
+    margin: .3rem 0 .8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  textarea { min-height: 120px; font-family: monospace }
+  button.primary {
+    background: #7c5cff;
+    color: #fff;
+    border: none;
+    padding: .6rem 1.4rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  #msg { margin-top: 1rem; padding: .6rem; border-radius: 4px; display: none }
+</style>
+</head>
+<body>
+<h1>Cadastrar E-book</h1>
+<p>
+  <a href="/admin">← Voltar ao painel</a> |
+  <a href="/api/v1/admin/products/status-panel">Publicação</a>
+</p>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('manual')">Manual</button>
+  <button class="tab" onclick="switchTab('json')">JSON</button>
+  <button class="tab" onclick="switchTab('link')">Link/URL</button>
+</div>
+
+<!-- Modo manual -->
+<div id="panel-manual" class="panel active">
+  <h3>Modo manual</h3>
+  <label>Título *
+    <input id="m-title" type="text" placeholder="Título do e-book" required>
+  </label>
+  <label>Preço (R$) *
+    <input id="m-price" type="text" placeholder="29.90" required>
+  </label>
+  <label>Autor
+    <input id="m-author" type="text" placeholder="Nome do autor">
+  </label>
+  <label>Descrição
+    <textarea id="m-desc" placeholder="Descrição do e-book"></textarea>
+  </label>
+  <label>URL da capa
+    <input id="m-cover" type="url" placeholder="https://...">
+  </label>
+  <button class="primary" onclick="submitManual()">Cadastrar</button>
+</div>
+
+<!-- Modo JSON -->
+<div id="panel-json" class="panel">
+  <h3>Modo JSON</h3>
+  <p>Cole o JSON do e-book (campos: title, price, author, description, cover_url).</p>
+  <textarea id="j-json"
+    placeholder='{"title": "Meu E-book", "price": "29.90"}'></textarea>
+  <button class="primary" onclick="submitJson()">Importar JSON</button>
+</div>
+
+<!-- Modo link -->
+<div id="panel-link" class="panel">
+  <h3>Modo Link/URL</h3>
+  <p>Informe a URL de um manifest JSON público.</p>
+  <label>URL do manifest
+    <input id="l-url" type="url"
+      placeholder="https://example.com/ebook-manifest.json">
+  </label>
+  <button class="primary" onclick="submitLink()">Importar da URL</button>
+</div>
+
+<div id="msg"></div>
+
+<script>
+const token = localStorage.getItem("token") || "";
+const auth = {
+  "Authorization": "Bearer " + token,
+  "Content-Type": "application/json",
+};
+
+function switchTab(mode) {
+  const modes = ["manual", "json", "link"];
+  document.querySelectorAll(".tab").forEach(function(t, i) {
+    t.classList.toggle("active", modes[i] === mode);
+  });
+  modes.forEach(function(m) {
+    document.getElementById("panel-" + m).classList.toggle("active", m === mode);
+  });
+}
+
+function showMsg(text, ok) {
+  const el = document.getElementById("msg");
+  el.style.background = ok ? "#d4edda" : "#f8d7da";
+  el.style.display = "block";
+  el.textContent = text;
+}
+
+async function post(url, body) {
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: auth,
+    body: JSON.stringify(body),
+  });
+  const data = await resp.json().catch(function() { return {}; });
+  if (resp.ok) {
+    showMsg("Cadastrado: " + (data.title || data.slug || "OK"), true);
+  } else {
+    const detail = data.detail || JSON.stringify(data);
+    showMsg("Erro " + resp.status + ": " + detail, false);
+  }
+}
+
+function submitManual() {
+  post("/api/v1/admin/products", {
+    title: document.getElementById("m-title").value,
+    price: document.getElementById("m-price").value,
+    author: document.getElementById("m-author").value || null,
+    description: document.getElementById("m-desc").value || null,
+    cover_url: document.getElementById("m-cover").value || null,
+  });
+}
+
+function submitJson() {
+  let body;
+  try {
+    body = JSON.parse(document.getElementById("j-json").value);
+  } catch(e) {
+    showMsg("JSON inválido: " + e.message, false);
+    return;
+  }
+  post("/api/v1/admin/products", body);
+}
+
+function submitLink() {
+  post("/api/v1/admin/products/import", {
+    url: document.getElementById("l-url").value,
+  });
+}
+</script>
+</body>
+</html>
