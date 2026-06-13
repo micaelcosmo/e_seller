@@ -33,48 +33,43 @@ async def orders_panel(
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pedidos — e_seller Admin</title>
+<link rel="stylesheet" href="/static/css/design-system.css">
+<link rel="stylesheet" href="/static/css/components.css">
 <style>
-  body{{font-family:sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#1a1d2b}}
-  h1{{margin-bottom:.5rem}}
-  .filters{{display:flex;gap:10px;flex-wrap:wrap;margin:1rem 0;align-items:flex-end}}
-  .filters label{{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:#6b7280}}
-  .filters input,.filters select{{padding:8px 10px;border:1px solid #ddd;border-radius:8px;font:inherit}}
-  .filters button{{padding:8px 16px;background:#6d5cff;color:#fff;border:0;border-radius:8px;cursor:pointer;font:inherit}}
-  .filters button:hover{{filter:brightness(1.1)}}
-  table{{width:100%;border-collapse:collapse;margin-top:.5rem}}
-  th,td{{padding:.5rem .75rem;border:1px solid #e6e8f0;text-align:left;font-size:.9rem}}
-  th{{background:#f6f7fb;font-weight:700}}
-  tr:hover{{background:#fafbff}}
-  .badge{{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.78rem;font-weight:700}}
-  .badge-paid{{background:#d4f1e4;color:#15a05a}}
-  .badge-pending{{background:#fef3cd;color:#856404}}
-  .badge-failed,.badge-cancelled{{background:#fde9ec;color:#d3455b}}
-  .badge-refunded{{background:#e9ecef;color:#495057}}
-  .mono{{font-family:monospace;font-size:.85rem;color:#6b7280}}
-  #msg{{margin:.5rem 0;padding:.4rem .75rem;border-radius:6px;display:none;font-size:.85rem}}
-  #msg.ok{{background:#d4f1e4;color:#15a05a}}
-  #msg.err{{background:#fde9ec;color:#d3455b}}
-  .empty{{text-align:center;padding:2rem;color:#6b7280}}
-  a.link{{color:#6d5cff;text-decoration:none;font-size:.82rem}}
-  a.link:hover{{text-decoration:underline}}
+  .admin-wrap{{max-width:1100px;margin:var(--sp-8) auto;padding:0 var(--sp-4)}}
+  .admin-header{{display:flex;align-items:center;gap:var(--sp-3);margin-bottom:var(--sp-6)}}
+  .admin-filters{{display:flex;gap:var(--sp-3);flex-wrap:wrap;margin:var(--sp-4) 0;align-items:flex-end}}
+  .admin-filters label{{display:flex;flex-direction:column;gap:var(--sp-1);font-size:var(--text-sm);color:var(--color-muted)}}
+  table{{width:100%;border-collapse:collapse;margin-top:var(--sp-2)}}
+  th,td{{padding:var(--sp-2) var(--sp-3);border:1px solid var(--color-border);text-align:left;font-size:var(--text-sm)}}
+  th{{background:var(--color-surface);font-weight:var(--fw-bold)}}
+  tr:hover td{{background:var(--color-surface)}}
+  .mono{{font-family:monospace;font-size:var(--text-sm);color:var(--color-muted)}}
+  #msg{{margin:var(--sp-2) 0;display:none}}
+  .empty{{text-align:center;padding:var(--sp-8);color:var(--color-muted)}}
 </style>
 </head>
 <body>
-<h1>Pedidos</h1>
-<p><a href="/admin">← Voltar ao painel</a></p>
+<div class="admin-wrap">
+<div class="admin-header">
+  <a href="/admin" class="btn btn-ghost btn-sm">← Painel</a>
+  <h1 style="font-size:var(--text-xl);font-weight:var(--fw-bold)">Pedidos</h1>
+  <span class="badge badge-muted" id="total-badge">–</span>
+</div>
 
-<div class="filters">
+<div class="admin-filters">
   <label>Status
-    <select id="f-status">{status_opts}</select>
+    <select id="f-status" class="input" style="width:140px">{status_opts}</select>
   </label>
   <label>E-mail do comprador
-    <input id="f-email" type="text" placeholder="parte do e-mail…" style="width:220px">
+    <input id="f-email" class="input" type="text" placeholder="parte do e-mail…" style="width:220px">
   </label>
   <label>Referência exata
-    <input id="f-ref" type="text" placeholder="REF-abc123" style="width:160px">
+    <input id="f-ref" class="input" type="text" placeholder="REF-abc123" style="width:160px">
   </label>
-  <button onclick="loadOrders()">Filtrar</button>
+  <button class="btn btn-primary" onclick="loadOrders()">Filtrar</button>
 </div>
 
 <div id="msg"></div>
@@ -93,10 +88,10 @@ const token = () => localStorage.getItem("token") || "";
 
 function badge(status) {{
   const map = {{
-    paid:"badge-paid",pending:"badge-pending",failed:"badge-failed",
-    cancelled:"badge-cancelled",refunded:"badge-refunded"
+    paid:"badge-success",pending:"badge-warning",failed:"badge-danger",
+    cancelled:"badge-danger",refunded:"badge-muted"
   }};
-  const cls = map[status] || "";
+  const cls = map[status] || "badge-muted";
   return `<span class="badge ${{cls}}">${{status}}</span>`;
 }}
 
@@ -127,6 +122,7 @@ async function loadOrders() {{
     tbody.innerHTML = '<tr><td colspan="6" class="empty">Nenhum pedido encontrado.</td></tr>';
     return;
   }}
+  document.getElementById("total-badge").textContent = orders.length + " pedidos";
   let rows = "";
   for (const o of orders) {{
     const created = o.created_at
@@ -137,9 +133,9 @@ async function loadOrders() {{
       <td class="mono">${{o.reference}}</td>
       <td>${{o.buyer_email || "—"}}</td>
       <td>${{badge(o.status)}}</td>
-      <td>${{amount}}</td>
-      <td>${{created}}</td>
-      <td><a class="link" href="${{detailUrl}}" target="_blank">Ver JSON</a></td>
+      <td style="font-weight:var(--fw-bold)">${{amount}}</td>
+      <td style="color:var(--color-muted)">${{created}}</td>
+      <td><a href="${{detailUrl}}" target="_blank" class="btn btn-ghost btn-sm">JSON</a></td>
     </tr>`;
   }}
   tbody.innerHTML = rows;
@@ -147,5 +143,6 @@ async function loadOrders() {{
 
 loadOrders();
 </script>
+</div>
 </body></html>"""
     return HTMLResponse(html)

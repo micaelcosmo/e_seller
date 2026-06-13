@@ -169,8 +169,28 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
   border-radius: 10px; font: inherit; }
 .review-form input { flex: 1; min-width: 180px; }
 
-.footer { text-align: center; color: var(--muted); padding: 24px; border-top: 1px solid var(--line);
-  background: var(--card); }
+.footer {
+  text-align: center; color: var(--muted); padding: 20px 24px 28px;
+  border-top: 1px solid var(--line); background: var(--card);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.news {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  justify-content: center; align-items: center;
+}
+.news input {
+  padding: 9px 14px; border: 1px solid var(--line); border-radius: 999px;
+  font: inherit; width: min(280px, 100%); outline: none;
+}
+.news input:focus { border-color: var(--accent); }
+.news-error {
+  font-size: .82rem; color: #d3455b; min-height: 1.1rem; margin: 0;
+}
+.footer-links { display: flex; align-items: center; gap: 8px; font-size: .82rem; }
+.footer-links a { color: var(--muted); }
+.footer-links a:hover { color: var(--accent); }
+.footer-links span { color: var(--line); }
+.footer-copy { font-size: .78rem; color: var(--line); }
 .hidden { display: none !important; }
 
 /* Botão "Carregar mais" */

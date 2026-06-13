@@ -81,13 +81,30 @@ function skeleton() {
   return html + "</div>";
 }
 
-function coverHtml(p, emoji) {
-  // Renderiza a capa do produto: imagem (se houver cover_url) ou emoji.
+function _titleHue(title) {
+  // Deriva um hue HSL determinístico a partir do título (hash simples).
+  let h = 0;
+  for (let i = 0; i < title.length; i++) {
+    h = ((h << 5) - h) + title.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h) % 360;
+}
+
+function coverHtml(p) {
+  // Renderiza a capa: imagem real se cover_url presente;
+  // caso contrário, placeholder com iniciais do título e cor derivada do slug.
   if (p.cover_url) {
     return '<div class="cover"><img src="' + escapeHtml(p.cover_url) +
       '" alt="Capa de ' + escapeHtml(p.title) + '" loading="lazy"></div>';
   }
-  return '<div class="cover">' + emoji + "</div>";
+  const words = (p.title || "?").trim().split(/\s+/);
+  const initials = (words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)).toUpperCase();
+  const hue = _titleHue(p.title || p.slug || "");
+  const bg = "hsl(" + hue + ",42%,32%)";
+  return '<div class="cover" style="background:' + bg + ';color:#fff;' +
+    'font-size:2rem;font-weight:800;letter-spacing:-.5px">' +
+    escapeHtml(initials) + "</div>";
 }
 
 // Slugs na wishlist do usuário logado (Set atualizado por renderHome).
@@ -109,7 +126,7 @@ function productCard(p, isOwned) {
     : "";
   return (
     '<a class="card" href="#/produto/' + p.slug + '" title="Ver detalhes">' +
-    badge + wishBtn + coverHtml(p, "📕") + '<div class="body">' +
+    badge + wishBtn + coverHtml(p) + '<div class="body">' +
     '<span class="tag">' + (p.author || "e-book") + "</span>" +
     "<h3>" + escapeHtml(p.title) + "</h3>" +
     '<div class="price">' + money(p.price) + "</div></div></a>"
@@ -359,7 +376,7 @@ async function renderProduct(slug) {
         '</div>';
     view.innerHTML =
       '<a class="back" href="#/">← Voltar</a>' +
-      '<div class="detail">' + coverHtml(p, "📘") + "<div>" +
+      '<div class="detail">' + coverHtml(p) + "<div>" +
       '<span class="tag">' + escapeHtml(p.author || "e-book") + "</span>" +
       "<h2>" + escapeHtml(p.title) + "</h2>" +
       '<p class="muted">' + escapeHtml(p.description || "") + "</p>" +
@@ -582,20 +599,36 @@ async function renderAccount() {
 
 // ---------- Autenticação ----------
 
+function decodeJwtRole(token) {
+  // Extrai o campo role do payload JWT (base64url) sem verificar assinatura.
+  // Usado apenas para controle de visibilidade de UI — autorização real é feita no backend.
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return payload.role || null;
+  } catch (e) { return null; }
+}
+
 function refreshAuthButton() {
   // Mostra "Entrar" ou o e-mail logado; exibe botões de Biblioteca/Carrinho/Conta quando logado.
+  // Exibe link Admin apenas se o JWT indicar role admin ou staff.
   const btn = document.getElementById("auth-btn");
   const lib = document.getElementById("lib-btn");
   const cart = document.getElementById("cart-btn");
   const account = document.getElementById("account-btn");
   const ordersBtn = document.getElementById("orders-btn");
+  const adminLink = document.getElementById("admin-link");
   const email = localStorage.getItem("email");
+  const token = localStorage.getItem("token");
   if (email) { btn.textContent = "Sair (" + email.split("@")[0] + ")"; btn.title = "Sair da conta"; }
   else { btn.textContent = "Entrar"; btn.title = "Entrar ou criar conta"; }
   lib.classList.toggle("hidden", !email);
   cart.classList.toggle("hidden", !email);
   account.classList.toggle("hidden", !email);
   ordersBtn.classList.toggle("hidden", !email);
+  if (adminLink) {
+    const role = token ? decodeJwtRole(token) : null;
+    adminLink.classList.toggle("hidden", role !== "admin" && role !== "staff");
+  }
 }
 
 async function addToCart(slug) {
@@ -895,14 +928,24 @@ window.addEventListener("DOMContentLoaded", function () {
   });
   document.getElementById("news-form").addEventListener("submit", async function (ev) {
     ev.preventDefault();
-    const email = document.getElementById("news-email").value;
+    const emailEl = document.getElementById("news-email");
+    const errEl = document.getElementById("news-error");
+    const email = emailEl.value.trim();
+    errEl.textContent = "";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = "Digite um e-mail válido.";
+      emailEl.focus();
+      return;
+    }
     try {
       await api("/newsletter/subscribe", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email }),
       });
       toast("Inscrição feita! 🎉", "ok");
-      document.getElementById("news-email").value = "";
-    } catch (e) { toast("E-mail inválido.", "err"); }
+      emailEl.value = "";
+    } catch (e) {
+      errEl.textContent = e.message || "Erro ao inscrever. Tente novamente.";
+    }
   });
 });

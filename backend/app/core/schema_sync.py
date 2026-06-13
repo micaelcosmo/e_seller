@@ -25,9 +25,13 @@ class SchemaSync:
         self.expected_columns: list[tuple[str, str, str]] = [
             ("product", "publisher_id", "INTEGER REFERENCES publisher(id)"),
             ("product", "series_id", "INTEGER REFERENCES series(id)"),
+            ("product", "view_count", "INTEGER DEFAULT 0 NOT NULL"),
+            ("product", "featured", "BOOLEAN DEFAULT false NOT NULL"),
             ("order", "billing_profile_id", "INTEGER REFERENCES billing_profile(id)"),
             ("order", "updated_at", "TIMESTAMPTZ DEFAULT NOW()"),
             ("user", "deleted_at", "TIMESTAMPTZ"),
+            ("user", "totp_secret_enc", "VARCHAR(512)"),
+            ("user", "totp_enabled", "BOOLEAN DEFAULT false NOT NULL"),
         ]
 
         # (nome do índice, tabela, coluna) — idempotente via CREATE INDEX IF NOT EXISTS.

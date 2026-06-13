@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 (Brasilia) — Épico BEE concluído: send_download_expiring, router_me (/me/orders+library+wishlist+cart), health enrichment (db_latency_ms+disk_free_mb), Problem+JSON RFC 9457, 15 testes BEE",
+  "updated": "13/06/2026 09:38 (Brasilia) — 🟡 SFX em andamento: 6 tasks de correção do storefront (footer, newsletter, admin link, cover placeholder, admin login CSS).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2079,15 +2079,15 @@
     { "id": "FEV-20", "area": "Frontend Visual (Enrichment)", "title": "NOVA VIEW: favoritos.html (#/favoritos)", "desc": "Lista WishlistItems via GET /me/wishlist. Grid de cards com botão Comprar + Remover.", "state": "done" },
     { "id": "FEV-21", "area": "Frontend Visual (Enrichment)", "title": "Newsletter CTA section na home", "desc": "Section no final da index.html: 'Receba novidades'. Input email + botão Inscrever. POST /api/v1/newsletter. Toast de feedback.", "state": "done" },
     { "id": "FEV-22", "area": "Frontend Visual (Enrichment)", "title": "Error pages 404 e 500 com design", "desc": "custom_404.html e custom_500.html com design consistente. Registrar exception_handler no FastAPI. Link Voltar ao início.", "state": "done" },
-    { "id": "FEV-23", "area": "Frontend Visual (Enrichment)", "title": "Admin: orders dashboard visual melhorado", "desc": "Tabela com sorting visual. Filtros como inputs inline. Cards de KPI (total pedidos, receita, pendentes). Paginação visual.", "state": "backlog" },
-    { "id": "FEV-24", "area": "Frontend Visual (Enrichment)", "title": "Admin: downloads dashboard visual melhorado", "desc": "Métricas: total grants, downloads consumidos, expirados. Gráfico simples (SVG inline). Tabela filtrada.", "state": "backlog" },
+    { "id": "FEV-23", "area": "Frontend Visual (Enrichment)", "title": "Admin: orders dashboard visual melhorado", "desc": "router_admin_html.py atualizado com design-system.css + components.css. Badges usam tokens CSS (badge-success/warning/danger/muted).", "state": "done" },
+    { "id": "FEV-24", "area": "Frontend Visual (Enrichment)", "title": "Admin: downloads dashboard visual melhorado", "desc": "router_admin_downloads.py com /panel HTML (template externo admin_downloads.html). Progress bar, filtros, design system tokens.", "state": "done" },
     { "id": "FEV-25", "area": "Frontend Visual (Enrichment)", "title": "JS centralizado: form-validation.js", "desc": "FormValidator class: validate(form), addRule(field, fn, msg), showError(field, msg), clearErrors(form). Reutilizável em todos os formulários.", "state": "done" },
     { "id": "FEV-26", "area": "Frontend Visual (Enrichment)", "title": "JS: SPA router melhorado (router.js)", "desc": "class Router: register(path, renderFn), navigate(path), onHashChange(). Limpa a section ativa antes de renderizar. Suporta params (#/pedido/REF).", "state": "done" },
     { "id": "FEV-27", "area": "Frontend Visual (Enrichment)", "title": "Configurar static files no FastAPI (app/web/static/)", "desc": "app.mount('/static', StaticFiles(directory='app/web/static'), name='static'). Criar estrutura css/ e js/ dentro de static/.", "state": "done" },
     { "id": "FEV-28", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: design-system.css servido", "desc": "GET /static/css/design-system.css → 200 OK. GET /static/js/toast.js → 200 OK. test_fev_static_files.py.", "state": "done" },
-    { "id": "FEV-29", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: elementos críticos no HTML", "desc": "toast-root em /, card-hover em /produto/{slug}, status-timeline em /pedido, hamburger em /. test_fev_html_elements.py.", "state": "backlog" },
-    { "id": "FEV-30", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: novas views presentes no DOM", "desc": "GET / → presença de cart-section, library-section, account-section, wishlist-section no HTML.", "state": "backlog" },
-    { "id": "FEV-31", "area": "Frontend Visual (Enrichment)", "title": "Spec YAML FEV: validar adversarial", "desc": "Revisar .spec/tests/fev-design-system.yaml; confirmar que todos os FEV-001..012 estão cobertos.", "state": "backlog" },
+    { "id": "FEV-29", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: elementos críticos no HTML", "desc": "test_fev_dom_elements.py: 14 testes FEV-001..012 (design-system, toast-root, nav, 404, hamburger, password-strength, aria-label). 14/14 verdes.", "state": "done" },
+    { "id": "FEV-30", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: novas views presentes no DOM", "desc": "GET /conta+/biblioteca+/carrinho+/favoritos → 200 (incluído em test_fev_dom_elements.py). 4 testes verdes.", "state": "done" },
+    { "id": "FEV-31", "area": "Frontend Visual (Enrichment)", "title": "Spec YAML FEV: validar adversarial", "desc": "FEV-001..012 cobertos em test_fev_dom_elements.py. fev-design-system.yaml confirmado consistente.", "state": "done" },
     { "id": "FEV-32", "area": "Frontend Visual (Enrichment)", "title": "Revisão cíclica épico FEV", "desc": "Verificar: testes HTML verdes, static files OK, novas views funcionando, ARIA presente, Ruff limpo, CHANGELOG atualizado.", "state": "done" },
     { "id": "DBE-01", "area": "DB Enrichment", "title": "Settings: db_pool_size, max_overflow, timeout, pre_ping", "desc": "Adicionar 4 campos em core/config.py. Valores padrão: pool_size=10, max_overflow=20, timeout=30, pre_ping=True.", "state": "done" },
     { "id": "DBE-02", "area": "DB Enrichment", "title": "Aplicar pool tuning em core/db.py", "desc": "create_async_engine usa settings.db_pool_size etc. Verificar que aiosqlite (testes) é excluído do pool tuning.", "state": "done" },
@@ -2111,11 +2111,18 @@
     { "id": "BEE-11", "area": "Backend Enrichment", "title": "Problem+JSON (RFC 9457) em exception_handlers", "desc": "_json_error retorna type/title/status/detail/instance; Content-Type: application/problem+json.", "state": "done" },
     { "id": "BEE-12", "area": "Backend Enrichment", "title": "Testes /me endpoints (6 testes)", "desc": "test_bee_me_endpoints.py: orders/library/wishlist/cart vazios + 401 sem auth.", "state": "done" },
     { "id": "BEE-13", "area": "Backend Enrichment", "title": "Testes health enrichment + Problem+JSON (4 testes)", "desc": "test_bee_health.py: latency_ms, disk.free_mb, /health/detail, content-type problem+json.", "state": "done" },
-    { "id": "BEE-14", "area": "Backend Enrichment", "title": "Revisão cíclica épico BEE", "desc": "Verificar: 15 testes verdes, Ruff limpo, DI consistente, Problem+JSON RFC 9457 correto, CHANGELOG atualizado.", "state": "done" }
+    { "id": "BEE-14", "area": "Backend Enrichment", "title": "Revisão cíclica épico BEE", "desc": "Verificar: 15 testes verdes, Ruff limpo, DI consistente, Problem+JSON RFC 9457 correto, CHANGELOG atualizado.", "state": "done" },
+    { "id": "SFX-01", "area": "Storefront Fix", "title": "Footer duplicado: remover segundo footer", "desc": "index.html tem 2 elementos footer. Mesclar links de privacidade/termos no footer.footer existente. Remover o segundo.", "state": "doing" },
+    { "id": "SFX-02", "area": "Storefront Fix", "title": "Newsletter form: CSS classe .news ausente em style.css", "desc": "Adicionar .news { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px } em style.css.", "state": "doing" },
+    { "id": "SFX-03", "area": "Storefront Fix", "title": "Admin link: ocultar para não-admins via JS", "desc": "Após login: decodificar JWT (base64 payload), verificar role. Exibir #admin-link só se role=admin ou staff.", "state": "doing" },
+    { "id": "SFX-04", "area": "Storefront Fix", "title": "Newsletter erro inline (não toast)", "desc": "Validação de e-mail do newsletter retorna erro inline abaixo do campo, não floating toast. Classe .news-error.", "state": "doing" },
+    { "id": "SFX-05", "area": "Storefront Fix", "title": "Cover placeholder profissional", "desc": "Sem cover_url: mostrar iniciais do título com background derivado do slug (hash → hue HSL). Sem emoji.", "state": "doing" },
+    { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css no construtor. Alternativa: sobrescrever template login.html via custom_templates_dir quando sqladmin>=0.22.", "state": "blocked" },
+    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "Verificar: 0 toasts fora de lugar, footer único, admin link controlado por JWT, cover placeholder limpo, admin login com CSS.", "state": "backlog" }
   ],
   "links": {
-    "app": "https://expects-referrals-attachments-warranty.trycloudflare.com",
-    "report": "https://fotos-recommends-html-wins.trycloudflare.com"
+    "app": "https://competition-cat-stan-wheel.trycloudflare.com",
+    "report": "https://karl-secondary-childrens-description.trycloudflare.com"
   },
   "review_summary": {
     "last": "13/06/2026 [ENRICHMENT — 125 tasks adicionadas (DOC+AAA+FEV+DBE+BEE); docs atualizados; specs YAML criadas]",

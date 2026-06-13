@@ -4,15 +4,20 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
+from pathlib import Path
 
-from fastapi import APIRouter, Depends, Query
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, Query, Request
+from fastapi.responses import HTMLResponse, Response
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from app.delivery.models import DownloadGrant
 from app.security.deps import RequireRole
+
+_PANEL_TEMPLATE = (
+    Path(__file__).parent.parent / "web" / "templates" / "admin_downloads.html"
+)
 
 router = APIRouter(prefix="/api/v1/admin/downloads", tags=["admin-downloads"])
 
@@ -78,6 +83,15 @@ def get_lister(
 ) -> DownloadGrantAdminLister:
     """Monta o DownloadGrantAdminLister com a sessão injetada."""
     return DownloadGrantAdminLister(session)
+
+
+@router.get("/panel", response_class=HTMLResponse)
+async def downloads_panel(
+    request: Request,
+    _staff: object = Depends(_require_staff),
+) -> HTMLResponse:
+    """Painel HTML de download grants administrativo com filtros e design system."""
+    return HTMLResponse(_PANEL_TEMPLATE.read_text(encoding="utf-8"))
 
 
 @router.get("", dependencies=[Depends(_require_staff)])

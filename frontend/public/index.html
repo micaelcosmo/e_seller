@@ -26,7 +26,7 @@
       <button id="lib-btn" class="ghost hidden" title="Seus e-books comprados">📚 Biblioteca</button>
       <button id="orders-btn" class="ghost hidden" title="Meus pedidos">🧾 Pedidos</button>
       <button id="account-btn" class="ghost hidden" title="Minha conta (perfil fiscal)">Conta</button>
-      <a href="/admin" class="ghost" title="Painel do vendedor (admin)">Admin</a>
+      <a id="admin-link" href="/admin" class="ghost hidden" title="Painel do vendedor (admin)">Admin</a>
       <button id="auth-btn" class="ghost" title="Entrar ou criar conta">Entrar</button>
     </nav>
   </header>
@@ -40,12 +40,20 @@
   </main>
 
   <footer class="footer">
-    <form id="news-form" class="news">
+    <form id="news-form" class="news" novalidate>
       <input id="news-email" type="email" placeholder="Receba novidades por e-mail"
-             aria-label="E-mail para newsletter" title="Seu e-mail">
+             aria-label="E-mail para newsletter" title="Seu e-mail" autocomplete="email">
       <button class="ghost" type="submit" title="Assinar a newsletter">Assinar</button>
     </form>
-    <span>e_seller · demo · <a href="/docs" title="Documentação da API">API</a></span>
+    <p id="news-error" class="news-error" role="alert" aria-live="polite"></p>
+    <nav class="footer-links">
+      <a href="/privacidade" title="Política de privacidade">Privacidade</a>
+      <span aria-hidden="true">·</span>
+      <a href="/termos" title="Termos de uso">Termos de uso</a>
+      <span aria-hidden="true">·</span>
+      <a href="/docs" title="Documentação da API">API</a>
+    </nav>
+    <span class="footer-copy">e_seller · demo</span>
   </footer>
 
   <!-- Modal de autenticação -->
@@ -79,11 +87,6 @@
   </div>
 
   <div id="toasts" class="toasts" aria-live="assertive"></div>
-
-  <footer style="text-align:center;padding:1.5rem 0;color:#888;font-size:.85rem">
-    <a href="/privacidade" style="color:#9aa">Privacidade</a> &nbsp;·&nbsp;
-    <a href="/termos" style="color:#9aa">Termos de uso</a>
-  </footer>
 
   <script src="/app.js"></script>
 </body>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Downloads — e_seller Admin</title>
+<link rel="stylesheet" href="/static/css/design-system.css">
+<link rel="stylesheet" href="/static/css/components.css">
+<style>
+  .admin-wrap {
+    max-width: 1100px;
+    margin: var(--sp-8) auto;
+    padding: 0 var(--sp-4);
+  }
+  .admin-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-6);
+  }
+  .admin-filters {
+    display: flex;
+    gap: var(--sp-3);
+    flex-wrap: wrap;
+    margin: var(--sp-4) 0;
+    align-items: flex-end;
+  }
+  .admin-filters label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--sp-2);
+  }
+  th, td {
+    padding: var(--sp-2) var(--sp-3);
+    border: 1px solid var(--color-border);
+    text-align: left;
+    font-size: var(--text-sm);
+  }
+  th { background: var(--color-surface); font-weight: var(--fw-bold); }
+  tr:hover td { background: var(--color-surface); }
+  .mono { font-family: monospace; font-size: var(--text-sm); color: var(--color-muted); }
+  #msg { margin: var(--sp-2) 0; display: none; }
+  .empty { text-align: center; padding: var(--sp-8); color: var(--color-muted); }
+  .progress-bar {
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    background: var(--color-accent);
+    height: 100%;
+    transition: width .3s;
+  }
+</style>
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="admin-header">
+    <a href="/admin" class="btn btn-ghost btn-sm">← Painel</a>
+    <h1 style="font-size:var(--text-xl);font-weight:var(--fw-bold)">Downloads</h1>
+    <span class="badge badge-muted" id="total-badge">–</span>
+  </div>
+
+  <div class="admin-filters">
+    <label>Expirados
+      <select id="f-expired" class="input" style="width:130px">
+        <option value="">Todos</option>
+        <option value="false">Ativos</option>
+        <option value="true">Expirados</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" onclick="loadGrants()">Filtrar</button>
+  </div>
+
+  <div id="msg"></div>
+  <table id="tbl">
+    <thead>
+      <tr>
+        <th>ID</th><th>Produto</th><th>Downloads</th><th>Uso</th>
+        <th>Expira em</th><th>Criado em</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="6" class="empty">Carregando…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+(function () {
+  const token = () => localStorage.getItem("token") || "";
+
+  function expBadge(grant) {
+    if (!grant.expires_at) return "";
+    const expired = new Date(grant.expires_at) < new Date();
+    const cls = expired ? "badge-danger" : "badge-success";
+    const label = expired ? "expirado" : "ativo";
+    return `<span class="badge ${cls}">${label}</span>`;
+  }
+
+  window.loadGrants = async function () {
+    const expired = document.getElementById("f-expired").value;
+    const params = new URLSearchParams({ page_size: "50" });
+    if (expired !== "") params.set("expired", expired);
+
+    const resp = await fetch("/api/v1/admin/downloads?" + params.toString(), {
+      headers: { Authorization: "Bearer " + token() },
+    });
+    const msg = document.getElementById("msg");
+    const tbody = document.getElementById("tbody");
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      msg.className = "badge badge-danger";
+      msg.style.display = "block";
+      msg.textContent = "Erro " + resp.status + ": " + (err.detail || "?");
+      return;
+    }
+    msg.style.display = "none";
+    const grants = await resp.json();
+    const total = resp.headers.get("X-Total-Count") || grants.length;
+    document.getElementById("total-badge").textContent = total + " grants";
+    if (!grants.length) {
+      tbody.innerHTML =
+        '<tr><td colspan="6" class="empty">Nenhum grant encontrado.</td></tr>';
+      return;
+    }
+    let rows = "";
+    for (const g of grants) {
+      const max = g.max_downloads;
+      const pct = max ? Math.round((g.download_count / max) * 100) : 0;
+      const exp = g.expires_at
+        ? new Date(g.expires_at).toLocaleString("pt-BR")
+        : "—";
+      const created = g.created_at
+        ? new Date(g.created_at).toLocaleString("pt-BR")
+        : "—";
+      rows += `<tr>
+        <td class="mono">${g.id}</td>
+        <td class="mono">${g.product_id}</td>
+        <td>${g.download_count} / ${max || "∞"}</td>
+        <td style="width:100px">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${pct}%"></div>
+          </div>
+          <span style="font-size:.75rem;color:var(--color-muted)">${pct}%</span>
+        </td>
+        <td>${expBadge(g)} ${exp}</td>
+        <td style="color:var(--color-muted)">${created}</td>
+      </tr>`;
+    }
+    tbody.innerHTML = rows;
+  };
+
+  loadGrants();
+}());
+</script>
+</body>
+</html>
