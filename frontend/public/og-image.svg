@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1330"/>
+      <stop offset="55%" stop-color="#2a1f5c"/>
+      <stop offset="100%" stop-color="#3a2470"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="980" cy="120" r="260" fill="#6d5cff" opacity="0.18"/>
+  <circle cx="220" cy="560" r="220" fill="#ff7a3c" opacity="0.14"/>
+  <g transform="translate(110 250)">
+    <rect x="0" y="-58" width="96" height="96" rx="22" fill="#6d5cff"/>
+    <g fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" transform="translate(24 -34) scale(2)">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+    </g>
+    <text x="124" y="14" font-family="Segoe UI, system-ui, sans-serif" font-size="68" font-weight="800" fill="#ffffff">e_seller</text>
+  </g>
+  <text x="110" y="380" font-family="Segoe UI, system-ui, sans-serif" font-size="92" font-weight="800" fill="#ffffff">E-books, na hora.</text>
+  <text x="112" y="452" font-family="Segoe UI, system-ui, sans-serif" font-size="40" fill="#c9c4e8">Compre, pague e baixe em segundos.</text>
+</svg>

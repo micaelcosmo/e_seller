@@ -340,10 +340,32 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
 /* Estados */
 .loading, .empty { text-align: center; color: var(--muted); padding: 40px; }
 .skeleton { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); }
-.skeleton .sk { height: 320px; border-radius: var(--radius);
+.sk {
   background: linear-gradient(90deg, #eef0f7 25%, #f7f8fc 37%, #eef0f7 63%);
-  background-size: 400% 100%; animation: shimmer 1.4s infinite; }
+  background-size: 400% 100%; animation: shimmer 1.4s infinite;
+}
+.skeleton .sk { height: 320px; border-radius: var(--radius); }
 @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+/* Skeleton dedicado do detalhe (UXR-28) */
+.detail-skeleton { display: grid; grid-template-columns: 280px 1fr; gap: var(--space-6);
+  align-items: start; margin-top: var(--space-4); }
+.detail-skeleton .sk-cover { aspect-ratio: 3/4; border-radius: var(--radius); }
+.detail-skeleton .sk-lines { display: flex; flex-direction: column; gap: var(--space-3); }
+.detail-skeleton .sk-line { height: 18px; border-radius: 6px; }
+.detail-skeleton .sk-line-sm { width: 40%; }
+.detail-skeleton .sk-line-lg { width: 75%; height: 32px; }
+.detail-skeleton .sk-box { height: 180px; border-radius: var(--radius); margin-top: var(--space-3); }
+@media (max-width: 640px) { .detail-skeleton { grid-template-columns: 1fr; } }
+
+/* Faixa de preço customizada (UXR-30) */
+.price-custom { display: inline-flex; align-items: center; gap: 6px; }
+.price-input {
+  width: 64px; padding: 4px 8px; border: 1px solid var(--line);
+  border-radius: var(--radius-sm); font: inherit; font-size: .8rem; outline: none;
+}
+.price-input:focus { border-color: var(--accent); }
+.price-sep { color: var(--muted); }
 
 /* Modal */
 .modal { position: fixed; inset: 0; background: rgba(15,18,38,.45);

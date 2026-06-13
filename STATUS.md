@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 12:39 — 🟢 Épico UXR CONCLUÍDO (UXR-01..25). Revisão cíclica: 502 testes verdes (PYTEST_EXIT=0), Ruff limpo. Auto-repair: corrigida regressão real em test_fe31 (seed featured) + 4 erros Ruff. Incremento: +7 follow-ups (UXR-26..32). Backlog em 373 itens._
+_Última atualização: 2026-06-13 13:05 — 🟢 UXR follow-ups resolvidos (UXR-27/28/29/30/32): rating no detalhe, skeleton dedicado do detalhe, favicon + og:image, filtro de preço custom (inputs min/max), página de favoritos (nova rota #/favoritos + botão no header) com estado vazio. Pendentes só UXR-26 (redes sociais: sem URLs reais) e UXR-31 (Lighthouse: sem browser headless no ambiente)._

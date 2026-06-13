@@ -81,6 +81,23 @@ function skeleton() {
   return html + "</div>";
 }
 
+function detailSkeleton() {
+  // Placeholder de carregamento específico do detalhe (UXR-28):
+  // capa à esquerda + linhas de texto e buy-box à direita.
+  return (
+    '<div class="detail-skeleton">' +
+    '<div class="sk sk-cover"></div>' +
+    '<div class="sk-lines">' +
+    '<div class="sk sk-line sk-line-sm"></div>' +
+    '<div class="sk sk-line sk-line-lg"></div>' +
+    '<div class="sk sk-line"></div>' +
+    '<div class="sk sk-line"></div>' +
+    '<div class="sk sk-line sk-line-sm"></div>' +
+    '<div class="sk sk-box"></div>' +
+    "</div></div>"
+  );
+}
+
 function emptyState(iconId, title, message, ctaLabel, ctaHref) {
   // Estado vazio desenhado: ícone + título + mensagem + CTA opcional (UXR-23).
   let cta = "";
@@ -216,6 +233,18 @@ function priceFilterBar() {
   if (_priceFilter.min !== null || _priceFilter.max !== null) {
     html += '<button class="chip-btn clear" data-price="clear" title="Remover filtro de preço">✕</button>';
   }
+  // Faixa customizada (UXR-30): inputs min/max numéricos.
+  const minVal = _priceFilter.min !== null ? _priceFilter.min : "";
+  const maxVal = _priceFilter.max !== null ? _priceFilter.max : "";
+  html +=
+    '<span class="price-custom">' +
+    '<input id="price-min" class="price-input" type="number" min="0" step="1" ' +
+    'inputmode="numeric" placeholder="mín" aria-label="Preço mínimo" value="' + minVal + '">' +
+    '<span class="price-sep">—</span>' +
+    '<input id="price-max" class="price-input" type="number" min="0" step="1" ' +
+    'inputmode="numeric" placeholder="máx" aria-label="Preço máximo" value="' + maxVal + '">' +
+    '<button class="chip-btn" id="price-apply" title="Aplicar faixa">Aplicar</button>' +
+    "</span>";
   return html + "</div>";
 }
 
@@ -279,6 +308,23 @@ function bindFacetChips(query, activeTag, authorSlug, activeSort) {
         renderHome(null, null, slug === authorSlug ? null : slug, 1, activeSort);
       }
     });
+  }
+  // Faixa de preço customizada (UXR-30): aplica os valores dos inputs.
+  const applyBtn = document.getElementById("price-apply");
+  if (applyBtn) {
+    const applyCustom = function () {
+      const minEl = document.getElementById("price-min");
+      const maxEl = document.getElementById("price-max");
+      const minRaw = minEl.value.trim();
+      const maxRaw = maxEl.value.trim();
+      _priceFilter.min = minRaw === "" ? null : Math.max(0, Number(minRaw));
+      _priceFilter.max = maxRaw === "" ? null : Math.max(0, Number(maxRaw));
+      renderHome(query, activeTag, authorSlug, 1, activeSort);
+    };
+    applyBtn.addEventListener("click", applyCustom);
+    const onEnter = function (ev) { if (ev.key === "Enter") { applyCustom(); } };
+    document.getElementById("price-min").addEventListener("keydown", onEnter);
+    document.getElementById("price-max").addEventListener("keydown", onEnter);
   }
 }
 
@@ -479,7 +525,7 @@ function updateProductMeta(p) {
 async function renderProduct(slug) {
   // Detalhe do produto + caixa de compra (ou botão de download se já comprado).
   hero.classList.add("hidden");
-  view.innerHTML = '<div class="loading">Carregando…</div>';
+  view.innerHTML = detailSkeleton();
   try {
     const p = await api("/products/" + slug);
     updateProductMeta(p);
@@ -524,6 +570,7 @@ async function renderProduct(slug) {
       '<div class="detail">' + coverHtml(p) + "<div>" +
       '<span class="tag">' + escapeHtml(p.author || "e-book") + "</span>" +
       "<h2>" + escapeHtml(p.title) + "</h2>" +
+      starsHtml(p.avg_rating || 0, p.review_count || 0) +
       '<p class="muted">' + escapeHtml(p.description || "") + "</p>" +
       '<div class="price" style="font-size:1.4rem">' + money(p.price) + "</div>" +
       tagChips(p.tags) +
@@ -770,6 +817,7 @@ function refreshAuthButton() {
   // Exibe link Admin apenas se o JWT indicar role admin ou staff.
   const btn = document.getElementById("auth-btn");
   const lib = document.getElementById("lib-btn");
+  const wish = document.getElementById("wish-btn");
   const cart = document.getElementById("cart-btn");
   const account = document.getElementById("account-btn");
   const ordersBtn = document.getElementById("orders-btn");
@@ -788,6 +836,7 @@ function refreshAuthButton() {
     btn.title = "Entrar ou criar conta";
   }
   lib.classList.toggle("hidden", !email);
+  if (wish) { wish.classList.toggle("hidden", !email); }
   cart.classList.toggle("hidden", !email);
   account.classList.toggle("hidden", !email);
   ordersBtn.classList.toggle("hidden", !email);
@@ -941,6 +990,42 @@ async function renderLibrary() {
     }
   } catch (e) {
     view.innerHTML = '<div class="empty">Não foi possível carregar a biblioteca.</div>';
+    toast(e.message, "err");
+  }
+}
+
+async function renderWishlist() {
+  // Lista os e-books favoritados pelo usuário (UXR-32), com estado vazio desenhado.
+  hero.classList.add("hidden");
+  if (!localStorage.getItem("token")) {
+    view.innerHTML = emptyState(
+      "heart", "Entre para ver seus favoritos",
+      "Faça login para salvar e-books na sua lista de favoritos.",
+      "Explorar catálogo", "#/"
+    );
+    return;
+  }
+  view.innerHTML = skeleton();
+  try {
+    const items = await api("/wishlist");
+    _wishSlugs.clear();
+    for (const item of items) { _wishSlugs.add(item.slug); }
+    if (!items.length) {
+      view.innerHTML = emptyState(
+        "heart", "Nenhum favorito ainda",
+        "Toque no coração de um e-book para salvá-lo aqui e comprar depois.",
+        "Explorar catálogo", "#/"
+      );
+      return;
+    }
+    let html = '<h2 class="section-title">Meus favoritos</h2><div class="grid">';
+    for (const p of items) {
+      html += productCard(p, _ownedSlugs.has(p.slug));
+    }
+    view.innerHTML = html + "</div>";
+    bindWishlistButtons();
+  } catch (e) {
+    view.innerHTML = '<div class="empty">Não foi possível carregar os favoritos.</div>';
     toast(e.message, "err");
   }
 }
@@ -1108,6 +1193,8 @@ function router() {
     renderProduct(decodeURIComponent(hash.slice("#/produto/".length)));
   } else if (hash === "#/biblioteca") {
     renderLibrary();
+  } else if (hash === "#/favoritos") {
+    renderWishlist();
   } else if (hash === "#/carrinho") {
     renderCart();
   } else if (hash === "#/conta") {
@@ -1140,6 +1227,9 @@ window.addEventListener("DOMContentLoaded", function () {
   setupAuth(); setupSearch(); refreshAuthButton(); loadFacets(); router();
   document.getElementById("lib-btn").addEventListener("click", function () {
     location.hash = "#/biblioteca";
+  });
+  document.getElementById("wish-btn").addEventListener("click", function () {
+    location.hash = "#/favoritos";
   });
   document.getElementById("cart-btn").addEventListener("click", function () {
     location.hash = "#/carrinho";

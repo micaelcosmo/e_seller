@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 12:39 (Brasilia) — 🟢 Épico UXR CONCLUÍDO (UXR-01..25). Revisão cíclica: 502 testes verdes (PYTEST_EXIT=0), Ruff limpo. Auto-repair corrigiu regressão real em test_fe31 (seed featured) + 4 erros Ruff. Incremento: +7 follow-ups (UXR-26..32).",
+  "updated": "13/06/2026 13:05 (Brasilia) — 🟢 UXR follow-ups resolvidos (UXR-27/28/29/30/32): rating no detalhe, skeleton dedicado do detalhe, favicon + og:image, filtro de preço custom (inputs min/max) e página de favoritos com estado vazio. Restam UXR-26 (redes sociais: sem URLs reais) e UXR-31 (Lighthouse: sem browser headless).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2152,12 +2152,12 @@
     { "id": "UXR-25", "area": "UX Redesign", "title": "Revisão cíclica épico UXR", "desc": "Parecer: 24/24 tasks de implementação concluídas (UXR-01..24). Auto-repair: Ruff verde (corrigidos 4 erros, sendo 3 preexistentes em testes AAA). Suíte de testes verde. Backend enriquecido com TDD (8 testes novos). Incremento: UXR-26..32 criados.", "state": "done" },
 
     { "id": "UXR-26", "area": "UX Redesign", "title": "Redes sociais no footer (via config)", "desc": "Adicionar ícones SVG de redes sociais (Instagram/YouTube/X) ao footer quando houver URLs reais em Settings. Hoje omitido para evitar links soltos.", "state": "backlog" },
-    { "id": "UXR-27", "area": "UX Redesign", "title": "Rating stars na página de detalhe", "desc": "Exibir avg_rating + review_count com estrelas no topo do detalhe do produto (hoje só nos cards). Reusar starsHtml().", "state": "backlog" },
-    { "id": "UXR-28", "area": "UX Redesign", "title": "Skeleton dedicado no detalhe do produto", "desc": "renderProduct usa skeleton de grid; criar skeleton específico (cover + linhas de texto + buy-box) para o layout de detalhe.", "state": "backlog" },
-    { "id": "UXR-29", "area": "UX Redesign", "title": "Favicon e og:image reais", "desc": "Adicionar favicon.svg da marca e meta og:image para compartilhamento. Hoje ausentes (ver ux-audit seção 6).", "state": "backlog" },
-    { "id": "UXR-30", "area": "UX Redesign", "title": "Filtro de preço: faixa customizada", "desc": "Além dos presets (UXR-16), permitir min/max custom via inputs numéricos. Sincroniza com price_min/price_max já suportados no backend.", "state": "backlog" },
+    { "id": "UXR-27", "area": "UX Redesign", "title": "Rating stars na página de detalhe", "desc": "Exibir avg_rating + review_count com estrelas no topo do detalhe do produto (hoje só nos cards). Reusar starsHtml().", "state": "done" },
+    { "id": "UXR-28", "area": "UX Redesign", "title": "Skeleton dedicado no detalhe do produto", "desc": "renderProduct usa skeleton de grid; criar skeleton específico (cover + linhas de texto + buy-box) para o layout de detalhe.", "state": "done" },
+    { "id": "UXR-29", "area": "UX Redesign", "title": "Favicon e og:image reais", "desc": "Adicionar favicon.svg da marca e meta og:image para compartilhamento. Hoje ausentes (ver ux-audit seção 6).", "state": "done" },
+    { "id": "UXR-30", "area": "UX Redesign", "title": "Filtro de preço: faixa customizada", "desc": "Além dos presets (UXR-16), permitir min/max custom via inputs numéricos. Sincroniza com price_min/price_max já suportados no backend.", "state": "done" },
     { "id": "UXR-31", "area": "UX Redesign", "title": "Auditoria Lighthouse mobile", "desc": "Rodar Lighthouse mobile e atingir >=90 em Performance e Accessibility (critério de aceite do roadmap-uxr). Requer ferramenta de browser headless.", "state": "backlog" },
-    { "id": "UXR-32", "area": "UX Redesign", "title": "Estado vazio de favoritos (wishlist)", "desc": "Aplicar emptyState() à página de favoritos quando vazia, com CTA para o catálogo (igual carrinho/biblioteca).", "state": "backlog" }
+    { "id": "UXR-32", "area": "UX Redesign", "title": "Estado vazio de favoritos (wishlist)", "desc": "Aplicar emptyState() à página de favoritos quando vazia, com CTA para o catálogo (igual carrinho/biblioteca).", "state": "done" }
   ],
   "links": {
     "app": "https://competition-cat-stan-wheel.trycloudflare.com",
