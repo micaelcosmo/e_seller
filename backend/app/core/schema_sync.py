@@ -32,6 +32,9 @@ class SchemaSync:
             ("user", "deleted_at", "TIMESTAMPTZ"),
             ("user", "totp_secret_enc", "VARCHAR(512)"),
             ("user", "totp_enabled", "BOOLEAN DEFAULT false NOT NULL"),
+            # O tipo enum reviewstatus já é criado pelo create_all; aqui só
+            # garantimos a coluna em bancos que nasceram antes do campo existir.
+            ("review", "status", "reviewstatus NOT NULL DEFAULT 'PENDING'"),
         ]
 
         # (nome do índice, tabela, coluna) — idempotente via CREATE INDEX IF NOT EXISTS.

@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 11:11 — 🟡 Épico UXR iniciado. Audit do frontend criado (.spec/frontend/ux-audit.md), pesquisa de mercado em 12 sites de e-book em andamento. Roadmap + 25 tasks serão criados após pesquisa._
+_Última atualização: 2026-06-13 11:26 — 🟢 Catálogo voltou a funcionar (era 500: faltava coluna `review.status` no DB; adicionada ao SchemaSync). Endpoints /products, /products/{slug}, /related, featured todos 200. Planning UXR completo (audit + research 10 sites + roadmap + 25 tasks). Iniciando Fase 1 (fundação visual)._
