@@ -1,5 +1,6 @@
 """Schemas (Pydantic) de entrada/saída do catálogo."""
 
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, field_validator
@@ -16,6 +17,9 @@ class ProductListItem(BaseModel):
     price: Decimal
     cover_url: str | None = None
     review_count: int = 0
+    avg_rating: float = 0.0
+    featured: bool = False
+    created_at: datetime | None = None
 
 
 class TaxonomyLabel(BaseModel):

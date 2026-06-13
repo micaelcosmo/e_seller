@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import urllib.request
+from decimal import Decimal
 from typing import Protocol
 from urllib.parse import urlparse
 
@@ -49,18 +50,22 @@ class ProductCatalog:
         author_slug: str | None = None,
         sort: str | None = None,
         featured: bool | None = None,
+        price_min: Decimal | None = None,
+        price_max: Decimal | None = None,
     ) -> list[Product]:
         """Lista produtos publicados com paginação, busca, filtros e ordenação."""
         products = await self.repo.list_published(
-            query, skip, limit, tag_slug, author_slug, sort, featured
+            query, skip, limit, tag_slug, author_slug, sort, featured,
+            price_min, price_max,
         )
         await self._attach_review_counts(products)
         return products
 
     async def _attach_review_counts(self, products: list[Product]) -> None:
-        """Popula review_count em cada produto com uma única query (sem N+1).
+        """Popula review_count e avg_rating em cada produto com uma única query.
 
-        Conta apenas reviews com status APPROVED.
+        Considera apenas reviews com status APPROVED. Produtos sem reviews
+        aprovadas recebem review_count=0 e avg_rating=0.0. Evita N+1.
         """
         from app.reviews.models import Review, ReviewStatus
 
@@ -68,23 +73,37 @@ class ProductCatalog:
             return
         ids = [p.id for p in products]
         stmt = (
-            select(Review.product_id, func.count(Review.id).label("cnt"))
+            select(
+                Review.product_id,
+                func.count(Review.id).label("cnt"),
+                func.avg(Review.rating).label("avg_rating"),
+            )
             .where(Review.product_id.in_(ids), Review.status == ReviewStatus.APPROVED)
             .group_by(Review.product_id)
         )
         rows = (await self.session.execute(stmt)).all()
-        counts = {row.product_id: row.cnt for row in rows}
+        counts = {}
+        averages = {}
+        for row in rows:
+            counts[row.product_id] = row.cnt
+            # avg vem como Decimal/None; arredonda para 1 casa para exibição.
+            averages[row.product_id] = round(float(row.avg_rating), 1) if row.avg_rating else 0.0
         for product in products:
             product.review_count = counts.get(product.id, 0)
+            product.avg_rating = averages.get(product.id, 0.0)
 
     async def count_published(
         self,
         query: str | None = None,
         tag_slug: str | None = None,
         author_slug: str | None = None,
+        price_min: Decimal | None = None,
+        price_max: Decimal | None = None,
     ) -> int:
         """Conta produtos publicados com os mesmos filtros da listagem."""
-        return await self.repo.count_published(query, tag_slug, author_slug)
+        return await self.repo.count_published(
+            query, tag_slug, author_slug, price_min, price_max
+        )
 
     async def get_related(self, slug: str, limit: int = 4) -> list[Product]:
         """Retorna produtos relacionados ao slug informado (mesmo autor/tag).

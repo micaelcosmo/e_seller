@@ -72,6 +72,7 @@ class DevSeeder:
                 price=Decimal(sample["price"]),
                 file_name=sample["file_name"],
                 status=ProductStatus(sample["status"]),
+                featured=bool(sample.get("featured", False)),
             )
             await taxonomy.apply_to_product(
                 product,

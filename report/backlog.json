@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 11:33 (Brasilia) — 🟡 UXR Fase 2 concluída (UXR-07..10): badge contador no carrinho com total R$, ícones SVG no header, menu hamburguer mobile, avatar com iniciais do usuário logado. Iniciando Fase 3 (catálogo e cards).",
+  "updated": "13/06/2026 12:01 (Brasilia) — 🟡 UXR Fase 3 concluída (UXR-11..16): card redesenhado (rating stars, badges, CTA comprar), avg_rating+featured+filtro de preço no backend (8 testes TDD verdes), carrossel de destaques, erro de catálogo com retry. Suíte completa verde. Iniciando Fase 4 (hero e prova social).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2132,12 +2132,12 @@
     { "id": "UXR-09", "area": "UX Redesign", "title": "Menu hamburguer no mobile", "desc": "Em <768px, ações do header colapsam em menu hamburguer. Busca full-width abaixo. Acessível (aria-expanded).", "state": "done" },
     { "id": "UXR-10", "area": "UX Redesign", "title": "Indicador de conta/avatar logado", "desc": "Usuário logado: botão Conta vira avatar com iniciais (reusa _titleHue do SFX-05). Dropdown com Biblioteca/Pedidos/Sair.", "state": "done" },
 
-    { "id": "UXR-11", "area": "UX Redesign", "title": "Card de produto redesenhado", "desc": "Card: capa + título + autor + rating stars + preço + botão comprar visível. Ordem consenso: capa->título->preço->CTA. Radius 8px, sombra sutil.", "state": "backlog" },
-    { "id": "UXR-12", "area": "UX Redesign", "title": "Rating stars nos cards e detalhe", "desc": "Exibir média de estrelas (amarelo, ref. Hotmart) + contagem de reviews nos cards e no detalhe. Fallback 'sem avaliações'.", "state": "backlog" },
-    { "id": "UXR-13", "area": "UX Redesign", "title": "Badges de destaque/novo nos cards", "desc": "Badge 'Destaque' (product.featured) e 'Novo' (created_at < 30d) nos cards. Estilo pill, canto superior. Sem hardcode de datas.", "state": "backlog" },
-    { "id": "UXR-14", "area": "UX Redesign", "title": "Seção 'Destaques' em carrossel horizontal", "desc": "Home: carrossel horizontal de e-books featured (ref. Leanpub shelf). Scroll-snap CSS, sem libs. Setas prev/next acessíveis.", "state": "backlog" },
-    { "id": "UXR-15", "area": "UX Redesign", "title": "Estado de erro do catálogo com retry", "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.", "state": "backlog" },
-    { "id": "UXR-16", "area": "UX Redesign", "title": "Filtro por faixa de preço", "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.", "state": "backlog" },
+    { "id": "UXR-11", "area": "UX Redesign", "title": "Card de produto redesenhado", "desc": "Card: capa + título + autor + rating stars + preço + botão comprar visível. Ordem consenso: capa->título->preço->CTA. Radius 8px, sombra sutil.", "state": "done" },
+    { "id": "UXR-12", "area": "UX Redesign", "title": "Rating stars nos cards e detalhe", "desc": "Exibir média de estrelas (amarelo, ref. Hotmart) + contagem de reviews nos cards e no detalhe. Fallback 'sem avaliações'.", "state": "done" },
+    { "id": "UXR-13", "area": "UX Redesign", "title": "Badges de destaque/novo nos cards", "desc": "Badge 'Destaque' (product.featured) e 'Novo' (created_at < 30d) nos cards. Estilo pill, canto superior. Sem hardcode de datas.", "state": "done" },
+    { "id": "UXR-14", "area": "UX Redesign", "title": "Seção 'Destaques' em carrossel horizontal", "desc": "Home: carrossel horizontal de e-books featured (ref. Leanpub shelf). Scroll-snap CSS, sem libs. Setas prev/next acessíveis.", "state": "done" },
+    { "id": "UXR-15", "area": "UX Redesign", "title": "Estado de erro do catálogo com retry", "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.", "state": "done" },
+    { "id": "UXR-16", "area": "UX Redesign", "title": "Filtro por faixa de preço", "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.", "state": "done" },
 
     { "id": "UXR-17", "area": "UX Redesign", "title": "Hero com CTA e prova social", "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.", "state": "backlog" },
     { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "backlog" },

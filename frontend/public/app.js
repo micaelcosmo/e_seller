@@ -112,24 +112,56 @@ const _wishSlugs = new Set();
 // Slugs de produtos já comprados (Set atualizado por renderHome e renderProduct).
 const _ownedSlugs = new Set();
 
+function starsHtml(avg, count) {
+  // Renderiza estrelas de avaliação (UXR-12). Sem reviews → texto discreto.
+  if (!count) {
+    return '<div class="rating rating-empty">Sem avaliações</div>';
+  }
+  const rounded = Math.round(avg);
+  let stars = "";
+  for (let i = 1; i <= 5; i++) {
+    const cls = i <= rounded ? "star on" : "star";
+    stars += '<svg class="' + cls + '" aria-hidden="true"><use href="#i-star"/></svg>';
+  }
+  return '<div class="rating" title="' + avg + ' de 5 (' + count + ' avaliações)">' +
+    stars + '<span class="rating-num">' + avg.toFixed(1) + "</span>" +
+    '<span class="rating-count">(' + count + ")</span></div>";
+}
+
+function _isNew(createdAt) {
+  // Verdadeiro se o produto foi criado nos últimos 30 dias (UXR-13).
+  if (!createdAt) { return false; }
+  const created = new Date(createdAt).getTime();
+  if (isNaN(created)) { return false; }
+  const days = (Date.now() - created) / (1000 * 60 * 60 * 24);
+  return days <= 30;
+}
+
 function productCard(p, isOwned) {
-  // HTML de um cartão de produto; isOwned exibe o badge "Comprado".
-  const badge = isOwned
-    ? '<span class="badge-owned">Comprado</span>'
-    : "";
+  // HTML de um cartão de produto redesenhado (UXR-11/12/13).
+  let badges = "";
+  if (isOwned) { badges += '<span class="badge badge-owned">Comprado</span>'; }
+  else if (p.featured) { badges += '<span class="badge badge-featured">★ Destaque</span>'; }
+  else if (_isNew(p.created_at)) { badges += '<span class="badge badge-new">Novo</span>'; }
   const inWish = _wishSlugs.has(p.slug);
   const wishBtn = localStorage.getItem("token")
     ? '<button class="btn-wish' + (inWish ? " wished" : "") +
       '" data-slug="' + escapeHtml(p.slug) + '" title="' +
-      (inWish ? "Remover da wishlist" : "Adicionar à wishlist") + '">' +
-      (inWish ? "♥" : "♡") + "</button>"
+      (inWish ? "Remover dos favoritos" : "Adicionar aos favoritos") + '" aria-label="Favoritar">' +
+      '<svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></button>'
     : "";
+  const buyLabel = isOwned ? "Baixar" : "Comprar";
   return (
     '<a class="card" href="#/produto/' + p.slug + '" title="Ver detalhes">' +
-    badge + wishBtn + coverHtml(p) + '<div class="body">' +
-    '<span class="tag">' + (p.author || "e-book") + "</span>" +
+    '<div class="card-media">' + badges + wishBtn + coverHtml(p) + "</div>" +
+    '<div class="body">' +
+    '<span class="tag">' + escapeHtml(p.author || "e-book") + "</span>" +
     "<h3>" + escapeHtml(p.title) + "</h3>" +
-    '<div class="price">' + money(p.price) + "</div></div></a>"
+    starsHtml(p.avg_rating || 0, p.review_count || 0) +
+    '<div class="card-foot">' +
+    '<span class="price">' + money(p.price) + "</span>" +
+    '<span class="buy buy-sm" aria-hidden="true">' + buyLabel + "</span>" +
+    "</div></div></a>"
   );
 }
 
@@ -143,6 +175,33 @@ function escapeHtml(text) {
 // ---------- Facetas de navegação (tags e autores) — FE-13 ----------
 
 const _facets = { tags: [], authors: [] };
+
+// Filtro de faixa de preço ativo (UXR-16). null = sem limite.
+const _priceFilter = { min: null, max: null };
+
+// Presets de faixa de preço exibidos como chips.
+const _PRICE_PRESETS = [
+  { label: "Até R$ 20", min: null, max: 20 },
+  { label: "R$ 20 a 50", min: 20, max: 50 },
+  { label: "R$ 50+", min: 50, max: null },
+];
+
+function priceFilterBar() {
+  // Renderiza chips de faixa de preço (UXR-16).
+  let html = '<div class="facets price-facets">';
+  html += '<span class="facet-label">Preço:</span>';
+  for (let i = 0; i < _PRICE_PRESETS.length; i++) {
+    const preset = _PRICE_PRESETS[i];
+    const active = _priceFilter.min === preset.min && _priceFilter.max === preset.max;
+    html += '<button class="chip-btn' + (active ? " active" : "") +
+      '" data-price="' + i + '" title="Filtrar por preço">' +
+      escapeHtml(preset.label) + "</button>";
+  }
+  if (_priceFilter.min !== null || _priceFilter.max !== null) {
+    html += '<button class="chip-btn clear" data-price="clear" title="Remover filtro de preço">✕</button>';
+  }
+  return html + "</div>";
+}
 
 async function loadFacets() {
   // Carrega tags e autores uma única vez na inicialização.
@@ -182,7 +241,19 @@ function bindFacetChips(query, activeTag, authorSlug, activeSort) {
   const chips = view.querySelectorAll(".chip-btn");
   for (const c of chips) {
     c.addEventListener("click", function () {
-      if (c.classList.contains("clear")) {
+      const priceAttr = c.getAttribute("data-price");
+      if (priceAttr !== null) {
+        // Chips de faixa de preço (UXR-16) — atualiza _priceFilter e recarrega.
+        if (priceAttr === "clear") {
+          _priceFilter.min = null; _priceFilter.max = null;
+        } else {
+          const preset = _PRICE_PRESETS[Number(priceAttr)];
+          const same = _priceFilter.min === preset.min && _priceFilter.max === preset.max;
+          _priceFilter.min = same ? null : preset.min;
+          _priceFilter.max = same ? null : preset.max;
+        }
+        renderHome(query, activeTag, authorSlug, 1, activeSort);
+      } else if (c.classList.contains("clear")) {
         renderHome(null, null, null, 1, activeSort);
       } else if (c.getAttribute("data-tag")) {
         const slug = c.getAttribute("data-tag");
@@ -264,6 +335,8 @@ async function renderHome(query, tagSlug, authorSlug, page, sort) {
     if (query) { params.set("q", query); }
     if (tagSlug) { params.set("tag", tagSlug); }
     if (authorSlug) { params.set("author", authorSlug); }
+    if (_priceFilter.min !== null) { params.set("price_min", _priceFilter.min); }
+    if (_priceFilter.max !== null) { params.set("price_max", _priceFilter.max); }
     params.set("sort", activeSort);
     params.set("page", currentPage);
     params.set("page_size", _PAGE_SIZE);
@@ -284,7 +357,11 @@ async function renderHome(query, tagSlug, authorSlug, page, sort) {
       for (const item of wish) { _wishSlugs.add(item.slug); }
     }
     if (currentPage === 1) {
-      let html = facetBar(tagSlug, authorSlug);
+      // Home "pura" (sem busca/filtro) ganha carrossel de destaques (UXR-14).
+      const isPureHome = !query && !tagSlug && !authorSlug;
+      let html = isPureHome ? '<div id="featured-slot"></div>' : "";
+      html += facetBar(tagSlug, authorSlug);
+      html += priceFilterBar();
       html += sortBar(activeSort);
       if (!products.length) {
         html += '<div class="empty">Nenhum e-book encontrado.</div>';
@@ -294,6 +371,7 @@ async function renderHome(query, tagSlug, authorSlug, page, sort) {
         html += "</div>";
       }
       view.innerHTML = html;
+      if (isPureHome) { loadFeaturedCarousel(); }
       const sel = document.getElementById("sort-select");
       if (sel) {
         sel.addEventListener("change", function () {
@@ -324,10 +402,45 @@ async function renderHome(query, tagSlug, authorSlug, page, sort) {
     bindFacetChips(query, tagSlug, authorSlug, activeSort);
     bindWishlistButtons();
   } catch (e) {
-    view.innerHTML = '<div class="empty">Não foi possível carregar o catálogo.</div>';
-    toast(e.message, "err");
+    // Estado de erro desenhado com ação de retry (UXR-15).
+    view.innerHTML =
+      '<div class="state-error">' +
+      '<svg class="state-icon" aria-hidden="true"><use href="#i-bolt"/></svg>' +
+      "<h3>Não foi possível carregar o catálogo</h3>" +
+      "<p>Verifique sua conexão e tente novamente.</p>" +
+      '<button class="primary" id="catalog-retry">Tentar novamente</button>' +
+      "</div>";
+    const retry = document.getElementById("catalog-retry");
+    if (retry) {
+      retry.addEventListener("click", function () {
+        renderHome(query, tagSlug, authorSlug, 1, activeSort);
+      });
+    }
   } finally {
     if (searchEl) { searchEl.classList.remove("is-busy"); }
+  }
+}
+
+async function loadFeaturedCarousel() {
+  // Carrega e renderiza o carrossel horizontal de destaques (UXR-14).
+  // Silencioso: se não houver destaques ou em erro, remove o slot.
+  const slot = document.getElementById("featured-slot");
+  if (!slot) { return; }
+  try {
+    const featured = await api("/products?featured=true&page=1&page_size=12");
+    if (!featured.length) { slot.remove(); return; }
+    let cards = "";
+    for (const p of featured) {
+      cards += productCard(p, _ownedSlugs.has(p.slug));
+    }
+    slot.innerHTML =
+      '<section class="featured">' +
+      '<h2 class="section-title">★ Destaques</h2>' +
+      '<div class="carousel" id="featured-carousel">' + cards + "</div>" +
+      "</section>";
+    bindWishlistButtons();
+  } catch (e) {
+    slot.remove();
   }
 }
 

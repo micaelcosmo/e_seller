@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -42,6 +44,8 @@ class ProductRepository:
         author_slug: str | None = None,
         sort: str | None = None,
         featured: bool | None = None,
+        price_min: Decimal | None = None,
+        price_max: Decimal | None = None,
     ) -> list[Product]:
         """Lista produtos publicados com paginação, filtros e ordenação opcionais."""
         statement = (
@@ -51,6 +55,10 @@ class ProductRepository:
         )
         if featured is not None:
             statement = statement.where(Product.featured == featured)
+        if price_min is not None:
+            statement = statement.where(Product.price >= price_min)
+        if price_max is not None:
+            statement = statement.where(Product.price <= price_max)
         relevance = None
         if query:
             pattern = f"%{query.lower()}%"
@@ -98,12 +106,18 @@ class ProductRepository:
         query: str | None = None,
         tag_slug: str | None = None,
         author_slug: str | None = None,
+        price_min: Decimal | None = None,
+        price_max: Decimal | None = None,
     ) -> int:
         """Conta o total de produtos publicados com os mesmos filtros da listagem."""
         stmt = (
             select(func.count(Product.id.distinct()))
             .where(Product.status == ProductStatus.PUBLISHED)
         )
+        if price_min is not None:
+            stmt = stmt.where(Product.price >= price_min)
+        if price_max is not None:
+            stmt = stmt.where(Product.price <= price_max)
         if query:
             pattern = f"%{query.lower()}%"
             stmt = stmt.where(

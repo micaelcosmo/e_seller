@@ -164,29 +164,83 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
 
 /* Grid de produtos */
 .grid {
-  display: grid; gap: 18px;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  display: grid; gap: var(--space-5);
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm);
   box-shadow: var(--shadow-1); overflow: hidden; display: flex; flex-direction: column;
-  transition: transform .12s ease, box-shadow .12s ease;
+  transition: transform .12s ease, box-shadow .12s ease; color: inherit;
 }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
+.card-media { position: relative; }
 .card .cover {
   aspect-ratio: 3/4; background: linear-gradient(135deg, #eceefb, #dfe3fb);
   display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
   overflow: hidden;
 }
 .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.card .body { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.card .body {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-2); flex: 1;
+}
 .card .tag {
   align-self: flex-start; font-size: .72rem; color: var(--accent);
-  background: #efeefe; padding: 2px 8px; border-radius: 999px;
+  background: var(--accent-soft); padding: 2px 8px; border-radius: var(--radius-pill);
 }
-.card h3 { margin: 2px 0; font-size: 1rem; }
-.card .price { margin-top: auto; font-weight: 800; font-size: 1.1rem; }
+.card h3 { margin: 0; font-size: 1rem; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; }
 .card .muted { color: var(--muted); font-size: .85rem; }
+.card-foot {
+  margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-2); padding-top: var(--space-1);
+}
+.card .price { font-weight: 800; font-size: 1.15rem; color: var(--ink); }
+.buy-sm { padding: 6px 12px; font-size: .82rem; border-radius: var(--radius-sm);
+  background: var(--buy); color: var(--buy-ink); font-weight: 700;
+  transition: background .14s; }
+.card:hover .buy-sm { background: var(--buy-deep); }
+
+/* Badges nos cards (UXR-13) */
+.badge {
+  position: absolute; top: 10px; left: 10px; z-index: 1;
+  font-size: .68rem; font-weight: 800; letter-spacing: .3px;
+  padding: 3px 9px; border-radius: var(--radius-pill); color: #fff;
+}
+.badge-featured { background: var(--buy); }
+.badge-new { background: var(--accent); }
+.badge-owned { background: var(--ok); left: auto; right: 10px; }
+
+/* Rating em estrelas (UXR-12) */
+.rating { display: flex; align-items: center; gap: 2px; font-size: .8rem; color: var(--muted); }
+.rating .star { width: 14px; height: 14px; color: var(--line); }
+.rating .star.on { color: var(--star); }
+.rating .rating-num { margin-left: 4px; font-weight: 700; color: var(--ink-soft); }
+.rating .rating-count { color: var(--muted); }
+.rating-empty { font-size: .78rem; color: var(--muted); font-style: italic; }
+
+/* Carrossel de destaques (UXR-14) */
+.featured { margin: 0 0 var(--space-6); }
+.section-title { font-size: 1.25rem; margin: 0 0 var(--space-4); color: var(--ink); }
+.carousel {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(200px, 220px);
+  gap: var(--space-4); overflow-x: auto; padding-bottom: var(--space-3);
+  scroll-snap-type: x mandatory; scrollbar-width: thin;
+}
+.carousel .card { scroll-snap-align: start; }
+.carousel::-webkit-scrollbar { height: 8px; }
+.carousel::-webkit-scrollbar-thumb { background: var(--line); border-radius: var(--radius-pill); }
+
+/* Estado de erro com retry (UXR-15) */
+.state-error {
+  text-align: center; padding: var(--space-8) var(--space-5);
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+}
+.state-error .state-icon { width: 48px; height: 48px; color: var(--warn); }
+.state-error h3 { margin: 0; font-size: 1.25rem; }
+.state-error p { margin: 0; color: var(--muted); }
+.state-error .primary { margin-top: var(--space-2); }
 
 /* Chips de tags (temas do e-book, no detalhe) */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
@@ -196,7 +250,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
 }
 
 /* Barra de facetas (filtragem por tag/autor no catálogo) — FE-13 */
-.facets { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+.facets { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; align-items: center; }
+.price-facets { margin-top: -8px; }
+.facet-label { font-size: .8rem; color: var(--muted); font-weight: 600; margin-right: 2px; }
 .chip-btn {
   font: inherit; font-size: .78rem; cursor: pointer;
   border: 1px solid var(--line); border-radius: 999px;
@@ -312,19 +368,16 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
 .not-found h2 { font-size: 2rem; margin-bottom: 12px; }
 .not-found p { color: var(--muted); margin-bottom: 24px; }
 
-/* Botão wishlist (coração) nos cards */
-.btn-wish { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,.85);
-  border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1rem;
+/* Botão favoritos (coração) nos cards */
+.btn-wish { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,.9);
+  border: none; border-radius: 50%; width: 32px; height: 32px;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  color: var(--muted); transition: color .15s, background .15s; z-index: 1; }
-.btn-wish:hover { background: #fff; }
-.btn-wish.wished { color: #e53e3e; }
-
-/* Badge "Comprado" nos cards do catálogo */
-.card { position: relative; }
-.badge-owned { position: absolute; top: 10px; right: 10px; background: var(--ok);
-  color: #fff; font-size: .7rem; font-weight: 700; padding: 3px 8px;
-  border-radius: 20px; letter-spacing: .5px; }
+  color: var(--muted); transition: color .15s, background .15s, transform .15s; z-index: 2;
+  box-shadow: var(--shadow-1); }
+.btn-wish:hover { background: #fff; transform: scale(1.1); color: var(--err); }
+.btn-wish.wished { color: var(--err); }
+.btn-wish.wished .icon { fill: var(--err); }
+.btn-wish .icon { width: 16px; height: 16px; }
 
 /* Estado de carregamento no input de busca */
 #search-input.is-busy { opacity: .6; cursor: progress;

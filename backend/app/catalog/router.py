@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -71,6 +73,8 @@ async def count_products(
     q: str | None = None,
     tag: str | None = None,
     author: str | None = None,
+    price_min: Decimal | None = Query(default=None, ge=0, description="Preço mínimo"),
+    price_max: Decimal | None = Query(default=None, ge=0, description="Preço máximo"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
     catalog: ProductCatalog = Depends(get_product_catalog),
@@ -79,7 +83,7 @@ async def count_products(
 
     Os parâmetros `page` e `page_size` são usados apenas para calcular `has_next`.
     """
-    total = await catalog.count_published(q, tag, author)
+    total = await catalog.count_published(q, tag, author, price_min, price_max)
     has_next = (page * page_size) < total
     return ProductCountOut(
         total=total, page=page, page_size=page_size, has_next=has_next
@@ -92,6 +96,8 @@ async def list_products(
     tag: str | None = None,
     author: str | None = None,
     featured: bool | None = Query(default=None, description="Filtrar destaques"),
+    price_min: Decimal | None = Query(default=None, ge=0, description="Preço mínimo"),
+    price_max: Decimal | None = Query(default=None, ge=0, description="Preço máximo"),
     sort: str | None = Query(
         default=None,
         description="Ordenação: newest | oldest | price_asc | price_desc | title_asc",
@@ -117,7 +123,8 @@ async def list_products(
         effective_skip = skip
         effective_limit = page_size if page_size is not None else limit
     return await catalog.list_published(
-        q, effective_skip, effective_limit, tag, author, sort, featured
+        q, effective_skip, effective_limit, tag, author, sort, featured,
+        price_min, price_max,
     )
 
 
