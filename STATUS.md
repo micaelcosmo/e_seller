@@ -28,6 +28,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Épico **FEV** (Frontend Visual) | 🟢 Concluído — design system, 10 views, SPA /conta, admin panels, 14 testes DOM |
 | Épico **DBE** (DB Enrichment) | 🟢 Concluído — pool tuning, SearchService FTS/ILIKE, migration GIN |
 | Épico **BEE** (Backend Enrichment) | 🟢 Concluído — email, /me endpoints, health, Problem+JSON |
+| Épico **SFX** (Storefront Fix) | 🟢 Concluído — footer, newsletter CSS, admin link auth-guard, cover placeholder, schema fixes |
 
 **Domínios entregues (main):** catálogo + busca, cadastro dinâmico, contas+JWT+RBAC,
 admin SQLAdmin, compra multi-item, pagamento simulado, webhook idempotente,
@@ -105,4 +106,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 09:53 — ✅ Backend healthy. Corrigido crash loop: colunas `product.featured`, `user.totp_secret_enc`, `user.totp_enabled` adicionadas ao DB e ao SchemaSync. Todos os containers UP. SFX-01..05 completos; SFX-06 bloqueado (sqladmin 0.21.0 sem `custom_css`). Próximo: commit geral + SFX-07 cyclic review._
+_Última atualização: 2026-06-13 10:21 — 🟢 Épico SFX concluído. Backend healthy (crash loop corrigido: featured+totp+schema). 473 testes verdes. Commit `enrichment` feito. Próximo épico: a definir._

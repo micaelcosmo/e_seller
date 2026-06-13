@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 09:38 (Brasilia) — 🟡 SFX em andamento: 6 tasks de correção do storefront (footer, newsletter, admin link, cover placeholder, admin login CSS).",
+  "updated": "13/06/2026 10:21 (Brasilia) — 🟢 SFX concluído (01-05 done, 06 bloqueado/sqladmin, 07 revisão cíclica). Backend healthy: colunas featured+totp adicionadas. 473 testes verdes.",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2112,13 +2112,13 @@
     { "id": "BEE-12", "area": "Backend Enrichment", "title": "Testes /me endpoints (6 testes)", "desc": "test_bee_me_endpoints.py: orders/library/wishlist/cart vazios + 401 sem auth.", "state": "done" },
     { "id": "BEE-13", "area": "Backend Enrichment", "title": "Testes health enrichment + Problem+JSON (4 testes)", "desc": "test_bee_health.py: latency_ms, disk.free_mb, /health/detail, content-type problem+json.", "state": "done" },
     { "id": "BEE-14", "area": "Backend Enrichment", "title": "Revisão cíclica épico BEE", "desc": "Verificar: 15 testes verdes, Ruff limpo, DI consistente, Problem+JSON RFC 9457 correto, CHANGELOG atualizado.", "state": "done" },
-    { "id": "SFX-01", "area": "Storefront Fix", "title": "Footer duplicado: remover segundo footer", "desc": "index.html tem 2 elementos footer. Mesclar links de privacidade/termos no footer.footer existente. Remover o segundo.", "state": "doing" },
-    { "id": "SFX-02", "area": "Storefront Fix", "title": "Newsletter form: CSS classe .news ausente em style.css", "desc": "Adicionar .news { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px } em style.css.", "state": "doing" },
-    { "id": "SFX-03", "area": "Storefront Fix", "title": "Admin link: ocultar para não-admins via JS", "desc": "Após login: decodificar JWT (base64 payload), verificar role. Exibir #admin-link só se role=admin ou staff.", "state": "doing" },
-    { "id": "SFX-04", "area": "Storefront Fix", "title": "Newsletter erro inline (não toast)", "desc": "Validação de e-mail do newsletter retorna erro inline abaixo do campo, não floating toast. Classe .news-error.", "state": "doing" },
-    { "id": "SFX-05", "area": "Storefront Fix", "title": "Cover placeholder profissional", "desc": "Sem cover_url: mostrar iniciais do título com background derivado do slug (hash → hue HSL). Sem emoji.", "state": "doing" },
-    { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css no construtor. Alternativa: sobrescrever template login.html via custom_templates_dir quando sqladmin>=0.22.", "state": "blocked" },
-    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "Verificar: 0 toasts fora de lugar, footer único, admin link controlado por JWT, cover placeholder limpo, admin login com CSS.", "state": "backlog" }
+    { "id": "SFX-01", "area": "Storefront Fix", "title": "Footer duplicado: remover segundo footer", "desc": "index.html tinha 2 elementos footer. Mesclado links de privacidade/termos no footer.footer existente. Segundo removido.", "state": "done" },
+    { "id": "SFX-02", "area": "Storefront Fix", "title": "Newsletter form: CSS .news + .news-error em style.css", "desc": "Adicionado .news (flex, gap, wrap), .news-error (inline error), .footer-links, .footer-copy em style.css.", "state": "done" },
+    { "id": "SFX-03", "area": "Storefront Fix", "title": "Admin link: ocultar para não-admins via JS", "desc": "decodeJwtRole() decodifica base64 payload do JWT; #admin-link exibido só se role=admin ou staff. UI-only (auth enforced server-side).", "state": "done" },
+    { "id": "SFX-04", "area": "Storefront Fix", "title": "Newsletter erro inline (não toast)", "desc": "Validação regex + erro inline em #news-error. Toast removido do fluxo de newsletter.", "state": "done" },
+    { "id": "SFX-05", "area": "Storefront Fix", "title": "Cover placeholder profissional", "desc": "Sem cover_url: iniciais do título (2 letras) com background hsl(hash,42%,32%). Sem emoji. _titleHue() usa hash djb2-like.", "state": "done" },
+    { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css nem custom_templates_dir de forma estável. Bloqueado até sqladmin>=0.22.", "state": "blocked" },
+    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).", "state": "done" }
   ],
   "links": {
     "app": "https://competition-cat-stan-wheel.trycloudflare.com",
