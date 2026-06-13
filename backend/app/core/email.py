@@ -122,6 +122,41 @@ class EmailService:
             if self._counter is not None:
                 self._counter.increment()
 
+    def send_download_expiring(
+        self, email: str, product_title: str, expires_at: str
+    ) -> None:
+        """Avisa o usuário que um link de download vai expirar em breve.
+
+        Falha silenciosa: loga o erro mas nunca propaga a exceção.
+        """
+        if not self._enabled():
+            return
+        msg = EmailMessage()
+        msg["Subject"] = f"Download expirando em breve: {product_title}"
+        msg["From"] = self.settings.smtp_from
+        msg["To"] = email
+        msg.set_content(
+            f"Olá!\n\nSeu link de download de '{product_title}' expira em "
+            f"{expires_at}.\n\nAcesse sua biblioteca para baixar antes que expire.\n\n"
+            f"Obrigado por comprar na e_seller!"
+        )
+        try:
+            with smtplib.SMTP(
+                self.settings.smtp_host, self.settings.smtp_port, timeout=10
+            ) as server:
+                server.starttls()
+                if self.settings.smtp_user:
+                    server.login(self.settings.smtp_user, self.settings.smtp_password)
+                server.send_message(msg)
+        except Exception as exc:
+            _logger.warning(
+                "Falha ao enviar aviso de expiração para %s: %s",
+                email,
+                exc,
+            )
+            if self._counter is not None:
+                self._counter.increment()
+
     def send_password_reset(self, email: str, reset_link: str) -> None:
         """Envia link de redefinição de senha ao usuário.
 

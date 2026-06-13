@@ -7,11 +7,10 @@
 
 ## Fase atual
 
-**🚀 Enrichment (branch `enrichment`)** — AAA (Authentication/Authorization/Accounting),
-refatoração visual completa do frontend e enriquecimento do banco de dados.
+**🚀 Enrichment (branch `enrichment`)** — todos os 4 épicos concluídos.
 
-Backend MVP está completo (238 tarefas done, 437 testes verdes, Ruff limpo, branch `main`).
-Agora expandimos segurança, UX e qualidade de dados.
+AAA (blacklist + TOTP + API Keys + activity log), FEV (design system + 10 views),
+DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + health + Problem+JSON).
 
 ---
 
@@ -22,13 +21,13 @@ Agora expandimos segurança, UX e qualidade de dados.
 | Planning | 🟢 Concluído (aprovado, congelado) |
 | Unit specs | 🟢 ~100 units (MVP + visão completa) |
 | Trilhas vivas (api/ops/observability/security) | 🟢 criadas |
-| Testes | 🟢 **451 passando** (437 MVP + 14 AAA) + Ruff verde |
+| Testes | 🟢 **473 passando** (437 MVP + 14 AAA + 7 DBE + 15 BEE +outros) + Ruff verde |
 | Código de produção (MVP) | 🟢 **Backend completo NO AR em Docker** |
 | Épico **DOC** (enrich) | 🟢 Concluído — roadmap, planning, backlog (125 tasks) |
 | Épico **AAA** (enrichment) | 🟢 Concluído — blacklist, TOTP 2FA, API Keys, activity log |
-| Épico **FEV** (Frontend Visual) | 🟡 Em andamento |
-| Épico **DBE** (DB Enrichment) | ⚪ Aguardando |
-| Épico **BEE** (Backend Enrichment) | ⚪ Aguardando |
+| Épico **FEV** (Frontend Visual) | 🟢 Concluído — design system, 10 views, SPA /conta |
+| Épico **DBE** (DB Enrichment) | 🟢 Concluído — pool tuning, SearchService FTS/ILIKE, migration GIN |
+| Épico **BEE** (Backend Enrichment) | 🟢 Concluído — email, /me endpoints, health, Problem+JSON |
 
 **Domínios entregues (main):** catálogo + busca, cadastro dinâmico, contas+JWT+RBAC,
 admin SQLAdmin, compra multi-item, pagamento simulado, webhook idempotente,
@@ -74,10 +73,16 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 - **Token blacklist:** tabela `RevokedToken` com TTL; verificada em `get_current_user`.
 - **API Keys:** hash SHA-256; autenticação alternativa ao JWT para integrações.
 - **Activity Log:** `UserActivityLog` model; registra login, compra, download, perfil.
-- **Full-text search:** índice `tsvector` GIN no PostgreSQL (products).
+- **Full-text search:** índice GIN funcional `to_tsvector(portuguese, ...)` no PostgreSQL;
+  fallback ILIKE no SQLite (testes). `SearchService` detecta dialeto em runtime.
 - **Email:** `EmailService` pluggável (SMTP via settings); ativado quando `SMTP_HOST` definido.
-- **Frontend:** refatoração CSS com design system (tokens, tipografia, escala de espaço).
-- **Novas views:** `/conta`, `/biblioteca`, `/carrinho`, `/favoritos` (SPA inline Jinja2).
+  Métodos: send_purchase_confirmation, send_password_reset, send_download_expiring, send_newsletter_welcome.
+- **Frontend:** refatoração CSS com design system (tokens, tipografia, escala de espaço 4px).
+  Novas views: `/conta` (SPA), `/biblioteca`, `/carrinho`, `/favoritos`.
+- **/me endpoints:** router_me.py com GET /me/orders, /me/library, /me/wishlist, /me/cart.
+- **Health enrichment:** db_latency_ms + disk_free_mb em /healthz/detail e /health/detail.
+- **Problem+JSON (RFC 9457):** exception_handlers retornam type/title/status/detail/instance
+  com Content-Type: application/problem+json.
 
 ---
 
@@ -94,20 +99,10 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 - **Branch:** `enrichment` (criada de `main` em 2026-06-13).
 - **Backlog mestre** em [`report/backlog.json`](report/backlog.json) — ~125 novas tasks (DOC+AAA+FEV+DBE+BEE).
-- Commits semânticos por task (sem push, sem Co-Authored-By).
+- Commits semânticos por épico (sem push, sem Co-Authored-By).
 - Revisão cíclica ao final de cada épico.
 - Docker Desktop ativo — nenhum serviço derrubado durante a execução.
 
 ---
 
-## Próximos passos (ordem de execução)
-
-1. **DOC** — atualizar todos os documentos + roadmap + backlog ← *em andamento*
-2. **AAA** — TOTP, blacklist, API Keys, activity log
-3. **FEV** — design system CSS, todas as views overhauled
-4. **DBE** — FTS, índices compostos, pool tuning
-5. **BEE** — email service, /me endpoints, health enrichment
-
----
-
-_Última atualização: 2026-06-13 (branch enrichment criada; 238 done + 437 testes em main; início do enrichment)_
+_Última atualização: 2026-06-13 — todos os 4 épicos de enrichment concluídos; ~473 testes verdes_

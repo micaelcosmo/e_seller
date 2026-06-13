@@ -8,6 +8,31 @@
 
 ## [Não lançado]
 
+### 2026-06-13 — Épico BEE concluído
+
+- **EmailService**: adicionado `send_download_expiring(email, product_title, expires_at)`.
+- **router_me.py**: GET /api/v1/me/orders, /me/library, /me/wishlist, /me/cart (protegidos por JWT).
+- **main.py**: me_router registrado.
+- **HealthChecker**: `db_latency_ms()` (mede SELECT 1) e `disk_free_mb()` (shutil.disk_usage).
+- **/api/v1/healthz/detail**: checks dict com database.latency_ms e disk.free_mb.
+- **/health/detail**: enriquecido com db_latency_ms e disk_free_mb.
+- **Problem+JSON (RFC 9457)**: _json_error emite type/title/status/detail/instance;
+  Content-Type: application/problem+json.
+- **15 testes novos** (email 5, /me 6, health+problem+json 4) — todos verdes.
+- **backlog.json**: BEE-01..14 marcados done.
+- **Revisão cíclica BEE** concluída: competência validada, Ruff limpo, DI consistente.
+
+### 2026-06-13 — Épico DBE concluído
+
+- **core/db.py**: Database.__init__ aceita pool_size/max_overflow/timeout/pre_ping; SQLite excluído.
+- **catalog/search.py**: SearchService detecta dialeto — plainto_tsquery (PG) / ILIKE (SQLite).
+- **catalog/router.py**: GET /api/v1/search (min_length=2) via SearchService.
+- **Alembic e5f6g7h8i9j0**: índices compostos (status_featured, order_user_status,
+  order_reference_status, download_grant_order_expires) + GIN funcional FTS (Portuguese).
+- **index.html**: inline style border-color:var(--accent) no card de destaque.
+- **7 testes novos** (SearchService ILIKE, endpoint 200/422) — todos verdes.
+- **Revisão cíclica DBE** concluída: migration up/down ok, ILIKE fallback testado.
+
 ### 2026-06-13 — Épico AAA concluído
 
 - **RevokedToken**, **UserActivityLog**, **ApiKey**: novos modelos + migration `d4e5f6g7h8i9`.

@@ -15,6 +15,7 @@ from fastapi.templating import Jinja2Templates
 from app.accounts import models as _accounts_models  # noqa: F401
 from app.accounts.router import router as accounts_router
 from app.accounts.router_admin import router as accounts_admin_router
+from app.accounts.router_me import router as me_router
 from app.admin.audit import AdminAuditLog as _AdminAuditLog  # noqa: F401
 from app.admin.auth import AdminAuth
 from app.admin.router_audit import router as audit_log_router
@@ -162,6 +163,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(alerts_router)
     app.include_router(accounts_router)
     app.include_router(accounts_admin_router)
+    app.include_router(me_router)
     app.include_router(catalog_router)
     app.include_router(catalog_admin_router)
     app.include_router(coupons_router)

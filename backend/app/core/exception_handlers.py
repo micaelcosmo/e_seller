@@ -24,10 +24,33 @@ from app.reviews.services import AlreadyReviewed, InvalidRating, ReviewNotAllowe
 from app.security.storage import FileMissing
 from app.wishlist.services import WishlistProductNotFound
 
+_STATUS_TITLES: dict[int, str] = {
+    400: "Requisição inválida",
+    401: "Não autenticado",
+    403: "Sem permissão",
+    404: "Não encontrado",
+    409: "Conflito de estado",
+    410: "Recurso expirado",
+    422: "Dados inválidos",
+    429: "Limite atingido",
+    500: "Erro interno",
+}
 
-def _json_error(status: int, detail: str) -> JSONResponse:
-    """Monta uma JSONResponse de erro padronizada."""
-    return JSONResponse(status_code=status, content={"detail": detail})
+
+def _json_error(status: int, detail: str, instance: str = "/") -> JSONResponse:
+    """Monta uma JSONResponse Problem+JSON (RFC 9457) padronizada."""
+    body = {
+        "type": f"https://e-seller.app/errors/{status}",
+        "title": _STATUS_TITLES.get(status, "Erro"),
+        "status": status,
+        "detail": detail,
+        "instance": instance,
+    }
+    return JSONResponse(
+        status_code=status,
+        content=body,
+        media_type="application/problem+json",
+    )
 
 
 class DomainHandlers:
@@ -79,10 +102,10 @@ class DomainHandlers:
 
     @staticmethod
     def _make_handler(status: int, detail: str):
-        """Cria um handler assíncrono para retornar a resposta JSON padronizada."""
+        """Cria um handler assíncrono para retornar a resposta Problem+JSON."""
 
         async def handler(request: Request, exc: Exception) -> JSONResponse:
-            """Converte a exceção de domínio em resposta HTTP padronizada."""
-            return _json_error(status, detail)
+            """Converte a exceção de domínio em Problem+JSON (RFC 9457)."""
+            return _json_error(status, detail, instance=str(request.url.path))
 
         return handler
