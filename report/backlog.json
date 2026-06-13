@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 12:04 (Brasilia) — 🟡 UXR Fase 4 concluída (UXR-17..19): hero com CTA 'Ver catálogo' + prova social (contagem real de e-books), faixa de confiança (download imediato/pagamento seguro/acesso vitalício), gradiente e responsividade. Iniciando Fase 5 (detalhe e footer).",
+  "updated": "13/06/2026 12:08 (Brasilia) — 🟡 UXR Fase 5 concluída (UXR-20..24): breadcrumb no detalhe, selos de garantia no buy-box, footer multi-coluna + selo de segurança, estados vazios desenhados (carrinho/biblioteca/pedidos) com CTA, skeleton em listas, emojis substituídos por SVG. Falta só UXR-25 (revisão cíclica).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2143,11 +2143,11 @@
     { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "done" },
     { "id": "UXR-19", "area": "UX Redesign", "title": "Faixa de confiança (pagamento + download)", "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.", "state": "done" },
 
-    { "id": "UXR-20", "area": "UX Redesign", "title": "Breadcrumb na página de detalhe", "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.", "state": "backlog" },
-    { "id": "UXR-21", "area": "UX Redesign", "title": "Selos de garantia no buy-box", "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).", "state": "backlog" },
-    { "id": "UXR-22", "area": "UX Redesign", "title": "Footer com redes sociais e colunas", "desc": "Footer multi-coluna (Sobre / Ajuda / Legal) + ícones de redes sociais SVG + selo segurança. Ref. 10/10 sites. Links via config.", "state": "backlog" },
-    { "id": "UXR-23", "area": "UX Redesign", "title": "Estados vazios desenhados", "desc": "Biblioteca/carrinho/favoritos vazios: ilustração SVG + mensagem + CTA ('Explorar catálogo'). Hoje é texto seco ou nada.", "state": "backlog" },
-    { "id": "UXR-24", "area": "UX Redesign", "title": "Loading global e skeleton em listas", "desc": "Skeleton (hoje só no catálogo) estendido a detalhe, biblioteca, pedidos. Indicador de loading global em navegação de rota.", "state": "backlog" },
+    { "id": "UXR-20", "area": "UX Redesign", "title": "Breadcrumb na página de detalhe", "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.", "state": "done" },
+    { "id": "UXR-21", "area": "UX Redesign", "title": "Selos de garantia no buy-box", "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).", "state": "done" },
+    { "id": "UXR-22", "area": "UX Redesign", "title": "Footer com colunas e selo de segurança", "desc": "Footer multi-coluna (Marca / Navegar / Institucional / Newsletter) + selo de conexão segura. Redes sociais NÃO incluídas: sem URLs reais (evitar links soltos). Entram via config — ver UXR-26.", "state": "done" },
+    { "id": "UXR-23", "area": "UX Redesign", "title": "Estados vazios desenhados", "desc": "Biblioteca/carrinho/favoritos vazios: ilustração SVG + mensagem + CTA ('Explorar catálogo'). Hoje é texto seco ou nada.", "state": "done" },
+    { "id": "UXR-24", "area": "UX Redesign", "title": "Loading global e skeleton em listas", "desc": "Skeleton (hoje só no catálogo) estendido a detalhe, biblioteca, pedidos. Indicador de loading global em navegação de rota.", "state": "done" },
 
     { "id": "UXR-25", "area": "UX Redesign", "title": "Revisão cíclica épico UXR", "desc": "Parecer de competência (Lighthouse mobile >=90, responsividade, zero hardcode), auto-repair, incremento de backlog. Valida critérios de aceite do roadmap-uxr.md.", "state": "backlog" }
   ],

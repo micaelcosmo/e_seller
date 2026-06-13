@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 12:04 — 🟡 UXR Fase 4 concluída (UXR-17..19): hero com CTA 'Ver catálogo' + prova social (contagem real de e-books), faixa de confiança (download imediato/pagamento seguro/acesso vitalício). Próximo: Fase 5 (detalhe e footer)._
+_Última atualização: 2026-06-13 12:08 — 🟡 UXR Fase 5 concluída (UXR-20..24): breadcrumb, selos de garantia no buy-box, footer multi-coluna, estados vazios desenhados com CTA, skeleton em listas, emojis → SVG. Próximo: Fase 6 (UXR-25 revisão cíclica)._

@@ -81,6 +81,22 @@ function skeleton() {
   return html + "</div>";
 }
 
+function emptyState(iconId, title, message, ctaLabel, ctaHref) {
+  // Estado vazio desenhado: ícone + título + mensagem + CTA opcional (UXR-23).
+  let cta = "";
+  if (ctaLabel && ctaHref) {
+    cta = '<a class="primary empty-cta" href="' + ctaHref + '">' +
+      escapeHtml(ctaLabel) + "</a>";
+  }
+  return (
+    '<div class="state-empty">' +
+    '<svg class="state-icon" aria-hidden="true"><use href="#i-' + iconId + '"/></svg>' +
+    "<h3>" + escapeHtml(title) + "</h3>" +
+    "<p>" + escapeHtml(message) + "</p>" + cta +
+    "</div>"
+  );
+}
+
 function _titleHue(title) {
   // Deriva um hue HSL determinístico a partir do título (hash simples).
   let h = 0;
@@ -473,10 +489,18 @@ async function renderProduct(slug) {
       for (const item of lib) { _ownedSlugs.add(item.slug); }
     }
     const isOwned = _ownedSlugs.has(slug);
+    // Selos de confiança no buy-box (UXR-21).
+    const trust =
+      '<ul class="buy-trust">' +
+      '<li><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg> Download imediato após o pagamento</li>' +
+      '<li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg> Pagamento seguro via Mercado Pago</li>' +
+      '<li><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Acesso vitalício ao arquivo</li>' +
+      "</ul>";
     const actionBox = isOwned
       ? '<div class="buy-box">' +
-        '<p style="color:#15a05a;font-weight:700;margin:0 0 10px">✓ Você já possui este e-book</p>' +
-        '<a class="btn primary" href="#/biblioteca" title="Ir para sua biblioteca">📚 Ir para a biblioteca</a>' +
+        '<p class="owned-note">✓ Você já possui este e-book</p>' +
+        '<a class="buy" href="#/biblioteca" title="Ir para sua biblioteca">Ir para a biblioteca</a>' +
+        trust +
         '</div>'
       : '<div class="buy-box"><strong>Comprar agora</strong>' +
         '<input id="buy-email" type="email" placeholder="seu@email.com" ' +
@@ -484,11 +508,19 @@ async function renderProduct(slug) {
         '<input id="buy-coupon" type="text" placeholder="Cupom (opcional) — ex.: BEMVINDO10" ' +
         'title="Código de cupom de desconto" autocomplete="off">' +
         '<div id="coupon-feedback" class="coupon-feedback hidden"></div>' +
-        '<button class="primary" id="buy-btn" title="Ir para o pagamento">Comprar e baixar</button> ' +
-        '<button class="ghost" id="cart-add-btn" title="Adicionar ao carrinho">🛒 Carrinho</button>' +
+        '<div class="buy-actions">' +
+        '<button class="buy" id="buy-btn" title="Ir para o pagamento">Comprar e baixar</button>' +
+        '<button class="ghost" id="cart-add-btn" title="Adicionar ao carrinho">' +
+        '<svg class="icon" aria-hidden="true"><use href="#i-cart"/></svg> Carrinho</button>' +
+        '</div>' + trust +
         '</div>';
+    // Breadcrumb (UXR-20).
+    const breadcrumb =
+      '<nav class="breadcrumb" aria-label="Você está aqui">' +
+      '<a href="#/">Início</a><span aria-hidden="true">›</span>' +
+      "<span>" + escapeHtml(p.title) + "</span></nav>";
     view.innerHTML =
-      '<a class="back" href="#/">← Voltar</a>' +
+      breadcrumb +
       '<div class="detail">' + coverHtml(p) + "<div>" +
       '<span class="tag">' + escapeHtml(p.author || "e-book") + "</span>" +
       "<h2>" + escapeHtml(p.title) + "</h2>" +
@@ -663,7 +695,8 @@ async function renderAccount() {
   view.innerHTML =
     '<a class="back" href="#/">← Voltar</a>' +
     '<h2 style="margin:8px 0 16px">Minha Conta</h2>' +
-    '<a href="#/pedidos" class="btn ghost" style="display:inline-block;margin-bottom:16px" title="Ver meus pedidos">🧾 Meus Pedidos</a>' +
+    '<a href="#/pedidos" class="ghost" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:16px" title="Ver meus pedidos">' +
+    '<svg class="icon" aria-hidden="true"><use href="#i-receipt"/></svg> Meus Pedidos</a>' +
     '<form id="account-form" class="form account-form">' +
     '<label class="field-label">Tipo de pessoa' +
     '<select name="person_type" title="Pessoa Física ou Jurídica">' +
@@ -805,21 +838,33 @@ async function renderCart() {
   // Mostra o carrinho com total e botão de finalizar.
   hero.classList.add("hidden");
   if (!localStorage.getItem("token")) {
-    view.innerHTML = '<div class="empty">Entre para usar o carrinho.</div>'; return;
+    view.innerHTML = emptyState(
+      "cart", "Entre para usar o carrinho",
+      "Faça login para adicionar e-books e finalizar a compra.",
+      "Entrar", "#/"
+    );
+    return;
   }
-  view.innerHTML = '<div class="loading">Carregando carrinho…</div>';
+  view.innerHTML = skeleton();
   try {
     const items = await api("/cart");
-    if (!items.length) { view.innerHTML = '<div class="empty">Seu carrinho está vazio.</div>'; return; }
+    if (!items.length) {
+      view.innerHTML = emptyState(
+        "cart", "Seu carrinho está vazio",
+        "Explore o catálogo e adicione e-books para comprar.",
+        "Explorar catálogo", "#/"
+      );
+      return;
+    }
     let total = 0;
-    let html = '<h2 style="margin:8px 0 16px">🛒 Seu carrinho</h2><div class="grid">';
+    let html = '<h2 class="section-title">Seu carrinho</h2><div class="grid">';
     for (const p of items) {
       total += Number(p.price);
-      html += '<div class="card"><div class="cover">📕</div><div class="body">' +
+      html += '<div class="card">' + coverHtml(p) + '<div class="body">' +
         "<h3>" + escapeHtml(p.title) + "</h3>" +
-        '<div class="price">' + money(p.price) + "</div>" +
-        '<button class="ghost" data-rm="' + p.slug + '" title="Remover">Remover</button>' +
-        "</div></div>";
+        '<div class="card-foot"><span class="price">' + money(p.price) + "</span>" +
+        '<button class="ghost btn-sm" data-rm="' + p.slug + '" title="Remover">Remover</button>' +
+        "</div></div></div>";
     }
     html += "</div>";
     html += '<div class="buy-box" style="margin-top:18px"><strong>Total: ' + money(total) + "</strong>" +
@@ -861,23 +906,32 @@ async function renderLibrary() {
   // Lista os e-books que o usuário possui, com botão de baixar.
   hero.classList.add("hidden");
   if (!localStorage.getItem("token")) {
-    view.innerHTML = '<div class="empty">Entre na sua conta para ver a biblioteca.</div>';
+    view.innerHTML = emptyState(
+      "library", "Entre para ver sua biblioteca",
+      "Faça login para acessar e baixar os e-books que você comprou.",
+      "Explorar catálogo", "#/"
+    );
     return;
   }
-  view.innerHTML = '<div class="loading">Carregando sua biblioteca…</div>';
+  view.innerHTML = skeleton();
   try {
     const items = await api("/library");
     if (!items.length) {
-      view.innerHTML = '<div class="empty">Você ainda não comprou nenhum e-book.</div>';
+      view.innerHTML = emptyState(
+        "library", "Sua biblioteca está vazia",
+        "Os e-books que você comprar aparecem aqui, prontos para baixar.",
+        "Explorar catálogo", "#/"
+      );
       return;
     }
-    let html = '<h2 style="margin:8px 0 16px">📚 Minha Biblioteca</h2><div class="grid">';
+    let html = '<h2 class="section-title">Minha biblioteca</h2><div class="grid">';
     for (const p of items) {
       html +=
-        '<div class="card"><div class="cover">📗</div><div class="body">' +
+        '<div class="card">' + coverHtml(p) + '<div class="body">' +
         '<span class="tag">' + escapeHtml(p.author || "e-book") + "</span>" +
         "<h3>" + escapeHtml(p.title) + "</h3>" +
-        '<button class="primary" data-slug="' + p.slug + '" title="Baixar o arquivo">⬇️ Baixar</button>' +
+        '<button class="buy buy-sm" data-slug="' + p.slug + '" title="Baixar o arquivo">' +
+        '<svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Baixar</button>' +
         "</div></div>";
     }
     view.innerHTML = html + "</div>";
@@ -895,17 +949,25 @@ async function renderOrders() {
   // Lista os pedidos do usuário autenticado via GET /api/v1/orders/my.
   hero.classList.add("hidden");
   if (!localStorage.getItem("token")) {
-    view.innerHTML = '<div class="empty">Entre na sua conta para ver seus pedidos.</div>';
+    view.innerHTML = emptyState(
+      "receipt", "Entre para ver seus pedidos",
+      "Faça login para acompanhar o histórico das suas compras.",
+      "Explorar catálogo", "#/"
+    );
     return;
   }
-  view.innerHTML = '<div class="loading">Carregando seus pedidos…</div>';
+  view.innerHTML = skeleton();
   try {
     const orders = await api("/orders/my");
     if (!orders.length) {
-      view.innerHTML = '<div class="empty">Você ainda não fez nenhum pedido.</div>';
+      view.innerHTML = emptyState(
+        "receipt", "Nenhum pedido ainda",
+        "Quando você comprar um e-book, o pedido aparece aqui.",
+        "Explorar catálogo", "#/"
+      );
       return;
     }
-    let html = '<h2 style="margin:8px 0 16px">🧾 Meus Pedidos</h2>';
+    let html = '<h2 class="section-title">Meus pedidos</h2>';
     html += '<div class="orders-list">';
     for (const o of orders) {
       const statusLabel = {

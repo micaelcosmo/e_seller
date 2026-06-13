@@ -117,20 +117,42 @@
   </main>
 
   <footer class="footer">
-    <form id="news-form" class="news" novalidate>
-      <input id="news-email" type="email" placeholder="Receba novidades por e-mail"
-             aria-label="E-mail para newsletter" title="Seu e-mail" autocomplete="email">
-      <button class="ghost" type="submit" title="Assinar a newsletter">Assinar</button>
-    </form>
-    <p id="news-error" class="news-error" role="alert" aria-live="polite"></p>
-    <nav class="footer-links">
-      <a href="/privacidade" title="Política de privacidade">Privacidade</a>
-      <span aria-hidden="true">·</span>
-      <a href="/termos" title="Termos de uso">Termos de uso</a>
-      <span aria-hidden="true">·</span>
-      <a href="/docs" title="Documentação da API">API</a>
-    </nav>
-    <span class="footer-copy">e_seller · demo</span>
+    <div class="footer-grid">
+      <div class="footer-col footer-brand">
+        <span class="brand">
+          <svg class="icon brand-icon" aria-hidden="true"><use href="#i-book"/></svg>
+          <span>e_seller</span>
+        </span>
+        <p class="footer-tagline">E-books com download na hora. Compre, pague e baixe em segundos.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegar</h4>
+        <a href="#/">Catálogo</a>
+        <a href="#/biblioteca">Minha biblioteca</a>
+        <a href="#/carrinho">Carrinho</a>
+      </div>
+      <div class="footer-col">
+        <h4>Institucional</h4>
+        <a href="/privacidade" title="Política de privacidade">Privacidade</a>
+        <a href="/termos" title="Termos de uso">Termos de uso</a>
+        <a href="/docs" title="Documentação da API">API / Docs</a>
+      </div>
+      <div class="footer-col">
+        <h4>Newsletter</h4>
+        <form id="news-form" class="news" novalidate>
+          <input id="news-email" type="email" placeholder="Seu melhor e-mail"
+                 aria-label="E-mail para newsletter" title="Seu e-mail" autocomplete="email">
+          <button class="primary" type="submit" title="Assinar a newsletter">Assinar</button>
+        </form>
+        <p id="news-error" class="news-error" role="alert" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 e_seller</span>
+      <span class="footer-secure">
+        <svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg> Conexão segura
+      </span>
+    </div>
   </footer>
 
   <!-- Modal de autenticação -->
