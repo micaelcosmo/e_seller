@@ -21,7 +21,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Planning | 🟢 Concluído (aprovado, congelado) |
 | Unit specs | 🟢 ~100 units (MVP + visão completa) |
 | Trilhas vivas (api/ops/observability/security) | 🟢 criadas |
-| Testes | 🟢 **473 passando** (437 MVP + 14 AAA + 7 DBE + 15 BEE +outros) + Ruff verde |
+| Testes | 🟢 **494 passando** (437 MVP + 14 FEV + 7 DBE + 15 BEE + outros) + Ruff verde |
 | Código de produção (MVP) | 🟢 **Backend completo NO AR em Docker** |
 | Épico **DOC** (enrich) | 🟢 Concluído — roadmap, planning, backlog (125 tasks) |
 | Épico **AAA** (enrichment) | 🟢 Concluído — blacklist, TOTP 2FA, API Keys, activity log |
