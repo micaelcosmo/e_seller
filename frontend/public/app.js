@@ -1111,7 +1111,31 @@ window.addEventListener("DOMContentLoaded", function () {
     }
   });
   setupMobileMenu();
+  setupHero();
 });
+
+async function setupHero() {
+  // Liga o CTA do hero e popula a prova social com a contagem real (UXR-17).
+  const cta = document.getElementById("hero-cta");
+  if (cta) {
+    cta.addEventListener("click", function () {
+      const grid = document.getElementById("product-grid");
+      const target = grid || document.getElementById("view");
+      if (target) { target.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    });
+  }
+  const proof = document.getElementById("hero-proof");
+  if (!proof) { return; }
+  try {
+    // Usa a contagem real de produtos publicados — sem números inventados.
+    const data = await api("/products/count");
+    const total = data.total || 0;
+    if (total > 0) {
+      const label = total === 1 ? "e-book disponível" : "e-books disponíveis";
+      proof.textContent = total + " " + label;
+    }
+  } catch (e) { /* prova social é opcional; falha silenciosa */ }
+}
 
 function setupMobileMenu() {
   // Menu hamburguer no mobile (UXR-09): alterna a barra de ações.

@@ -157,6 +157,24 @@ button, .btn { font: inherit; cursor: pointer; border-radius: 10px; border: 0; }
   font-weight: 800; line-height: 1.08;
 }
 .hero p { color: var(--ink-soft); margin: 0; font-size: clamp(1rem, 2vw, 1.15rem); }
+.hero-actions {
+  margin-top: var(--space-4); display: flex; align-items: center;
+  justify-content: center; gap: var(--space-4); flex-wrap: wrap;
+}
+.hero-cta { font-size: 1rem; padding: 12px 28px; border-radius: var(--radius-sm); }
+.hero-proof { color: var(--muted); font-size: .9rem; font-weight: 600; }
+.hero-proof:not(:empty)::before {
+  content: "●"; color: var(--ok); margin-right: 6px; font-size: .7em; vertical-align: middle;
+}
+.trust-bar {
+  list-style: none; margin: var(--space-5) 0 0; padding: 0;
+  display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-5);
+}
+.trust-bar li {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .85rem; color: var(--ink-soft); font-weight: 600;
+}
+.trust-bar .icon { width: 16px; height: 16px; color: var(--accent); }
 
 /* Layout principal */
 main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }

@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 12:01 (Brasilia) — 🟡 UXR Fase 3 concluída (UXR-11..16): card redesenhado (rating stars, badges, CTA comprar), avg_rating+featured+filtro de preço no backend (8 testes TDD verdes), carrossel de destaques, erro de catálogo com retry. Suíte completa verde. Iniciando Fase 4 (hero e prova social).",
+  "updated": "13/06/2026 12:04 (Brasilia) — 🟡 UXR Fase 4 concluída (UXR-17..19): hero com CTA 'Ver catálogo' + prova social (contagem real de e-books), faixa de confiança (download imediato/pagamento seguro/acesso vitalício), gradiente e responsividade. Iniciando Fase 5 (detalhe e footer).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2139,9 +2139,9 @@
     { "id": "UXR-15", "area": "UX Redesign", "title": "Estado de erro do catálogo com retry", "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.", "state": "done" },
     { "id": "UXR-16", "area": "UX Redesign", "title": "Filtro por faixa de preço", "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.", "state": "done" },
 
-    { "id": "UXR-17", "area": "UX Redesign", "title": "Hero com CTA e prova social", "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.", "state": "backlog" },
-    { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "backlog" },
-    { "id": "UXR-19", "area": "UX Redesign", "title": "Faixa de confiança (pagamento + download)", "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.", "state": "backlog" },
+    { "id": "UXR-17", "area": "UX Redesign", "title": "Hero com CTA e prova social", "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.", "state": "done" },
+    { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "done" },
+    { "id": "UXR-19", "area": "UX Redesign", "title": "Faixa de confiança (pagamento + download)", "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.", "state": "done" },
 
     { "id": "UXR-20", "area": "UX Redesign", "title": "Breadcrumb na página de detalhe", "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.", "state": "backlog" },
     { "id": "UXR-21", "area": "UX Redesign", "title": "Selos de garantia no buy-box", "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).", "state": "backlog" },

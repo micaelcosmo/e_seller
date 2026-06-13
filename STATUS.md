@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 12:01 — 🟡 UXR Fase 3 concluída (UXR-11..16): card redesenhado (rating stars, badges destaque/novo, CTA comprar), backend enriquecido (avg_rating, featured, created_at, filtro de preço — 8 testes TDD), carrossel de destaques, erro de catálogo com retry. Próximo: Fase 4 (hero e prova social)._
+_Última atualização: 2026-06-13 12:04 — 🟡 UXR Fase 4 concluída (UXR-17..19): hero com CTA 'Ver catálogo' + prova social (contagem real de e-books), faixa de confiança (download imediato/pagamento seguro/acesso vitalício). Próximo: Fase 5 (detalhe e footer)._
