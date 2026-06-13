@@ -1,23 +1,100 @@
 {% extends "base.html" %}
-{% block title %}Pedido {{ order.reference }}{% endblock %}
+{% block title %}Pedido {{ order.reference }} — e_seller{% endblock %}
 {% block content %}
-  <h1>Seu pedido</h1>
-  <div class="card">
-    <p>Referência: <code>{{ order.reference }}</code></p>
-    <p>Status: <span class="tag">{{ order.status.value }}</span></p>
-    <p class="price">Total: R$ {{ "%.2f"|format(order.amount) }}</p>
 
-    {% if order.status.value == "paid" %}
-      <h3>Downloads liberados</h3>
-      {% for grant in grants %}
-        <p><a class="link" href="/api/v1/download/{{ grant.token }}">⬇️ Baixar e-book</a>
-           <span class="muted">(expira em {{ grant.expires_at }}, limite {{ grant.max_downloads }})</span></p>
-      {% endfor %}
-    {% elif order.status.value == "failed" %}
-      <p>Pagamento recusado. <a class="link" href="/">Voltar à loja</a></p>
+<a href="/" class="btn btn-ghost btn-sm" style="margin-bottom: var(--sp-6)">← Voltar à loja</a>
+
+<h1 class="text-2xl font-bold" style="margin-bottom: var(--sp-2)">Seu pedido</h1>
+<p class="text-muted text-sm" style="margin-bottom: var(--sp-6)">
+  Referência: <code style="font-family: var(--font-mono); color: var(--color-accent)">{{ order.reference }}</code>
+</p>
+
+{% set status = order.status.value %}
+<div class="card" style="margin-bottom: var(--sp-6)">
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap: var(--sp-3)">
+    <span class="text-muted text-sm">Status do pedido</span>
+    {% if status == "paid" %}
+    <span class="badge badge-success">✓ Pago</span>
+    {% elif status == "failed" %}
+    <span class="badge badge-danger">✕ Recusado</span>
+    {% elif status == "cancelled" %}
+    <span class="badge badge-muted">Cancelado</span>
     {% else %}
-      <p class="muted">Aguardando confirmação do pagamento…</p>
+    <span class="badge badge-warning">⏳ Aguardando</span>
     {% endif %}
   </div>
-  <p style="margin-top:16px"><a class="link" href="/">← Voltar à loja</a></p>
+  <p class="price">R$ {{ "%.2f"|format(order.amount) }}</p>
+</div>
+
+<div class="timeline" style="margin-bottom: var(--sp-8)" role="list" aria-label="Linha do tempo do pedido">
+  <div class="timeline-item" role="listitem">
+    <div class="timeline-icon {% if status in ('paid','failed','cancelled') %}active{% elif status == 'pending' %}current{% endif %}" aria-hidden="true">🛒</div>
+    <div>
+      <p style="font-weight: var(--fw-medium)">Pedido criado</p>
+      <p class="text-muted text-sm">Registro gerado com sucesso</p>
+    </div>
+  </div>
+  <div class="timeline-item" role="listitem">
+    <div class="timeline-icon {% if status == 'paid' %}active{% elif status == 'pending' %}current{% endif %}" aria-hidden="true">💳</div>
+    <div>
+      <p style="font-weight: var(--fw-medium)">Pagamento</p>
+      <p class="text-muted text-sm">
+        {% if status == "paid" %}Confirmado{% elif status == "failed" %}Recusado{% else %}Aguardando confirmação{% endif %}
+      </p>
+    </div>
+  </div>
+  <div class="timeline-item" role="listitem">
+    <div class="timeline-icon {% if status == 'paid' %}active{% endif %}" aria-hidden="true">📥</div>
+    <div>
+      <p style="font-weight: var(--fw-medium)">Entrega</p>
+      <p class="text-muted text-sm">{% if status == "paid" %}Downloads liberados{% else %}Aguardando pagamento{% endif %}</p>
+    </div>
+  </div>
+</div>
+
+{% if status == "paid" %}
+<section aria-labelledby="downloads-heading">
+  <h2 id="downloads-heading" class="text-xl font-bold" style="margin-bottom: var(--sp-4)">
+    📥 Downloads disponíveis
+  </h2>
+  <div style="display:flex; flex-direction:column; gap: var(--sp-3)">
+    {% for grant in grants %}
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap: var(--sp-3)">
+        <div>
+          <p style="font-weight: var(--fw-medium)">Arquivo do e-book</p>
+          <p class="text-muted text-xs">
+            Downloads: {{ grant.download_count }}/{{ grant.max_downloads }} ·
+            Expira: {{ grant.expires_at | string | truncate(16, True, '') }}
+          </p>
+        </div>
+        {% if grant.download_count < grant.max_downloads %}
+        <a href="/api/v1/download/{{ grant.token }}" class="btn btn-primary" aria-label="Baixar e-book">
+          ⬇️ Baixar
+        </a>
+        {% else %}
+        <span class="badge badge-muted">Limite atingido</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% elif status == "failed" %}
+<div class="card" style="text-align:center; padding: var(--sp-8)">
+  <p style="font-size:2rem; margin-bottom: var(--sp-3)">❌</p>
+  <p class="font-bold" style="margin-bottom: var(--sp-2)">Pagamento recusado</p>
+  <p class="text-muted text-sm" style="margin-bottom: var(--sp-4)">Verifique os dados e tente novamente.</p>
+  <a href="/" class="btn btn-primary">Voltar à loja</a>
+</div>
+
+{% else %}
+<div class="card" style="text-align:center; padding: var(--sp-8)">
+  <p style="font-size:2rem; margin-bottom: var(--sp-3)">⏳</p>
+  <p class="font-bold" style="margin-bottom: var(--sp-2)">Aguardando confirmação</p>
+  <p class="text-muted text-sm">O download ficará disponível assim que o pagamento for confirmado.</p>
+</div>
+{% endif %}
+
 {% endblock %}

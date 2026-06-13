@@ -1,80 +1,125 @@
 {% extends "base.html" %}
-{% block title %}e_seller — loja{% endblock %}
+{% block title %}e_seller — e-books{% endblock %}
+{% block og_title %}e_seller — sua loja de e-books{% endblock %}
 {% block content %}
-  {% if featured %}
-  <section style="margin-bottom:32px">
-    <h2 style="color:var(--accent);margin-bottom:12px">⭐ Em Destaque</h2>
-    <div class="grid">
-      {% for product in featured %}
-        <div class="card" style="border-color:var(--accent);border-width:2px">
-          <div class="tag">destaque</div>
-          <h3><a class="link" href="/produto/{{ product.slug }}">{{ product.title }}</a></h3>
-          <p class="muted">{{ product.description }}</p>
-          <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
-          <form method="post" action="/comprar">
-            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
-            <input type="hidden" name="slug" value="{{ product.slug }}">
-            <input type="email" name="email" placeholder="seu@email.com" required>
-            <button type="submit">Comprar</button>
-          </form>
-        </div>
-      {% endfor %}
-    </div>
-  </section>
-  <hr style="border-color:#2a2f55;margin-bottom:32px">
-  {% endif %}
 
-  <h1>E-books à venda</h1>
-  <p class="muted">Demo do fluxo: comprar → pagar (simulado) → baixar.</p>
-  <div style="margin-bottom:20px">
+<section class="hero">
+  <h1 class="hero-title">Leia mais, aprenda mais</h1>
+  <p class="hero-sub">E-books de qualidade com download seguro e entrega imediata.</p>
+  <div class="search-bar" role="search">
+    <label for="search-input" class="sr-only">Buscar e-book</label>
     <input
       id="search-input"
+      class="input"
       type="search"
-      placeholder="Buscar e-book..."
-      style="width:100%;max-width:400px;padding:10px;border-radius:10px;
-             border:1px solid #2a2f55;background:#0d1024;color:#eef;font:inherit"
+      placeholder="Título, autor ou tema..."
+      autocomplete="off"
+      aria-label="Buscar e-books"
       oninput="searchProducts(this.value)"
     >
+    <button class="btn btn-primary" onclick="searchProducts(document.getElementById('search-input').value)" aria-label="Buscar">
+      🔍
+    </button>
   </div>
-  <div id="products-grid" class="grid">
-    {% if not products %}
-      <p id="empty-msg">Nenhum e-book publicado ainda.</p>
-    {% endif %}
-    {% for product in products %}
-      <div class="card">
-        <div class="tag">{{ product.author }}</div>
-        <h3><a class="link" href="/produto/{{ product.slug }}">{{ product.title }}</a></h3>
-        <p class="muted">{{ product.description }}</p>
-        <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
-        <form method="post" action="/comprar">
-          <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
-          <input type="hidden" name="slug" value="{{ product.slug }}">
-          <input type="email" name="email" placeholder="seu@email.com" required>
-          <button type="submit">Comprar</button>
-        </form>
+</section>
+
+{% if featured %}
+<section aria-labelledby="featured-heading" style="margin-bottom: var(--sp-8)">
+  <h2 id="featured-heading" class="text-accent font-bold text-xl" style="margin-bottom: var(--sp-4)">
+    ⭐ Em Destaque
+  </h2>
+  <div class="grid-auto">
+    {% for product in featured %}
+    <article class="card card-accent card-hover" aria-label="{{ product.title }}">
+      <div class="cover-placeholder">📖</div>
+      <div style="display:flex; gap: var(--sp-2); flex-wrap: wrap">
+        <span class="badge badge-accent">destaque</span>
+        {% if product.author %}<span class="tag">{{ product.author }}</span>{% endif %}
       </div>
+      <h3 style="font-size: var(--text-base); font-weight: var(--fw-bold); line-height: var(--lh-tight)">
+        <a href="/produto/{{ product.slug }}" style="color: var(--color-ink)">{{ product.title }}</a>
+      </h3>
+      <p class="text-muted text-sm" style="flex:1">{{ product.description | truncate(100) }}</p>
+      <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
+      <form method="post" action="/comprar">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+        <input type="hidden" name="slug" value="{{ product.slug }}">
+        <label for="email-feat-{{ product.slug }}" class="sr-only">Seu e-mail</label>
+        <input id="email-feat-{{ product.slug }}" class="input" type="email" name="email" placeholder="seu@email.com" required style="margin-bottom: var(--sp-2)">
+        <button class="btn btn-primary btn-block" type="submit">Comprar agora</button>
+      </form>
+    </article>
     {% endfor %}
   </div>
-  <div id="pagination-bar" style="display:none;margin-top:20px;text-align:center;gap:12px;justify-content:center;align-items:center">
-    <button id="btn-prev" onclick="changePage(-1)"
-      style="padding:8px 18px;border-radius:8px;border:1px solid #2a2f55;background:#0d1024;color:#eef;cursor:pointer">
-      ← Anterior
-    </button>
-    <span id="page-indicator" style="color:#aab;font-size:.9rem"></span>
-    <button id="btn-next" onclick="changePage(1)"
-      style="padding:8px 18px;border-radius:8px;border:1px solid #2a2f55;background:#0d1024;color:#eef;cursor:pointer">
-      Próxima →
-    </button>
+</section>
+<hr class="divider">
+{% endif %}
+
+<section aria-labelledby="catalog-heading">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: var(--sp-4); flex-wrap:wrap; gap: var(--sp-3)">
+    <h2 id="catalog-heading" class="text-xl font-bold">Todos os e-books</h2>
+    <div style="display:flex; gap: var(--sp-2); flex-wrap:wrap" id="filter-chips" role="group" aria-label="Filtros rápidos">
+    </div>
   </div>
+
+  <div id="products-grid" class="grid-auto">
+    {% if not products %}
+    <div id="empty-msg" style="grid-column:1/-1; text-align:center; padding: var(--sp-12) 0">
+      <div style="font-size:3rem; margin-bottom: var(--sp-4)">📭</div>
+      <p class="text-muted">Nenhum e-book publicado ainda.</p>
+    </div>
+    {% endif %}
+    {% for product in products %}
+    <article class="card card-hover" aria-label="{{ product.title }}">
+      <div class="cover-placeholder">📖</div>
+      {% if product.author %}<span class="tag">{{ product.author }}</span>{% endif %}
+      <h3 style="font-size: var(--text-base); font-weight: var(--fw-bold); line-height: var(--lh-tight)">
+        <a href="/produto/{{ product.slug }}" style="color: var(--color-ink)">{{ product.title }}</a>
+      </h3>
+      <p class="text-muted text-sm" style="flex:1">{{ product.description | truncate(100) }}</p>
+      <p class="price">R$ {{ "%.2f"|format(product.price) }}</p>
+      <form method="post" action="/comprar">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+        <input type="hidden" name="slug" value="{{ product.slug }}">
+        <label for="email-{{ product.slug }}" class="sr-only">Seu e-mail</label>
+        <input id="email-{{ product.slug }}" class="input" type="email" name="email" placeholder="seu@email.com" required style="margin-bottom: var(--sp-2)">
+        <button class="btn btn-primary btn-block" type="submit">Comprar</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+
+  <nav id="pagination-bar" aria-label="Paginação" style="display:none; margin-top: var(--sp-6); display:none">
+    <div style="display:flex; align-items:center; justify-content:center; gap: var(--sp-3)">
+      <button id="btn-prev" class="btn btn-ghost btn-sm" onclick="changePage(-1)" aria-label="Página anterior">← Anterior</button>
+      <span id="page-indicator" class="text-muted text-sm"></span>
+      <button id="btn-next" class="btn btn-ghost btn-sm" onclick="changePage(1)" aria-label="Próxima página">Próxima →</button>
+    </div>
+  </nav>
+</section>
+
+<section style="margin-top: var(--sp-16); background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--sp-8); text-align:center" aria-labelledby="newsletter-heading">
+  <h2 id="newsletter-heading" class="text-xl font-bold" style="margin-bottom: var(--sp-2)">📬 Receba novidades</h2>
+  <p class="text-muted text-sm" style="margin-bottom: var(--sp-4)">Lançamentos e promoções direto no seu e-mail. Sem spam.</p>
+  <form id="newsletter-form" style="display:flex; gap: var(--sp-2); max-width:400px; margin-inline:auto">
+    <label for="newsletter-email" class="sr-only">E-mail para newsletter</label>
+    <input id="newsletter-email" class="input" type="email" placeholder="seu@email.com" required>
+    <button class="btn btn-primary" type="submit">Inscrever</button>
+  </form>
+</section>
+
+{% endblock %}
+{% block scripts %}
 <script>
   var _PAGE_SIZE = 20;
   var _currentPage = 1;
   var _currentQuery = '';
   var _hasNext = false;
   var _debounce = null;
+
   function searchProducts(q) {
     clearTimeout(_debounce);
-    _debounce = setTimeout(function() { _currentPage = 1; _doSearch(q, 1); }, 300);
+    _debounce = setTimeout(function () { _currentPage = 1; _doSearch(q, 1); }, 300);
   }
   function changePage(delta) {
     var next = _currentPage + delta;
@@ -87,14 +132,18 @@
     _currentPage = page || 1;
     var url = '/api/v1/products?page_size=' + _PAGE_SIZE + '&page=' + _currentPage;
     if (_currentQuery.trim()) { url += '&q=' + encodeURIComponent(_currentQuery.trim()); }
+    var grid = document.getElementById('products-grid');
+    grid.innerHTML = '<div class="skeleton" style="height:200px; grid-column:1/-1"></div>';
     fetch(url)
-      .then(function(r) { return r.json(); })
-      .then(function(items) {
+      .then(function (r) { return r.json(); })
+      .then(function (items) {
         _renderGrid(items);
         _hasNext = items.length >= _PAGE_SIZE;
         _updatePagination();
       })
-      .catch(function() {});
+      .catch(function () {
+        grid.innerHTML = '<p class="text-muted" style="grid-column:1/-1; text-align:center">Erro ao buscar. Tente novamente.</p>';
+      });
   }
   function _updatePagination() {
     var bar = document.getElementById('pagination-bar');
@@ -102,29 +151,57 @@
     var btnNext = document.getElementById('btn-next');
     var indicator = document.getElementById('page-indicator');
     var visible = _currentPage > 1 || _hasNext;
-    bar.style.display = visible ? 'flex' : 'none';
+    bar.style.display = visible ? 'block' : 'none';
     btnPrev.disabled = _currentPage <= 1;
     btnNext.disabled = !_hasNext;
     indicator.textContent = 'Página ' + _currentPage;
   }
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
   function _cardHtml(p) {
     var price = parseFloat(p.price).toFixed(2).replace('.', ',');
-    return '<div class="card">' +
-      '<div class="tag">' + (p.author || '') + '</div>' +
-      '<h3><a class="link" href="/produto/' + p.slug + '">' + p.title + '</a></h3>' +
-      '<p class="muted">' + (p.description || '') + '</p>' +
+    var author = p.author ? '<span class="tag">' + _esc(p.author) + '</span>' : '';
+    return '<article class="card card-hover" aria-label="' + _esc(p.title) + '">' +
+      '<div class="cover-placeholder">📖</div>' +
+      author +
+      '<h3 style="font-size:var(--text-base);font-weight:var(--fw-bold);line-height:var(--lh-tight)">' +
+        '<a href="/produto/' + _esc(p.slug) + '" style="color:var(--color-ink)">' + _esc(p.title) + '</a></h3>' +
+      '<p class="text-muted text-sm" style="flex:1">' + _esc((p.description || '').substring(0, 100)) + '</p>' +
       '<p class="price">R$ ' + price + '</p>' +
-      '</div>';
+      '</article>';
   }
   function _renderGrid(items) {
     var grid = document.getElementById('products-grid');
     if (!items || items.length === 0) {
-      grid.innerHTML = '<p class="muted">Nenhum resultado encontrado.</p>';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:var(--sp-12) 0">' +
+        '<div style="font-size:3rem;margin-bottom:var(--sp-4)">🔍</div>' +
+        '<p class="text-muted">Nenhum resultado encontrado.</p></div>';
       return;
     }
     var html = '';
     for (var i = 0; i < items.length; i++) { html += _cardHtml(items[i]); }
     grid.innerHTML = html;
   }
+
+  /* newsletter */
+  document.getElementById('newsletter-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('newsletter-email').value;
+    fetch('/api/v1/newsletter', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email: email})
+    }).then(function (r) {
+      if (r.ok) {
+        window._toast && window._toast.success('Inscrito com sucesso!');
+        document.getElementById('newsletter-email').value = '';
+      } else {
+        window._toast && window._toast.warning('E-mail já cadastrado ou inválido.');
+      }
+    }).catch(function () {
+      window._toast && window._toast.error('Erro ao inscrever. Tente novamente.');
+    });
+  });
 </script>
 {% endblock %}

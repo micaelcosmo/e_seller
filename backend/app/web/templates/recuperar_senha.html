@@ -1,98 +1,158 @@
 {% extends "base.html" %}
 {% block title %}Recuperar senha — e_seller{% endblock %}
 {% block content %}
-<style>
-  .form-box { max-width: 420px; margin: 48px auto; }
-  .form-box h2 { margin-bottom: 24px; }
-  .form-box input[type=email],
-  .form-box input[type=password] {
-    width: 100%; padding: 12px; border-radius: 10px;
-    border: 1px solid #2a2f55; background: #0d1024;
-    color: var(--ink); margin: 8px 0 16px; font: inherit;
-  }
-  .form-box button { width: 100%; padding: 12px; }
-  #msg { margin-top: 16px; min-height: 1.4rem; font-size: .9rem; }
-  .ok  { color: #6dde8e; }
-  .err { color: #e87070; }
-</style>
 
-<div class="form-box">
+<div class="content-narrow" style="margin-top: var(--sp-10)">
   {% if token %}
-  <h2>Nova senha</h2>
-  <p class="muted">Crie uma nova senha para a sua conta.</p>
-  <form id="reset-form">
-    <input type="password" id="new-password" placeholder="Nova senha" required autocomplete="new-password">
-    <input type="password" id="confirm-password" placeholder="Confirmar senha" required autocomplete="new-password">
-    <button type="submit">Redefinir senha</button>
-  </form>
-  <p id="msg"></p>
+  <div class="card" style="padding: var(--sp-8)">
+    <div style="text-align:center; margin-bottom: var(--sp-6)">
+      <p style="font-size:2.5rem; margin-bottom: var(--sp-3)">🔐</p>
+      <h1 class="text-2xl font-bold">Nova senha</h1>
+      <p class="text-muted text-sm">Crie uma senha forte para proteger sua conta.</p>
+    </div>
 
-  <script>
-    const TOKEN = "{{ token }}";
-    document.getElementById("reset-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const pw = document.getElementById("new-password").value;
-      const cw = document.getElementById("confirm-password").value;
-      const msg = document.getElementById("msg");
-      if (pw !== cw) {
-        msg.className = "err";
-        msg.textContent = "As senhas não coincidem.";
-        return;
-      }
-      msg.textContent = "";
-      try {
-        const resp = await fetch("/api/v1/auth/reset-password", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({token: TOKEN, new_password: pw})
-        });
-        if (resp.status === 204) {
-          msg.className = "ok";
-          msg.textContent = "Senha redefinida com sucesso! Você já pode fazer login.";
-          document.getElementById("reset-form").style.display = "none";
-        } else {
-          const data = await resp.json();
-          msg.className = "err";
-          msg.textContent = data.detail || "Token inválido ou expirado. Solicite um novo link.";
-        }
-      } catch (_) {
-        msg.className = "err";
-        msg.textContent = "Erro de conexão. Tente novamente.";
-      }
-    });
-  </script>
+    <div style="display:flex; justify-content:center; gap: var(--sp-6); margin-bottom: var(--sp-6)" role="list" aria-label="Etapas">
+      <div style="text-align:center; opacity:.5" role="listitem"><span class="badge badge-success">1</span><p class="text-xs" style="margin-top:4px">E-mail</p></div>
+      <div style="text-align:center; opacity:.5" role="listitem"><span class="badge badge-success">2</span><p class="text-xs" style="margin-top:4px">Link enviado</p></div>
+      <div style="text-align:center" role="listitem"><span class="badge badge-accent">3</span><p class="text-xs" style="margin-top:4px">Nova senha</p></div>
+    </div>
+
+    <form id="reset-form" style="display:flex; flex-direction:column; gap: var(--sp-4)">
+      <div class="field">
+        <label for="new-password">Nova senha</label>
+        <input id="new-password" class="input" type="password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
+        <div id="strength-bar" style="height:4px; border-radius:2px; background: var(--color-border); margin-top:4px; overflow:hidden">
+          <div id="strength-fill" style="height:100%; width:0; transition:width .3s, background .3s"></div>
+        </div>
+        <p id="strength-label" class="field-error"></p>
+      </div>
+      <div class="field">
+        <label for="confirm-password">Confirmar senha</label>
+        <input id="confirm-password" class="input" type="password" placeholder="Repita a senha" required autocomplete="new-password">
+        <p id="match-msg" class="field-error"></p>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="reset-btn">Redefinir senha</button>
+    </form>
+  </div>
+
   {% else %}
-  <h2>Esqueceu a senha?</h2>
-  <p class="muted">Informe seu e-mail e enviaremos um link para redefinir sua senha.</p>
-  <form id="forgot-form">
-    <input type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
-    <button type="submit">Enviar link</button>
-  </form>
-  <p id="msg"></p>
+  <div class="card" style="padding: var(--sp-8)">
+    <div style="text-align:center; margin-bottom: var(--sp-6)">
+      <p style="font-size:2.5rem; margin-bottom: var(--sp-3)">📧</p>
+      <h1 class="text-2xl font-bold">Esqueceu a senha?</h1>
+      <p class="text-muted text-sm">Informe seu e-mail e enviaremos um link para redefinição.</p>
+    </div>
 
-  <script>
-    document.getElementById("forgot-form").addEventListener("submit", async function(e) {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const msg = document.getElementById("msg");
-      msg.textContent = "";
-      try {
-        const resp = await fetch("/api/v1/auth/forgot-password", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({email: email})
-        });
-        const data = await resp.json();
-        msg.className = resp.ok ? "ok" : "err";
-        msg.textContent = data.detail || "Verifique seu e-mail.";
-        if (resp.ok) document.getElementById("forgot-form").style.display = "none";
-      } catch (_) {
-        msg.className = "err";
-        msg.textContent = "Erro de conexão. Tente novamente.";
-      }
-    });
-  </script>
+    <div style="display:flex; justify-content:center; gap: var(--sp-6); margin-bottom: var(--sp-6)" role="list" aria-label="Etapas">
+      <div style="text-align:center" role="listitem"><span class="badge badge-accent">1</span><p class="text-xs" style="margin-top:4px">E-mail</p></div>
+      <div style="text-align:center; opacity:.4" role="listitem"><span class="badge badge-muted">2</span><p class="text-xs" style="margin-top:4px">Link enviado</p></div>
+      <div style="text-align:center; opacity:.4" role="listitem"><span class="badge badge-muted">3</span><p class="text-xs" style="margin-top:4px">Nova senha</p></div>
+    </div>
+
+    <form id="forgot-form" style="display:flex; flex-direction:column; gap: var(--sp-4)">
+      <div class="field">
+        <label for="forgot-email">E-mail da conta</label>
+        <input id="forgot-email" class="input" type="email" placeholder="seu@email.com" required autocomplete="email">
+        <p id="email-error" class="field-error"></p>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="forgot-btn">Enviar link</button>
+    </form>
+  </div>
   {% endif %}
-  <p style="margin-top:24px"><a class="link" href="/">← Voltar à loja</a></p>
+
+  <p style="text-align:center; margin-top: var(--sp-6)">
+    <a href="/" class="text-muted text-sm">← Voltar à loja</a>
+  </p>
 </div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var TOKEN = "{{ token | default('', true) }}";
+
+  if (TOKEN) {
+    var pwEl = document.getElementById('new-password');
+    var cwEl = document.getElementById('confirm-password');
+    var fill = document.getElementById('strength-fill');
+    var lbl  = document.getElementById('strength-label');
+    var matchMsg = document.getElementById('match-msg');
+
+    function strengthOf(pw) {
+      var score = 0;
+      if (pw.length >= 8)  { score++; }
+      if (pw.length >= 12) { score++; }
+      if (/[A-Z]/.test(pw)) { score++; }
+      if (/[0-9]/.test(pw)) { score++; }
+      if (/[^A-Za-z0-9]/.test(pw)) { score++; }
+      return score;
+    }
+    var COLORS = ['#ef4444','#f59e0b','#eab308','#22c55e','#16a34a'];
+    var LABELS = ['Muito fraca','Fraca','Razoável','Forte','Muito forte'];
+
+    pwEl.addEventListener('input', function () {
+      var s = strengthOf(pwEl.value);
+      fill.style.width = (s * 20) + '%';
+      fill.style.background = COLORS[s - 1] || COLORS[0];
+      lbl.textContent = pwEl.value.length > 0 ? LABELS[s - 1] : '';
+      lbl.style.color = COLORS[s - 1] || '';
+    });
+    cwEl.addEventListener('input', function () {
+      matchMsg.textContent = cwEl.value && pwEl.value !== cwEl.value ? 'As senhas não coincidem.' : '';
+    });
+
+    document.getElementById('reset-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var pw = pwEl.value;
+      var cw = cwEl.value;
+      if (pw !== cw) { matchMsg.textContent = 'As senhas não coincidem.'; return; }
+      var btn = document.getElementById('reset-btn');
+      btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Aguarde...'; btn.disabled = true;
+      fetch('/api/v1/auth/reset-password', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({token: TOKEN, new_password: pw})
+      }).then(function (r) {
+        btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Redefinir senha';
+        if (r.status === 204) {
+          window._toast && window._toast.success('Senha redefinida! Faça login.');
+          document.getElementById('reset-form').style.display = 'none';
+        } else {
+          r.json().then(function (d) {
+            window._toast && window._toast.error(d.detail || 'Token inválido ou expirado.');
+          });
+        }
+      }).catch(function () {
+        btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Redefinir senha';
+        window._toast && window._toast.error('Erro de conexão. Tente novamente.');
+      });
+    });
+  } else {
+    document.getElementById('forgot-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('forgot-email').value;
+      var btn = document.getElementById('forgot-btn');
+      btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Enviando...'; btn.disabled = true;
+      fetch('/api/v1/auth/forgot-password', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email})
+      }).then(function (r) {
+        btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Enviar link';
+        return r.json().then(function (d) {
+          if (r.ok) {
+            window._toast && window._toast.success(d.detail || 'Link enviado! Verifique seu e-mail.');
+            document.getElementById('forgot-form').style.display = 'none';
+          } else {
+            window._toast && window._toast.error(d.detail || 'Erro ao enviar.');
+          }
+        });
+      }).catch(function () {
+        btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Enviar link';
+        window._toast && window._toast.error('Erro de conexão. Tente novamente.');
+      });
+    });
+  }
+}());
+</script>
 {% endblock %}

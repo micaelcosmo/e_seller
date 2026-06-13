@@ -63,6 +63,30 @@ async def terms_of_service(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "terms.html", {})
 
 
+@router.get("/conta", response_class=HTMLResponse)
+async def conta_page(request: Request) -> HTMLResponse:
+    """Página de conta do usuário (login/registro/dashboard SPA)."""
+    return templates.TemplateResponse(request, "conta.html", {})
+
+
+@router.get("/biblioteca", response_class=HTMLResponse)
+async def biblioteca_page(request: Request) -> HTMLResponse:
+    """Biblioteca do usuário (entitlements/downloads)."""
+    return templates.TemplateResponse(request, "biblioteca.html", {})
+
+
+@router.get("/carrinho", response_class=HTMLResponse)
+async def carrinho_page(request: Request) -> HTMLResponse:
+    """Carrinho de compras do usuário."""
+    return templates.TemplateResponse(request, "carrinho.html", {})
+
+
+@router.get("/favoritos", response_class=HTMLResponse)
+async def favoritos_page(request: Request) -> HTMLResponse:
+    """Lista de favoritos (wishlist) do usuário."""
+    return templates.TemplateResponse(request, "favoritos.html", {})
+
+
 @router.get("/recuperar-senha", response_class=HTMLResponse)
 async def password_recovery_page(request: Request) -> HTMLResponse:
     """Tela de recuperação/redefinição de senha.

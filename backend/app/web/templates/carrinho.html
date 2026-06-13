@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Carrinho — e_seller{% endblock %}
+{% block content %}
+
+<div id="cart-root">
+  <div class="skeleton" style="height:200px; margin-top:var(--sp-6)"></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  function getToken() { return localStorage.getItem('access_token'); }
+  function authHeaders() { return {'Content-Type':'application/json', 'Authorization': 'Bearer ' + (getToken() || '')}; }
+
+  function render() {
+    var tok = getToken();
+    var root = document.getElementById('cart-root');
+    if (!tok) {
+      root.innerHTML =
+        '<div style="text-align:center;padding:var(--sp-12) 0">' +
+        '<p style="font-size:3rem;margin-bottom:var(--sp-4)">🛒</p>' +
+        '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-2)">Carrinho</h1>' +
+        '<p class="text-muted" style="margin-bottom:var(--sp-6)">Faça login para ver seu carrinho.</p>' +
+        '<a href="/#/conta" class="btn btn-primary">Entrar</a></div>';
+      return;
+    }
+
+    fetch('/api/v1/cart', {headers: authHeaders()})
+      .then(function (r) {
+        if (r.status === 401) { root.innerHTML = '<p class="text-muted">Sessão expirada. <a href="/#/conta">Entrar</a></p>'; return null; }
+        return r.json();
+      })
+      .then(function (cart) {
+        if (!cart) { return; }
+        var items = cart.items || [];
+        root.innerHTML =
+          '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-6)">🛒 Carrinho</h1>';
+        if (!items.length) {
+          root.innerHTML +=
+            '<div class="card" style="text-align:center;padding:var(--sp-8)">' +
+            '<p style="font-size:2.5rem;margin-bottom:var(--sp-3)">🛒</p>' +
+            '<p class="text-muted" style="margin-bottom:var(--sp-4)">Seu carrinho está vazio.</p>' +
+            '<a href="/" class="btn btn-primary">Ver catálogo</a></div>';
+          return;
+        }
+        var total = 0;
+        var html = '<div style="display:flex;flex-direction:column;gap:var(--sp-3);margin-bottom:var(--sp-6)">';
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          var price = parseFloat(it.product_price || 0);
+          total += price;
+          html +=
+            '<div class="card" style="flex-direction:row;align-items:center;gap:var(--sp-4)">' +
+            '<div class="cover-placeholder" style="width:60px;height:80px;flex-shrink:0;font-size:1.5rem">📖</div>' +
+            '<div style="flex:1">' +
+              '<p class="font-bold text-sm">' + (it.product_title || 'E-book') + '</p>' +
+              '<p class="price" style="font-size:var(--text-base)">R$ ' + price.toFixed(2).replace('.',',') + '</p>' +
+            '</div>' +
+            '<button class="btn btn-ghost btn-sm" onclick="removeItem(' + it.id + ')" aria-label="Remover">✕</button>' +
+            '</div>';
+        }
+        html += '</div>';
+        html +=
+          '<div class="card" style="gap:var(--sp-4)">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between">' +
+            '<p class="text-lg font-bold">Total</p>' +
+            '<p class="price" style="font-size:var(--text-2xl)">R$ ' + total.toFixed(2).replace('.',',') + '</p>' +
+          '</div>' +
+          '<div class="field"><label for="coupon-input" class="text-sm">Cupom de desconto</label>' +
+            '<div style="display:flex;gap:var(--sp-2)">' +
+              '<input id="coupon-input" class="input" type="text" placeholder="CÓDIGO">' +
+              '<button class="btn btn-ghost" onclick="applyCoupon()">Aplicar</button>' +
+            '</div>' +
+          '</div>' +
+          '<a href="/" class="btn btn-primary btn-lg btn-block">Ir para checkout</a>' +
+          '</div>';
+        root.innerHTML += html;
+      })
+      .catch(function () {
+        root.innerHTML = '<p class="text-muted">Erro ao carregar carrinho.</p>';
+      });
+  }
+
+  window.removeItem = function (id) {
+    fetch('/api/v1/cart/items/' + id, {method:'DELETE', headers:authHeaders()})
+      .then(function (r) {
+        if (r.status === 204) { window._toast && window._toast.success('Item removido.'); render(); }
+        else { window._toast && window._toast.error('Erro ao remover.'); }
+      });
+  };
+
+  window.applyCoupon = function () {
+    var code = document.getElementById('coupon-input').value;
+    if (!code) { return; }
+    window._toast && window._toast.info('Cupom "' + code + '" — disponível no checkout.');
+  };
+
+  render();
+}());
+</script>
+{% endblock %}

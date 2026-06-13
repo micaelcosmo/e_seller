@@ -1,56 +1,111 @@
 {% extends "base.html" %}
 {% block title %}{{ product.title }} — e_seller{% endblock %}
+{% block og_title %}{{ product.title }}{% endblock %}
+{% block og_desc %}{{ product.description | truncate(160) }}{% endblock %}
 {% block content %}
-<style>
-  .detail-hero { display: flex; gap: 32px; margin-bottom: 32px; flex-wrap: wrap; }
-  .detail-info { flex: 1; min-width: 260px; }
-  .detail-info h1 { margin-bottom: 4px; font-size: 1.6rem; }
-  .detail-info .author { color: var(--muted); margin-bottom: 16px; }
-  .detail-info .price { font-size: 2rem; color: var(--accent); font-weight: 800; margin-bottom: 20px; }
-  .buy-form input[type=email] { width: 100%; max-width: 320px; }
-  .buy-form button { margin-top: 8px; padding: 12px 24px; }
-  .reviews-section h2 { margin-bottom: 16px; }
-  .review-card { background: var(--card); border: 1px solid #2a2f55; border-radius: 12px;
-                 padding: 14px 16px; margin-bottom: 12px; }
-  .review-card .stars { color: #f5c518; font-size: 1rem; margin-bottom: 4px; }
-  .review-card .author { color: var(--muted); font-size: .8rem; margin-top: 6px; }
-  .no-reviews { color: var(--muted); font-style: italic; }
-</style>
 
-<a class="link" href="/" style="font-size:.9rem">← Voltar à loja</a>
+<a href="/" class="btn btn-ghost btn-sm" style="margin-bottom: var(--sp-6)">← Voltar à loja</a>
 
-<div class="detail-hero" style="margin-top:20px">
-  <div class="detail-info">
-    <h1>{{ product.title }}</h1>
-    <p class="author">por {{ product.author or "Autor desconhecido" }}</p>
-    <p class="muted">{{ product.description }}</p>
-    <div class="price">R$ {{ "%.2f"|format(product.price) }}</div>
-    <div class="buy-form">
-      <form method="post" action="/comprar">
+<div style="display:flex; gap: var(--sp-8); flex-wrap:wrap; margin-bottom: var(--sp-10)">
+  <div style="flex:0 0 260px">
+    <div class="cover-placeholder" style="height:360px; font-size:5rem">📖</div>
+  </div>
+
+  <div style="flex:1; min-width:260px; display:flex; flex-direction:column; gap: var(--sp-4)">
+    <div>
+      <p class="text-muted text-sm">por {{ product.author or "Autor desconhecido" }}</p>
+      <h1 style="font-size: var(--text-3xl); font-weight: var(--fw-black); line-height: var(--lh-tight); margin: var(--sp-2) 0">
+        {{ product.title }}
+      </h1>
+      <div style="display:flex; align-items:center; gap: var(--sp-3); flex-wrap:wrap">
+        {% if product.review_count %}
+        <div class="stars" aria-label="{{ product.review_count }} avaliações">
+          {{ "★★★★★"[:5] }}
+        </div>
+        <span class="text-muted text-sm">{{ product.review_count }} avaliação{{ "" if product.review_count == 1 else "ões" }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="text-muted" style="line-height: var(--lh-loose)">{{ product.description }}</p>
+
+    <div class="card" style="gap: var(--sp-4)">
+      <p class="price" style="font-size: var(--text-3xl)">R$ {{ "%.2f"|format(product.price) }}</p>
+      <form method="post" action="/comprar" id="buy-form">
         <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
         <input type="hidden" name="slug" value="{{ product.slug }}">
-        <input type="email" name="email" placeholder="seu@email.com" required autocomplete="email">
-        <button type="submit">Comprar agora</button>
+        <div class="field" style="margin-bottom: var(--sp-3)">
+          <label for="buy-email" style="font-size: var(--text-sm); font-weight: var(--fw-medium)">
+            Seu e-mail para entrega
+          </label>
+          <input
+            id="buy-email"
+            class="input"
+            type="email"
+            name="email"
+            placeholder="seu@email.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+        <button
+          class="btn btn-primary btn-lg btn-block"
+          type="submit"
+          id="buy-btn"
+          aria-label="Comprar {{ product.title }}"
+        >
+          🛒 Comprar agora
+        </button>
       </form>
+      <p class="text-muted text-xs" style="text-align:center">
+        Entrega imediata por e-mail · Download seguro
+      </p>
     </div>
-    <p class="muted" style="margin-top:12px;font-size:.85rem">
-      {{ product.review_count }} avaliação{{ "" if product.review_count == 1 else "ões" }}
-    </p>
   </div>
 </div>
 
-<section class="reviews-section">
-  <h2>Avaliações</h2>
+<section aria-labelledby="reviews-heading">
+  <h2 id="reviews-heading" class="text-xl font-bold" style="margin-bottom: var(--sp-4)">
+    Avaliações dos leitores
+  </h2>
   {% if reviews %}
-    {% for review in reviews %}
-      <div class="review-card">
-        <div class="stars">{{ "★" * review.rating }}{{ "☆" * (5 - review.rating) }}</div>
-        <p style="margin:4px 0">{{ review.comment }}</p>
-        <p class="author">{{ review.author }} · {{ review.created_at[:10] if review.created_at else "" }}</p>
-      </div>
-    {% endfor %}
+    <div style="display:flex; flex-direction:column; gap: var(--sp-3)">
+      {% for review in reviews %}
+      <article class="card">
+        <div style="display:flex; align-items:center; gap: var(--sp-3)">
+          <div style="width:36px; height:36px; border-radius:50%; background:var(--color-accent); display:flex; align-items:center; justify-content:center; font-weight:var(--fw-bold); font-size:var(--text-sm); flex-shrink:0">
+            {{ (review.author or "A")[0].upper() }}
+          </div>
+          <div>
+            <p style="font-weight: var(--fw-medium); font-size: var(--text-sm)">{{ review.author }}</p>
+            <div class="stars" aria-label="{{ review.rating }} de 5 estrelas">
+              {{ "★" * review.rating }}{{ "☆" * (5 - review.rating) }}
+            </div>
+          </div>
+          <span class="text-muted text-xs" style="margin-left:auto">
+            {{ review.created_at[:10] if review.created_at else "" }}
+          </span>
+        </div>
+        <p style="line-height: var(--lh-loose); color: var(--color-ink-2)">{{ review.comment }}</p>
+      </article>
+      {% endfor %}
+    </div>
   {% else %}
-    <p class="no-reviews">Nenhuma avaliação aprovada ainda.</p>
+    <div class="card" style="text-align:center; padding: var(--sp-8)">
+      <p style="font-size:2rem; margin-bottom: var(--sp-3)">💬</p>
+      <p class="text-muted">Seja o primeiro a avaliar este e-book.</p>
+    </div>
   {% endif %}
 </section>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  document.getElementById('buy-form').addEventListener('submit', function () {
+    var btn = document.getElementById('buy-btn');
+    btn.setAttribute('aria-busy', 'true');
+    btn.textContent = 'Processando...';
+    btn.disabled = true;
+  });
+</script>
 {% endblock %}

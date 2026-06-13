@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Favoritos — e_seller{% endblock %}
+{% block content %}
+
+<div id="favoritos-root">
+  <div class="skeleton" style="height:200px; margin-top:var(--sp-6)"></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  function getToken() { return localStorage.getItem('access_token'); }
+  function authHeaders() { return {'Content-Type':'application/json', 'Authorization': 'Bearer ' + (getToken() || '')}; }
+
+  function render() {
+    var tok = getToken();
+    var root = document.getElementById('favoritos-root');
+    if (!tok) {
+      root.innerHTML =
+        '<div style="text-align:center;padding:var(--sp-12) 0">' +
+        '<p style="font-size:3rem;margin-bottom:var(--sp-4)">❤️</p>' +
+        '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-2)">Favoritos</h1>' +
+        '<p class="text-muted" style="margin-bottom:var(--sp-6)">Faça login para ver seus favoritos.</p>' +
+        '<a href="/#/conta" class="btn btn-primary">Entrar</a></div>';
+      return;
+    }
+
+    fetch('/api/v1/wishlist', {headers: authHeaders()})
+      .then(function (r) {
+        if (r.status === 401) { root.innerHTML = '<p class="text-muted">Sessão expirada. <a href="/#/conta">Entrar</a></p>'; return null; }
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data) { return; }
+        var items = data.items || [];
+        root.innerHTML = '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-6)">❤️ Favoritos</h1>';
+        if (!items.length) {
+          root.innerHTML +=
+            '<div class="card" style="text-align:center;padding:var(--sp-8)">' +
+            '<p style="font-size:2.5rem;margin-bottom:var(--sp-3)">❤️</p>' +
+            '<p class="text-muted" style="margin-bottom:var(--sp-4)">Nenhum favorito ainda.</p>' +
+            '<a href="/" class="btn btn-primary">Ver catálogo</a></div>';
+          return;
+        }
+        var html = '<div class="grid-auto">';
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          html +=
+            '<article class="card card-hover">' +
+            '<div class="cover-placeholder">📖</div>' +
+            '<h3 style="font-size:var(--text-base);font-weight:var(--fw-bold);line-height:var(--lh-tight)">' +
+              '<a href="/produto/' + (it.product_slug || '') + '" style="color:var(--color-ink)">' + (it.product_title || 'E-book') + '</a>' +
+            '</h3>' +
+            '<p class="price">R$ ' + parseFloat(it.product_price || 0).toFixed(2).replace('.',',') + '</p>' +
+            '<div style="display:flex;gap:var(--sp-2)">' +
+              '<a href="/produto/' + (it.product_slug || '') + '" class="btn btn-primary btn-sm" style="flex:1">Comprar</a>' +
+              '<button class="btn btn-ghost btn-sm" onclick="removeWish(' + it.product_id + ')" aria-label="Remover dos favoritos">♡</button>' +
+            '</div>' +
+            '</article>';
+        }
+        html += '</div>';
+        root.innerHTML += html;
+      })
+      .catch(function () {
+        root.innerHTML = '<p class="text-muted">Erro ao carregar favoritos.</p>';
+      });
+  }
+
+  window.removeWish = function (productId) {
+    fetch('/api/v1/wishlist/items/' + productId, {method:'DELETE', headers:authHeaders()})
+      .then(function (r) {
+        if (r.status === 204) { window._toast && window._toast.success('Removido dos favoritos.'); render(); }
+        else { window._toast && window._toast.error('Erro ao remover.'); }
+      });
+  };
+
+  render();
+}());
+</script>
+{% endblock %}

@@ -3,38 +3,68 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f1226">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="e_seller">
+  <meta property="og:title" content="{% block og_title %}e_seller — sua loja de e-books{% endblock %}">
+  <meta property="og:description" content="{% block og_desc %}Os melhores e-books com download seguro e entrega imediata.{% endblock %}">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   <title>{% block title %}e_seller{% endblock %}</title>
-  <style>
-    :root { --bg:#0f1226; --card:#1a1f3a; --ink:#eef; --accent:#7c5cff; --muted:#9aa; }
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: system-ui, Segoe UI, Roboto, sans-serif;
-           background: var(--bg); color: var(--ink); }
-    header { padding: 18px 24px; background: #12152e; border-bottom: 1px solid #2a2f55; }
-    header a { color: var(--ink); text-decoration: none; font-weight: 700; }
-    main { max-width: 920px; margin: 0 auto; padding: 24px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
-    .card { background: var(--card); border:1px solid #2a2f55; border-radius: 14px; padding: 16px; }
-    .price { color: var(--accent); font-weight: 800; font-size: 1.2rem; }
-    .muted { color: var(--muted); font-size:.9rem; }
-    input, button { font: inherit; }
-    input[type=email] { width:100%; padding:10px; border-radius:10px; border:1px solid #2a2f55;
-                        background:#0d1024; color:var(--ink); margin:8px 0; }
-    button { cursor:pointer; background: var(--accent); color:#fff; border:0;
-             padding:10px 14px; border-radius:10px; font-weight:700; }
-    button.ghost { background:#2a2f55; }
-    .tag { display:inline-block; background:#2a2f55; color:#cdf; padding:2px 8px;
-           border-radius:999px; font-size:.75rem; }
-    a.link { color: var(--accent); }
-  </style>
+  <link rel="stylesheet" href="/static/css/design-system.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  {% block head %}{% endblock %}
 </head>
 <body>
-  <header><a href="/">📚 e_seller</a> &nbsp; <span class="muted">demo</span>
-    &nbsp;·&nbsp; <a class="link" href="/docs">API /docs</a>
-    &nbsp;·&nbsp; <a class="link" href="/recuperar-senha">Esqueceu a senha?</a></header>
-  <main>{% block content %}{% endblock %}</main>
-  <footer style="text-align:center;padding:1rem 0 2rem;color:#9aa;font-size:.85rem">
-    <a class="link" href="/privacidade">Privacidade</a> &nbsp;·&nbsp;
-    <a class="link" href="/termos">Termos de uso</a>
+  <header class="site-header" id="site-header" role="banner">
+    <a href="/" class="site-logo" aria-label="e_seller — início">
+      📚 <span>e_seller</span>
+    </a>
+    <nav class="site-nav" role="navigation" aria-label="Navegação principal">
+      <a href="/">Catálogo</a>
+      <a href="/#/biblioteca">Biblioteca</a>
+      <a href="/#/carrinho">Carrinho</a>
+      <a href="/#/conta" id="nav-conta">Minha conta</a>
+      <a href="/docs" aria-label="Documentação da API">API /docs</a>
+    </nav>
+    <button class="hamburger" id="menu-toggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="site-header">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="site-main" id="site-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <a href="/privacidade">Privacidade</a> &nbsp;·&nbsp;
+    <a href="/termos">Termos de uso</a> &nbsp;·&nbsp;
+    <a href="/recuperar-senha">Esqueceu a senha?</a>
   </footer>
+
+  <div id="toast-root" role="region" aria-label="Notificações" aria-live="polite"></div>
+
+  <script src="/static/js/toast.js"></script>
+  <script src="/static/js/router.js"></script>
+  <script>
+    (function () {
+      var btn = document.getElementById('menu-toggle');
+      var header = document.getElementById('site-header');
+      if (btn && header) {
+        btn.addEventListener('click', function () {
+          var open = header.classList.toggle('nav-open');
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        document.addEventListener('click', function (e) {
+          if (!header.contains(e.target)) {
+            header.classList.remove('nav-open');
+            btn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+    }());
+  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

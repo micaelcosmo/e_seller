@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Biblioteca — e_seller{% endblock %}
+{% block content %}
+
+<div id="biblioteca-root">
+  <div style="text-align:center; padding: var(--sp-12) 0">
+    <div class="skeleton" style="height:40px; width:200px; margin:0 auto var(--sp-4)"></div>
+    <div class="skeleton" style="height:16px; width:300px; margin:0 auto"></div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  function getToken() { return localStorage.getItem('access_token'); }
+  function authHeaders() { return {'Authorization': 'Bearer ' + (getToken() || '')}; }
+
+  function render() {
+    var tok = getToken();
+    var root = document.getElementById('biblioteca-root');
+    if (!tok) {
+      root.innerHTML =
+        '<div style="text-align:center; padding:var(--sp-12) 0">' +
+        '<p style="font-size:3rem;margin-bottom:var(--sp-4)">📚</p>' +
+        '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-2)">Sua biblioteca</h1>' +
+        '<p class="text-muted" style="margin-bottom:var(--sp-6)">Faça login para ver seus e-books comprados.</p>' +
+        '<a href="/#/conta" class="btn btn-primary">Entrar</a></div>';
+      return;
+    }
+
+    root.innerHTML =
+      '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-6)">📚 Minha Biblioteca</h1>' +
+      '<div id="lib-grid" class="grid-auto">' +
+        '<div class="skeleton" style="height:200px"></div>' +
+        '<div class="skeleton" style="height:200px"></div>' +
+      '</div>';
+
+    fetch('/api/v1/library', {headers: authHeaders()})
+      .then(function (r) {
+        if (r.status === 401) {
+          root.innerHTML = '<p class="text-muted">Sessão expirada. <a href="/#/conta">Entrar novamente</a></p>';
+          return null;
+        }
+        return r.json();
+      })
+      .then(function (items) {
+        if (!items) { return; }
+        var grid = document.getElementById('lib-grid');
+        if (!items.length) {
+          grid.innerHTML =
+            '<div style="grid-column:1/-1; text-align:center; padding:var(--sp-12) 0">' +
+            '<p style="font-size:3rem;margin-bottom:var(--sp-4)">📭</p>' +
+            '<p class="text-muted">Nenhum e-book na biblioteca ainda.</p>' +
+            '<a href="/" class="btn btn-primary" style="margin-top:var(--sp-4)">Ver catálogo</a></div>';
+          return;
+        }
+        var html = '';
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          html +=
+            '<article class="card card-hover">' +
+            '<div class="cover-placeholder">📖</div>' +
+            '<h3 style="font-size:var(--text-base);font-weight:var(--fw-bold)">' + (it.product_title || it.product_id) + '</h3>' +
+            '<p class="text-muted text-xs">Adquirido em ' + (it.created_at || '').substring(0,10) + '</p>' +
+            '<a href="/api/v1/library/' + it.id + '/download" class="btn btn-primary btn-sm" style="margin-top:auto">⬇️ Baixar</a>' +
+            '</article>';
+        }
+        grid.innerHTML = html;
+      })
+      .catch(function () {
+        document.getElementById('lib-grid').innerHTML = '<p class="text-muted" style="grid-column:1/-1">Erro ao carregar biblioteca.</p>';
+      });
+  }
+
+  render();
+}());
+</script>
+{% endblock %}

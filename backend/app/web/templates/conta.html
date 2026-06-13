@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block title %}Minha conta — e_seller{% endblock %}
+{% block content %}
+
+<div id="conta-root">
+  <div style="text-align:center; padding: var(--sp-12) 0">
+    <div class="skeleton" style="height:40px; width:200px; margin:0 auto var(--sp-4)"></div>
+    <div class="skeleton" style="height:16px; width:300px; margin:0 auto"></div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  var _token = null;
+
+  function getToken() {
+    return localStorage.getItem('access_token');
+  }
+  function setToken(t) {
+    localStorage.setItem('access_token', t);
+    _token = t;
+  }
+  function authHeaders() {
+    return {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (_token || getToken())};
+  }
+
+  function renderLogin() {
+    var root = document.getElementById('conta-root');
+    root.innerHTML =
+      '<div class="content-narrow" style="margin-top:var(--sp-10)">' +
+        '<div class="card" style="padding:var(--sp-8)">' +
+          '<div style="text-align:center;margin-bottom:var(--sp-6)">' +
+            '<p style="font-size:2.5rem;margin-bottom:var(--sp-3)">👤</p>' +
+            '<h1 class="text-2xl font-bold">Entrar na conta</h1>' +
+            '<p class="text-muted text-sm">Acesse sua biblioteca e gerenciar sua conta.</p>' +
+          '</div>' +
+          '<form id="login-form" style="display:flex;flex-direction:column;gap:var(--sp-4)">' +
+            '<div class="field"><label for="login-email">E-mail</label>' +
+              '<input id="login-email" class="input" type="email" required autocomplete="email" placeholder="seu@email.com"></div>' +
+            '<div class="field"><label for="login-pw">Senha</label>' +
+              '<input id="login-pw" class="input" type="password" required autocomplete="current-password" placeholder="••••••••"></div>' +
+            '<button class="btn btn-primary btn-lg btn-block" type="submit" id="login-btn">Entrar</button>' +
+          '</form>' +
+          '<p class="text-muted text-sm" style="text-align:center;margin-top:var(--sp-4)">' +
+            '<a href="/recuperar-senha">Esqueceu a senha?</a>' +
+          '</p>' +
+          '<hr class="divider" style="margin:var(--sp-4) 0">' +
+          '<form id="register-form" style="display:flex;flex-direction:column;gap:var(--sp-4)">' +
+            '<p class="text-sm font-bold" style="margin-bottom:0">Criar conta</p>' +
+            '<div class="field"><label for="reg-name">Nome</label>' +
+              '<input id="reg-name" class="input" type="text" placeholder="Seu nome" autocomplete="name"></div>' +
+            '<div class="field"><label for="reg-email">E-mail</label>' +
+              '<input id="reg-email" class="input" type="email" required placeholder="seu@email.com" autocomplete="email"></div>' +
+            '<div class="field"><label for="reg-pw">Senha</label>' +
+              '<input id="reg-pw" class="input" type="password" required placeholder="Mínimo 8 caracteres" autocomplete="new-password"></div>' +
+            '<button class="btn btn-outline btn-block" type="submit" id="reg-btn">Criar conta</button>' +
+          '</form>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('login-email').value;
+      var pw = document.getElementById('login-pw').value;
+      var btn = document.getElementById('login-btn');
+      btn.setAttribute('aria-busy','true'); btn.textContent = 'Entrando...'; btn.disabled = true;
+      var form = new FormData();
+      form.append('username', email); form.append('password', pw);
+      fetch('/api/v1/auth/token', {method:'POST', body: form})
+        .then(function (r) { return r.json().then(function (d) { return {ok:r.ok, d:d}; }); })
+        .then(function (res) {
+          btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Entrar';
+          if (res.ok) { setToken(res.d.access_token); renderDashboard(); }
+          else { window._toast && window._toast.error(res.d.detail || 'Credenciais inválidas.'); }
+        }).catch(function () {
+          btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Entrar';
+          window._toast && window._toast.error('Erro de conexão.');
+        });
+    });
+
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = document.getElementById('reg-name').value;
+      var email = document.getElementById('reg-email').value;
+      var pw = document.getElementById('reg-pw').value;
+      var btn = document.getElementById('reg-btn');
+      btn.setAttribute('aria-busy','true'); btn.textContent = 'Criando...'; btn.disabled = true;
+      fetch('/api/v1/auth/register', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email:email, password:pw, full_name:name})})
+        .then(function (r) { return r.json().then(function (d) { return {ok:r.ok, d:d}; }); })
+        .then(function (res) {
+          btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Criar conta';
+          if (res.ok) {
+            window._toast && window._toast.success('Conta criada! Faça login.');
+          } else {
+            window._toast && window._toast.error(res.d.detail || 'Erro ao criar conta.');
+          }
+        }).catch(function () {
+          btn.removeAttribute('aria-busy'); btn.disabled = false; btn.textContent = 'Criar conta';
+          window._toast && window._toast.error('Erro de conexão.');
+        });
+    });
+  }
+
+  function renderDashboard() {
+    fetch('/api/v1/auth/me', {headers: authHeaders()})
+      .then(function (r) {
+        if (r.status === 401) { localStorage.removeItem('access_token'); renderLogin(); return null; }
+        return r.json();
+      })
+      .then(function (user) {
+        if (!user) { return; }
+        var root = document.getElementById('conta-root');
+        root.innerHTML =
+          '<h1 class="text-2xl font-bold" style="margin-bottom:var(--sp-2)">Minha conta</h1>' +
+          '<p class="text-muted text-sm" style="margin-bottom:var(--sp-6)">' + user.email + ' &nbsp;·&nbsp; <span class="badge badge-accent">' + user.role + '</span></p>' +
+          '<div class="tabs" role="tablist">' +
+            '<button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-dados" id="tbtn-dados" onclick="switchTab(\'dados\')">Dados</button>' +
+            '<button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-seguranca" id="tbtn-seguranca" onclick="switchTab(\'seguranca\')">Segurança</button>' +
+            '<button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-atividade" id="tbtn-atividade" onclick="switchTab(\'atividade\')">Atividade</button>' +
+          '</div>' +
+          '<div id="tab-content"></div>' +
+          '<hr class="divider" style="margin-top:var(--sp-8)">' +
+          '<button class="btn btn-ghost btn-sm" onclick="doLogout()">Sair</button>';
+        renderTabDados(user);
+      });
+  }
+
+  window.switchTab = function (tab) {
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.remove('active'); b.setAttribute('aria-selected','false');
+    });
+    var btn = document.getElementById('tbtn-' + tab);
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-selected','true'); }
+    if (tab === 'dados') { renderTabDados(); }
+    else if (tab === 'seguranca') { renderTabSeguranca(); }
+    else if (tab === 'atividade') { renderTabAtividade(); }
+  };
+
+  function renderTabDados(user) {
+    var c = document.getElementById('tab-content');
+    if (user) {
+      c.innerHTML = '<div class="card" style="margin-top:var(--sp-4)">' +
+        '<p class="text-sm text-muted">Nome</p><p class="font-bold">' + (user.full_name || '—') + '</p>' +
+        '<hr class="divider">' +
+        '<p class="text-sm text-muted">E-mail</p><p class="font-bold">' + user.email + '</p>' +
+        '<hr class="divider">' +
+        '<p class="text-sm text-muted">Função</p><p class="font-bold">' + user.role + '</p>' +
+        '</div>';
+    } else {
+      fetch('/api/v1/auth/me', {headers: authHeaders()})
+        .then(function (r) { return r.json(); })
+        .then(function (u) { renderTabDados(u); });
+    }
+  }
+
+  function renderTabSeguranca() {
+    var c = document.getElementById('tab-content');
+    c.innerHTML = '<div style="display:flex;flex-direction:column;gap:var(--sp-4);margin-top:var(--sp-4)">' +
+      '<div class="card"><p class="font-bold" style="margin-bottom:var(--sp-2)">🔐 Autenticação 2FA (TOTP)</p>' +
+        '<p class="text-muted text-sm" style="margin-bottom:var(--sp-3)">Adicione uma camada extra de segurança com um aplicativo autenticador.</p>' +
+        '<button class="btn btn-primary btn-sm" onclick="enroll2fa()">Ativar 2FA</button>' +
+      '</div>' +
+      '<div class="card">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-3)">' +
+          '<p class="font-bold">🔑 API Keys</p>' +
+          '<button class="btn btn-ghost btn-sm" onclick="createApiKey()">+ Nova key</button>' +
+        '</div>' +
+        '<div id="api-keys-list"><p class="text-muted text-sm">Carregando...</p></div>' +
+      '</div>' +
+      '<div class="card"><p class="font-bold" style="margin-bottom:var(--sp-3)">🔒 Alterar senha</p>' +
+        '<div style="display:flex;flex-direction:column;gap:var(--sp-3)">' +
+          '<input id="cp-cur" class="input" type="password" placeholder="Senha atual">' +
+          '<input id="cp-new" class="input" type="password" placeholder="Nova senha">' +
+          '<button class="btn btn-primary btn-sm" onclick="changePassword()">Salvar</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    loadApiKeys();
+  }
+
+  function loadApiKeys() {
+    fetch('/api/v1/auth/me/api-keys', {headers: authHeaders()})
+      .then(function (r) { return r.json(); })
+      .then(function (keys) {
+        var el = document.getElementById('api-keys-list');
+        if (!keys || keys.length === 0) { el.innerHTML = '<p class="text-muted text-sm">Nenhuma API Key criada.</p>'; return; }
+        var html = '<div style="display:flex;flex-direction:column;gap:var(--sp-2)">';
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) 0">' +
+            '<div><p class="text-sm font-bold">' + k.name + '</p>' +
+            '<p class="text-xs text-muted">' + k.prefix + '... &nbsp; ' + (k.is_active ? '<span class="badge badge-success">ativa</span>' : '<span class="badge badge-muted">inativa</span>') + '</p></div>' +
+            '<button class="btn btn-danger btn-sm" onclick="revokeApiKey(' + k.id + ')">Revogar</button>' +
+          '</div>';
+        }
+        html += '</div>';
+        el.innerHTML = html;
+      });
+  }
+
+  window.createApiKey = function () {
+    var name = prompt('Nome para a API Key:');
+    if (!name) { return; }
+    fetch('/api/v1/auth/me/api-keys', {method:'POST', headers:authHeaders(), body:JSON.stringify({name:name})})
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.key) {
+          window._toast && window._toast.success('Chave criada (salve agora!): ' + d.key);
+          loadApiKeys();
+        } else {
+          window._toast && window._toast.error('Erro ao criar key.');
+        }
+      });
+  };
+
+  window.revokeApiKey = function (id) {
+    fetch('/api/v1/auth/me/api-keys/' + id, {method:'DELETE', headers:authHeaders()})
+      .then(function (r) {
+        if (r.status === 204) { window._toast && window._toast.success('Key revogada.'); loadApiKeys(); }
+        else { window._toast && window._toast.error('Erro ao revogar.'); }
+      });
+  };
+
+  window.enroll2fa = function () {
+    fetch('/api/v1/auth/2fa/enroll', {method:'POST', headers:authHeaders()})
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.secret) {
+          var code = prompt('Secret: ' + d.secret + '\n\nDigite o código do seu autenticador:');
+          if (!code) { return; }
+          fetch('/api/v1/auth/2fa/confirm', {method:'POST', headers:authHeaders(),
+            body:JSON.stringify({secret:d.secret, code:code})})
+            .then(function (r) {
+              if (r.status === 204) { window._toast && window._toast.success('2FA ativado!'); }
+              else { window._toast && window._toast.error('Código inválido.'); }
+            });
+        }
+      });
+  };
+
+  window.changePassword = function () {
+    var cur = document.getElementById('cp-cur').value;
+    var nw  = document.getElementById('cp-new').value;
+    if (!cur || !nw) { window._toast && window._toast.warning('Preencha os dois campos.'); return; }
+    fetch('/api/v1/auth/change-password', {method:'POST', headers:authHeaders(),
+      body:JSON.stringify({current_password:cur, new_password:nw})})
+      .then(function (r) {
+        if (r.status === 204) { window._toast && window._toast.success('Senha alterada!'); }
+        else { r.json().then(function (d) { window._toast && window._toast.error(d.detail || 'Erro.'); }); }
+      });
+  };
+
+  function renderTabAtividade() {
+    var c = document.getElementById('tab-content');
+    c.innerHTML = '<div id="activity-list" class="card" style="margin-top:var(--sp-4)"><p class="text-muted text-sm">Carregando...</p></div>';
+    fetch('/api/v1/auth/me/activity?limit=20', {headers: authHeaders()})
+      .then(function (r) { return r.json(); })
+      .then(function (items) {
+        var el = document.getElementById('activity-list');
+        if (!items || items.length === 0) { el.innerHTML = '<p class="text-muted text-sm">Nenhuma atividade registrada.</p>'; return; }
+        var icons = {login:'🔐', purchase:'🛒', download:'⬇️'};
+        var html = '<div style="display:flex;flex-direction:column;gap:var(--sp-2)">';
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          html += '<div style="display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) 0;border-bottom:1px solid var(--color-border)">' +
+            '<span style="font-size:1.2rem">' + (icons[it.event_type] || '📌') + '</span>' +
+            '<div style="flex:1"><p class="text-sm font-bold">' + it.event_type + '</p>' +
+            '<p class="text-xs text-muted">' + (it.created_at || '').substring(0,19).replace('T',' ') + '</p></div>' +
+          '</div>';
+        }
+        html += '</div>';
+        el.innerHTML = html;
+      });
+  }
+
+  window.doLogout = function () {
+    fetch('/api/v1/auth/logout', {method:'POST', headers:authHeaders()})
+      .finally(function () {
+        localStorage.removeItem('access_token');
+        window._toast && window._toast.info('Sessão encerrada.');
+        setTimeout(function () { renderLogin(); }, 800);
+      });
+  };
+
+  /* init */
+  var tok = getToken();
+  if (tok) { _token = tok; renderDashboard(); }
+  else { renderLogin(); }
+}());
+</script>
+{% endblock %}

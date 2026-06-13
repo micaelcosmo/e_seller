@@ -1,20 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Pagamento (simulado){% endblock %}
+{% block title %}Pagamento simulado — e_seller{% endblock %}
 {% block content %}
-  <h1>Pagamento simulado</h1>
-  <p class="muted">Ambiente de demonstração — nenhum pagamento real é feito.</p>
-  <div class="card">
-    <p>Pedido: <code>{{ reference }}</code></p>
-    <form method="post" action="/pay/confirm/{{ reference }}" style="display:inline">
-      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
-      <input type="hidden" name="decision" value="approved">
-      <button type="submit">Aprovar pagamento</button>
-    </form>
-    &nbsp;
-    <form method="post" action="/pay/confirm/{{ reference }}" style="display:inline">
-      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
-      <input type="hidden" name="decision" value="rejected">
-      <button class="ghost" type="submit">Recusar</button>
-    </form>
+
+<div class="content-narrow" style="margin-top: var(--sp-10)">
+  <div class="card" style="padding: var(--sp-8)">
+    <div style="text-align:center; margin-bottom: var(--sp-6)">
+      <p style="font-size:3rem; margin-bottom: var(--sp-3)">💳</p>
+      <h1 class="text-2xl font-bold">Simulador de pagamento</h1>
+      <p class="text-muted text-sm">Ambiente de demonstração — nenhuma transação real é processada.</p>
+      <span class="badge badge-warning" style="margin-top: var(--sp-2)">Modo sandbox</span>
+    </div>
+
+    <div class="card" style="background: var(--color-bg); margin-bottom: var(--sp-6)">
+      <p class="text-sm text-muted">Referência do pedido</p>
+      <p style="font-family: var(--font-mono); font-size: var(--text-lg); color: var(--color-accent)">
+        {{ reference }}
+      </p>
+    </div>
+
+    <div style="display:flex; gap: var(--sp-3)">
+      <form method="post" action="/pay/confirm/{{ reference }}" style="flex:1">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+        <input type="hidden" name="decision" value="approved">
+        <button class="btn btn-primary btn-block btn-lg" type="submit">
+          ✓ Aprovar pagamento
+        </button>
+      </form>
+      <form method="post" action="/pay/confirm/{{ reference }}" style="flex:1">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}">
+        <input type="hidden" name="decision" value="rejected">
+        <button class="btn btn-danger btn-block btn-lg" type="submit">
+          ✕ Recusar
+        </button>
+      </form>
+    </div>
   </div>
+</div>
+
 {% endblock %}
