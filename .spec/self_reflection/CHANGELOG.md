@@ -6,6 +6,11 @@
 
 ## [Não lançado]
 
+### Atualizado — 2026-06-13
+- Entrada de reflexão do épico **UXR** (UX Redesign, UXR-01..25): redesign do storefront em
+  5 fases (design system, header, cards, hero, detalhe/footer), backend enriquecido com TDD
+  (avg_rating/featured/filtro de preço), auto-repair de Ruff, +7 follow-ups (UXR-26..32).
+
 ### Atualizado — 2026-06-07 (noite)
 - Entrada de reflexão "depois" sobre a implementação do MVP + deploy (autônomo):
   o que funciona, débitos (SQLite vs Alembic/Postgres, auth/RBAC/cupons só em spec,

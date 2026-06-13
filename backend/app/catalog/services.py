@@ -87,7 +87,8 @@ class ProductCatalog:
         for row in rows:
             counts[row.product_id] = row.cnt
             # avg vem como Decimal/None; arredonda para 1 casa para exibição.
-            averages[row.product_id] = round(float(row.avg_rating), 1) if row.avg_rating else 0.0
+            average = round(float(row.avg_rating), 1) if row.avg_rating else 0.0
+            averages[row.product_id] = average
         for product in products:
             product.review_count = counts.get(product.id, 0)
             product.avg_rating = averages.get(product.id, 0.0)

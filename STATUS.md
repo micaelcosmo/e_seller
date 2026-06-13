@@ -21,7 +21,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Planning | 🟢 Concluído (aprovado, congelado) |
 | Unit specs | 🟢 ~100 units (MVP + visão completa) |
 | Trilhas vivas (api/ops/observability/security) | 🟢 criadas |
-| Testes | 🟢 **494 passando** (437 MVP + 14 FEV + 7 DBE + 15 BEE + outros) + Ruff verde |
+| Testes | 🟢 **502 passando** (437 MVP + 14 FEV + 7 DBE + 15 BEE + 8 UXR + outros) + Ruff verde |
 | Código de produção (MVP) | 🟢 **Backend completo NO AR em Docker** |
 | Épico **DOC** (enrich) | 🟢 Concluído — roadmap, planning, backlog (125 tasks) |
 | Épico **AAA** (enrichment) | 🟢 Concluído — blacklist, TOTP 2FA, API Keys, activity log |
@@ -29,7 +29,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Épico **DBE** (DB Enrichment) | 🟢 Concluído — pool tuning, SearchService FTS/ILIKE, migration GIN |
 | Épico **BEE** (Backend Enrichment) | 🟢 Concluído — email, /me endpoints, health, Problem+JSON |
 | Épico **SFX** (Storefront Fix) | 🟢 Concluído — footer, newsletter CSS, admin link auth-guard, cover placeholder, schema fixes |
-| Épico **UXR** (UX Redesign) | 🟡 Em andamento — audit feito, pesquisa de mercado em execução |
+| Épico **UXR** (UX Redesign) | 🟢 Concluído — design system, header, cards (rating/badges), hero, footer, estados vazios; backend enriquecido (avg_rating/featured/filtro preço) |
 
 **Domínios entregues (main):** catálogo + busca, cadastro dinâmico, contas+JWT+RBAC,
 admin SQLAdmin, compra multi-item, pagamento simulado, webhook idempotente,
@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 12:08 — 🟡 UXR Fase 5 concluída (UXR-20..24): breadcrumb, selos de garantia no buy-box, footer multi-coluna, estados vazios desenhados com CTA, skeleton em listas, emojis → SVG. Próximo: Fase 6 (UXR-25 revisão cíclica)._
+_Última atualização: 2026-06-13 12:39 — 🟢 Épico UXR CONCLUÍDO (UXR-01..25). Revisão cíclica: 502 testes verdes (PYTEST_EXIT=0), Ruff limpo. Auto-repair: corrigida regressão real em test_fe31 (seed featured) + 4 erros Ruff. Incremento: +7 follow-ups (UXR-26..32). Backlog em 373 itens._

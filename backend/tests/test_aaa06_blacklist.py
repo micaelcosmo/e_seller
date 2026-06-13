@@ -1,4 +1,7 @@
-"""Testes do token blacklist (AAA-01..06): logout revoga JWT, jti presente, isolamento."""
+"""Testes do token blacklist (AAA-01..06).
+
+Logout revoga JWT, jti presente, isolamento entre usuários.
+"""
 
 import pytest
 

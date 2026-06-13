@@ -39,7 +39,7 @@ async def test_me_activity_returns_own_entries_only(client, db_session):
     """ACT-005: GET /me/activity retorna apenas entradas do usuário autenticado."""
     from sqlalchemy import select
 
-    from app.accounts.models import User, UserActivityLog
+    from app.accounts.models import User
     from app.accounts.services_aaa import UserActivityLogService
 
     token_a = await _register_and_login(client, "act005a@test.com")

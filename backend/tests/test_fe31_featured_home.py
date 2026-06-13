@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from decimal import Decimal
 
+from sqlalchemy import update
+
 from app.catalog.models import Product, ProductStatus
 
 
@@ -26,8 +28,19 @@ async def _make_product(
     return product
 
 
+async def _clear_featured(db_session) -> None:
+    """Zera o destaque de todos os produtos (inclui os vindos do seed dev).
+
+    Garante o cenário 'sem destaque' de forma determinística, independente
+    de o seed marcar algum produto como featured.
+    """
+    await db_session.execute(update(Product).values(featured=False))
+    await db_session.commit()
+
+
 async def test_home_sem_destaque_nao_exibe_secao(client, db_session) -> None:
     """Home sem produtos em destaque não exibe seção de destaque."""
+    await _clear_featured(db_session)
     await _make_product(db_session, "comum-fe31", "Livro Comum")
     resp = await client.get("/")
     assert resp.status_code == 200

@@ -1,7 +1,7 @@
 """Testes do fluxo TOTP 2FA (AAA-19..27): enroll, confirm, login passo 2, disable."""
 
-import pytest
 import pyotp
+import pytest
 
 from app.accounts.models import User, UserRole
 from app.security.passwords import PasswordHasher

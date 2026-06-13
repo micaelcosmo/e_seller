@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-06-13 (automode) — Fechamento do épico UXR (UX Redesign, UXR-01..25)
+
+**Fiz:** Redesign completo do storefront SPA em 5 fases, partindo de audit do estado atual
+([`ux-audit.md`](../frontend/ux-audit.md)) + pesquisa de mercado em 10 plataformas de e-book
+([`market-research.md`](../frontend/market-research.md)) → roadmap com de-para. **Fase 1**: design
+system (tokens de superfície, accent quente `#ff7a3c` somado ao roxo de marca, escala de
+sombra/radius/espaço 4px, fonte display, sprite SVG de ícones, gradiente do hero). **Fase 2**:
+header (badge de contador no carrinho com total R$, ícones SVG, menu hamburguer mobile, avatar
+com iniciais). **Fase 3**: cards (rating em estrelas, badges destaque/novo, CTA comprar) +
+backend enriquecido com TDD (`avg_rating`, `featured`, `created_at`, filtro de preço — 8 testes
+novos) + carrossel de destaques + erro de catálogo com retry. **Fase 4**: hero com CTA e prova
+social real (contagem via API) + faixa de confiança. **Fase 5**: breadcrumb, selos de garantia,
+footer multi-coluna, estados vazios desenhados com CTA, skeleton em listas, emojis → SVG.
+
+**Bom:** Identidade roxa preservada (acréscimo, não substituição). Backend enriquecido seguiu
+TDD (Red→Green) e o padrão sem-N+1 já existente (`avg_rating` na mesma query do `review_count`).
+Dados de demo externalizados (`featured` no `dev_products.json`, não hardcode). Prova social usa
+contagem real — zero números inventados. Redes sociais **omitidas** por não haver URLs reais
+(evita "links soltos", conforme feedback do usuário) — registradas em UXR-26.
+
+**Gotcha resolvido:** o banco de dev tinha schema do MVP e as migrations de enrichment nunca
+rodaram (`alembic_version` ausente) → 500 no catálogo por colunas faltantes em cascata
+(`product.featured`, `user.totp_*`, `review.status`). Recriar o schema foi **bloqueado pelo
+classifier** (destrutivo, sem autorização) e os dados estavam intactos — então a correção foi
+**aditiva** via `SchemaSync` (o tipo enum `reviewstatus` já existia; só faltava a coluna).
+Lição: preferir correção aditiva idempotente a recriação destrutiva quando há dados.
+
+**Auto-repair (revisão cíclica):** Ruff verde após corrigir 4 erros (1 meu E501 em
+`services.py`; 3 preexistentes em testes AAA — import order/unused/docstring longa). Suíte de
+testes verde. Incremento: +7 follow-ups em contexto (UXR-26 redes sociais via config, UXR-27
+rating no detalhe, UXR-28 skeleton do detalhe, UXR-29 favicon/og:image, UXR-30 faixa de preço
+custom, UXR-31 auditoria Lighthouse, UXR-32 estado vazio de favoritos). Backlog em 373 itens.
+
+**A melhorar / dívidas:** Lighthouse mobile ≥90 (critério de aceite) não verificado — sem browser
+headless no ambiente (UXR-31). Rating no detalhe e skeleton dedicado do detalhe ficaram como
+incremento (UXR-27/28). Migrations Alembic seguem dessincronizadas do banco de dev (o app usa
+`create_all`+`SchemaSync` como atalho; prod usaria `alembic upgrade head`).
+
+---
+
 ## 2026-06-10 (automode) — Fechamento do épico Domínios (DOM-01..11)
 
 **Fiz:** Conclusão dos domínios restantes com TDD e verificação ao vivo em Docker:
