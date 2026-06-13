@@ -1,0 +1,61 @@
+topic: "API Keys (Autenticação Programática)"
+adversarial: true
+description: >
+  Valida geração, autenticação, listagem e revogação de API Keys.
+  A chave crua é exibida apenas na criação; o hash SHA-256 é armazenado.
+
+cases:
+  - id: "APIKEY-001"
+    description: "Criação retorna chave crua uma única vez"
+    precondition: "Usuário autenticado"
+    action: "POST /api/v1/me/api-keys {name: 'minha-key'}"
+    expected: "201 Created; {id, prefix, key: 'sk_...'}"
+    adversarial: "GET /api/v1/me/api-keys NÃO deve retornar o campo 'key' (apenas prefix)"
+
+  - id: "APIKEY-002"
+    description: "Autenticação via X-API-Key funciona"
+    precondition: "API Key criada"
+    action: "GET /api/v1/me com header X-API-Key: sk_..."
+    expected: "200 OK; usuário resolvido corretamente"
+    adversarial: "Usar Bearer JWT inválido junto com X-API-Key válido — X-API-Key deve ter precedência"
+
+  - id: "APIKEY-003"
+    description: "Chave inválida é rejeitada"
+    precondition: "Nenhuma chave existente"
+    action: "GET /api/v1/me com X-API-Key: sk_invalida"
+    expected: "401 Unauthorized"
+    adversarial: "Chave com prefix correto mas sufixo errado também deve falhar"
+
+  - id: "APIKEY-004"
+    description: "Chave revogada não autentica"
+    precondition: "API Key ativa"
+    action: "DELETE /api/v1/me/api-keys/{id}; GET /api/v1/me com a chave"
+    expected: "401 Unauthorized após revogação"
+    adversarial: "Revogação deve ser imediata (sem cache)"
+
+  - id: "APIKEY-005"
+    description: "Usuário não pode revogar chave de outro usuário"
+    precondition: "user_A tem api_key_A; user_B autenticado"
+    action: "DELETE /api/v1/me/api-keys/{api_key_A.id} com token de user_B"
+    expected: "403 ou 404 (nunca 200)"
+    adversarial: "Ownership check obrigatório na revogação"
+
+  - id: "APIKEY-006"
+    description: "last_used_at atualizado a cada autenticação"
+    precondition: "API Key criada; last_used_at = None"
+    action: "GET /api/v1/me com X-API-Key"
+    expected: "GET /api/v1/me/api-keys mostra last_used_at atualizado"
+    adversarial: "last_used_at não pode permanecer None após uso"
+
+  - id: "APIKEY-007"
+    description: "Chave expirada (expires_at no passado) não autentica"
+    precondition: "API Key com expires_at = now() - 1h"
+    action: "GET /api/v1/me com chave expirada"
+    expected: "401 Unauthorized"
+    adversarial: "Expiração deve ser verificada antes de autenticar"
+
+implementation_notes:
+  - "Prefixo da chave: 'sk_' + 8 chars do token_urlsafe para identificação visual"
+  - "Hash: hashlib.sha256(raw_key.encode()).hexdigest()"
+  - "Dependency: tentar X-API-Key header antes de oauth2_scheme (JWT)"
+  - "is_active=False e expires_at < now → rejeitar"

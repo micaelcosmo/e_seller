@@ -1,0 +1,61 @@
+topic: "User Activity Log (Accounting)"
+adversarial: true
+description: >
+  Valida que ações críticas do usuário são registradas em UserActivityLog
+  e que o endpoint /me/activity retorna apenas atividades do próprio usuário.
+
+cases:
+  - id: "ACT-001"
+    description: "Login bem-sucedido gera registro de atividade"
+    precondition: "Usuário registrado"
+    action: "POST /api/v1/auth/token com credenciais válidas"
+    expected: "UserActivityLog com event_type='login' e user_id correto"
+    adversarial: "Verificar no DB que created_at é recente (< 5s); metadata contém ip"
+
+  - id: "ACT-002"
+    description: "Login falho NÃO gera registro de atividade (apenas LoginAttempt)"
+    precondition: "Usuário registrado"
+    action: "POST /api/v1/auth/token com senha errada"
+    expected: "UserActivityLog NÃO tem entry para este evento"
+    adversarial: "Falha de login não deve poluir activity log (LoginAttempt já cobre isso)"
+
+  - id: "ACT-003"
+    description: "Compra gera registro de atividade"
+    precondition: "Usuário autenticado; produto disponível"
+    action: "POST /api/v1/orders (compra)"
+    expected: "UserActivityLog com event_type='purchase'; metadata.order_ref presente"
+    adversarial: "Ordem anônima (sem user_id) deve ter user_id=None no log"
+
+  - id: "ACT-004"
+    description: "Download gera registro de atividade"
+    precondition: "Usuário com grant de download ativo"
+    action: "GET /api/v1/delivery/download/{token}"
+    expected: "UserActivityLog com event_type='download'; metadata.product_id presente"
+    adversarial: "Download expirado/consumido não gera atividade (erro antes)"
+
+  - id: "ACT-005"
+    description: "GET /me/activity retorna apenas atividades do usuário autenticado"
+    precondition: "user_A e user_B com atividades"
+    action: "GET /api/v1/me/activity com token de user_A"
+    expected: "Apenas atividades de user_A; nenhum registro de user_B"
+    adversarial: "Vazamento de atividade entre usuários = falha crítica"
+
+  - id: "ACT-006"
+    description: "GET /me/activity respeita paginação (limit)"
+    precondition: "Usuário com 30 atividades"
+    action: "GET /api/v1/me/activity?limit=10"
+    expected: "Retorna exatamente 10 registros mais recentes"
+    adversarial: "Sem limit, retornar todos os registros pode causar payload enorme"
+
+  - id: "ACT-007"
+    description: "metadata não contém PII além do necessário"
+    precondition: "Usuário faz login"
+    action: "Verificar UserActivityLog.metadata do evento 'login'"
+    expected: "Contém ip (hash ou truncado); NÃO contém senha ou token"
+    adversarial: "Senha ou token JWT no metadata = falha crítica de segurança/LGPD"
+
+implementation_notes:
+  - "event_type: Enum ou str com valores fixos ('login','purchase','download','profile_update','2fa_enrolled')"
+  - "metadata: JSONField; sem PII sensível"
+  - "user_id: nullable (compras anônimas)"
+  - "Índice em (user_id, created_at) para paginação eficiente"

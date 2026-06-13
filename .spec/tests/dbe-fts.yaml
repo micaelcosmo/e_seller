@@ -1,0 +1,62 @@
+topic: "Full-Text Search (FTS) em Produtos"
+adversarial: true
+description: >
+  Valida a busca full-text com PostgreSQL tsvector/tsquery.
+  Nota: SQLite (ambiente de teste) não tem tsvector — testes usam ILIKE como fallback
+  OU testam com banco PostgreSQL real via fixture.
+
+cases:
+  - id: "FTS-001"
+    description: "Busca por título retorna produto correspondente"
+    precondition: "Produto com title='Python para Dados'"
+    action: "GET /api/v1/products?q=python"
+    expected: "Produto 'Python para Dados' na resposta"
+    adversarial: "Busca case-insensitive; 'PYTHON' e 'python' devem retornar o mesmo resultado"
+
+  - id: "FTS-002"
+    description: "Busca com acento funciona (stemming pt-BR)"
+    precondition: "Produto com title='Programação Funcional'"
+    action: "GET /api/v1/products?q=programacao"
+    expected: "Produto encontrado (sem acento no termo de busca)"
+    adversarial: "tsvector deve usar dictionary='portuguese' com unaccent"
+
+  - id: "FTS-003"
+    description: "Busca sem resultado retorna lista vazia (não erro)"
+    precondition: "Nenhum produto com termo 'xyzxyzxyz'"
+    action: "GET /api/v1/products?q=xyzxyzxyz"
+    expected: "200 OK; items: []; total: 0"
+    adversarial: "Nunca retornar 500 em busca sem resultado"
+
+  - id: "FTS-004"
+    description: "Ranking: produto com termo no título ranqueado acima de descrição"
+    precondition: "Produto A: título='Machine Learning'; Produto B: descrição='machine learning'"
+    action: "GET /api/v1/products?q=machine+learning"
+    expected: "Produto A antes de Produto B na resposta"
+    adversarial: "setweight('A') no título deve superar weight('B') na descrição"
+
+  - id: "FTS-005"
+    description: "search_vector atualizado automaticamente ao editar produto"
+    precondition: "Produto com título 'Python Básico'"
+    action: "PATCH /api/v1/admin/products/{slug} {title: 'Python Avançado'}; buscar 'avancado'"
+    expected: "Produto encontrado após atualização"
+    adversarial: "Trigger deve disparar no UPDATE; produto antigo não deve aparecer em 'basico'"
+
+  - id: "FTS-006"
+    description: "Busca multi-palavra funciona como AND implícito"
+    precondition: "Produto 'FastAPI para Iniciantes'"
+    action: "GET /api/v1/products?q=fastapi+iniciantes"
+    expected: "Produto encontrado"
+    adversarial: "websearch_to_tsquery interpreta espaço como AND; 'fastapi xpto' não deve retornar nada"
+
+  - id: "FTS-007"
+    description: "SQL injection via parâmetro q não causa erro"
+    precondition: "Qualquer estado"
+    action: "GET /api/v1/products?q='; DROP TABLE products; --"
+    expected: "200 OK; lista vazia; tabela products intacta"
+    adversarial: "websearch_to_tsquery parametriza a query — confirmar que não há concatenação de string"
+
+implementation_notes:
+  - "SQLite fallback: if db dialect != 'postgresql': usar ILIKE '%q%' (para testes)"
+  - "FTS só ativo em PostgreSQL (prod/staging); testes unitários podem usar ILIKE"
+  - "trigger deve chamar to_tsvector('portuguese', ...) com unaccent se disponível"
+  - "migration: separar em 2 passos (ADD COLUMN + CREATE INDEX) para evitar lock"

@@ -8,6 +8,30 @@
 
 ## [Não lançado]
 
+### 2026-06-13 — Branch enrichment: análise, roadmap e planning
+
+- **Branch `enrichment`** criada de `main` (HEAD `96ca46f`).
+- **STATUS.md** atualizado: fase Enrichment; novos épicos DOC/AAA/FEV/DBE/BEE registrados.
+- **`.spec/roadmap.md`** reescrito: reflete estado MVP completo + roadmap de enrichment.
+- **`.spec/enrichment/`** criado: 4 docs de planning (AAA, Frontend, DB, Backend).
+- **`.spec/tests/`** criado: specs YAML adversariais por tópico.
+- **`report/backlog.json`** expandido: ~125 novas tasks de enrichment (backlog).
+- **Decisões de enrichment registradas:** 2FA/TOTP, blacklist, API Keys, activity log,
+  FTS, email pluggável, design system CSS, novas views SPA inline.
+
+### 2026-06-10 — MVP completo: 238 épicos done, 437 testes verdes, push main
+
+- **Push para `main`:** commit `96ca46f` (MVP completo — backend FastAPI + frontend + infra + 437 testes).
+- **`.github/workflows/`** removido do commit (PAT sem escopo `workflow`).
+- **report/backlog.json:** todos os 238 itens done; 4 blocked (dep. externa); revisão cíclica FINAL.
+- **Épicos 4ª leva:** BEQ-30 (validado), BEQ-32 (filtro product_id em reviews admin),
+  BEQ-33 (buyer_email alias em orders admin), OPS-24 (download metrics no dashboard),
+  ADM-12 (AdminAuditReader + X-Total-Count), SEC-20 (CSP via SecurityHeadersMiddleware),
+  FE-36 (paginação Próxima/Anterior na home), DOM-37 (domain_event ao expirar cupom),
+  ADM-13 (GET /admin/downloads com filtros + X-Total-Count).
+- **Ruff limpo:** 34 E501 + 3 F401 corrigidos em testes antigos.
+- **Auto-repair:** 0 itens na revisão final.
+
 ### 2026-06-10 — Épicos BEQ+DBQ+FE+AUTH+OPS+SEC concluídos (121 testes)
 
 - **STATUS.md** atualizado: 8 épicos fechados; **121 testes** verdes; backlog em 130 itens.

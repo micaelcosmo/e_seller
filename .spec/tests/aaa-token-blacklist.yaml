@@ -1,0 +1,55 @@
+topic: "Token Blacklist (JWT Revocation)"
+adversarial: true
+description: >
+  Valida que tokens revogados via logout são rejeitados em chamadas subsequentes.
+  Testa também que o JTI (JWT ID) é adicionado ao token e verificado.
+
+setup:
+  user:
+    email: "blacklist@test.com"
+    role: "customer"
+  env:
+    JWT_TTL_SECONDS: 3600
+
+cases:
+  - id: "BL-001"
+    description: "Token revogado não autoriza nenhum endpoint protegido"
+    precondition: "Usuário autenticado; token emitido com jti"
+    action: "POST /api/v1/auth/logout (Bearer token)"
+    then: "GET /api/v1/me retorna 401"
+    adversarial: "Usar exatamente o mesmo token antes e depois do logout para confirmar mudança"
+    must_not: "Retornar 200 após logout com o mesmo token"
+
+  - id: "BL-002"
+    description: "Logout sem token retorna 401"
+    precondition: "Nenhum token no header"
+    action: "POST /api/v1/auth/logout sem Authorization header"
+    expected: "401 Unauthorized"
+    adversarial: "Verificar que endpoint não aceita logout anônimo (sem autenticação)"
+
+  - id: "BL-003"
+    description: "Token diferente (outro usuário) não é afetado pelo logout"
+    precondition: "Dois usuários autenticados; user_A faz logout"
+    action: "GET /api/v1/me com token de user_B após logout de user_A"
+    expected: "200 OK (token de user_B válido)"
+    adversarial: "Logout não deve invalidar tokens de outros usuários"
+
+  - id: "BL-004"
+    description: "JWT emitido tem campo jti"
+    precondition: "Usuário faz login"
+    action: "Decodificar payload do access_token"
+    expected: "Campo 'jti' presente e não vazio (UUID)"
+    adversarial: "Token sem jti não pode ser revogado individualmente — deve falhar"
+
+  - id: "BL-005"
+    description: "RevokedToken com expires_at no passado não polui a tabela indefinidamente"
+    precondition: "RevokedToken expirado existe na tabela"
+    action: "Verificar que limpeza (ou query com expires_at > now) não retorna entrada expirada"
+    expected: "is_revoked() retorna False para jti de token expirado (já inválido por exp)"
+    adversarial: "Não deve acumular tokens expirados infinitamente na tabela"
+
+implementation_notes:
+  - "RevokedToken.jti deve ter índice UNIQUE"
+  - "get_current_user deve checar blacklist APÓS verificar assinatura e expiração"
+  - "Logout deve retornar 204 No Content"
+  - "jti deve ser UUID4 gerado no JwtService.issue()"

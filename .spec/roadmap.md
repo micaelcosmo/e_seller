@@ -1,87 +1,154 @@
 # ROADMAP (vivo) — e_seller
 
-> Roadmap **vivo** do projeto, atualizado conforme avançamos. Substitui, para fins de
-> sequenciamento, o [`planning/21-roadmap.md`](planning/21-roadmap.md) (congelado).
-> Datas absolutas quando definidas. Última atualização: 2026-06-06.
+> Roadmap **vivo** do projeto. Substitui o congelado [`planning/21-roadmap.md`](planning/21-roadmap.md).
+> Datas absolutas quando definidas. Última atualização: 2026-06-13.
 
 ---
 
-## Onde estamos
+## Estado atual
 
-**Fase de especificação.** Resumo:
+**MVP completo em `main`.** Backend FastAPI + Jinja2 storefront rodando em Docker.
+Branch `enrichment` aberta para AAA + Frontend Visual + DB.
 
 | Trilha | Estado |
 |---|---|
 | `planning/` | 🟢 congelado (22 docs) |
 | `standards/` | 🟢 vivo (6 docs) |
-| `unit/` | 🟢 ~100 unit specs (MVP + visão completa) |
-| `api/` `ops/` `observability/` `security/` | 🟢 trilhas vivas criadas |
-| Frontend | ⚪ tecnologia a decidir |
-| Código de produção | ⚪ não iniciado |
-
-Pendências de spec: migrations dos tiers 🟡/🔵 ([`unit/db/README`](unit/db/README.md));
-decisão de frontend; estender schemas de catálogo.
+| `unit/` | 🟢 ~100 unit specs |
+| `api/` `ops/` `observability/` `security/` | 🟢 trilhas vivas |
+| Backend MVP | 🟢 **completo** — 13 domínios, 437 testes verdes, Ruff limpo |
+| Frontend MVP | 🟢 **funcional** — 8 templates Jinja2, dark theme, responsivo |
+| DB MVP | 🟢 **sólido** — 21 modelos, 9+ índices, constraints CHECK |
+| **Enrichment** | 🟡 **em andamento** (branch `enrichment`) |
 
 ---
 
-## Fase 1 — MVP (Tier 🟢) — implementação (código + TDD)
+## Fase MVP — concluída ✅
 
-> Só inicia quando o Micael liberar "codar". Cada marco segue SDD→TDD e a
-> [Definition of Done](planning/16-definition-of-done.md).
+Todos os marcos M0–M16 entregues. Destaques:
 
-| Marco | Entrega | Units principais |
+| Marco | Entrega | Testes |
 |---|---|---|
-| **M0** Fundação | FastAPI + Docker + Postgres + Alembic + Ruff + CI verde; `/api/v1/healthz` | `core/*`, `infra/*`, `db/alembic_setup` |
-| **M1** Domínio + Admin + Auth | models MVP + migration inicial; SQLAdmin; login JWT | `*/model_*`, `db/migration_initial`, `admin/*`, `accounts/*`, `security/jwt*` |
-| **M2** Catálogo (API) | `GET /products`, `/products/{slug}`, `/categories` | `catalog/*` |
-| **M3** Pedido + Checkout | `POST /orders` + checkout MP (sandbox) | `orders/*`, `payments/service_create_checkout`, `gateway_mercadopago` |
-| **M4** Webhook + Estados | webhook idempotente + máquina de estados | `payments/service_process_webhook`, `service_map_status`, `orders/service_state_machine`, `security/webhook_signature` |
-| **M5** Entrega segura | grant (expira/limite) + download protegido → **MVP ✅** | `delivery/*`, `security/download_token`, `file_protection` |
-
-Cross-cutting do MVP: logging básico ([`observability/logging`](observability/logging.md)),
-backup do Postgres ([`ops/backup-restore`](ops/backup-restore.md)), revisão do
-[threat model](security/threat-model.md).
-
----
-
-## Fase 2 — Tier 🟡 (próximo)
-
-| Marco | Entrega |
-|---|---|
-| **M6** Biblioteca/Posse | `entitlement` + "Minha Biblioteca" + `download_log` + reemissão de link |
-| **M7** Reviews | avaliação de comprador verificado |
-| **M8** Cupons | desconto no checkout (idempotente por pedido) |
-| **M9** Carrinho | compra multi-item |
-| **M10** Catálogo rico | autores, tags, múltiplos arquivos/imagens; busca/filtros (RF-04) |
-| **M11** Estornos | `refund` revoga acesso |
-
-Migration: `db/migration_tier_yellow`.
+| M0 Fundação | FastAPI + Docker + Postgres + Alembic + Ruff | ✅ |
+| M1 Domínio + Admin + Auth | 21 modelos, migration, SQLAdmin, JWT+RBAC | ✅ |
+| M2 Catálogo | `/products`, `/categories`, busca, facetas | ✅ |
+| M3 Pedido + Checkout | multi-item, gateway simulado | ✅ |
+| M4 Webhook + Estados | idempotência, máquina de estados, HMAC | ✅ |
+| M5 Entrega segura | grant (TTL+limite), download auditado | ✅ |
+| M6 Biblioteca | entitlement, "Minha Biblioteca", download_log | ✅ |
+| M7 Reviews | avaliação de comprador verificado | ✅ |
+| M8 Cupons | desconto, auto-desativação, domain event | ✅ |
+| M9 Carrinho | compra multi-item | ✅ |
+| M10 Catálogo rico | autores, tags, arquivos, imagens, busca facetada | ✅ |
+| M11 Estornos | refund revoga acesso | ✅ |
+| M12 RBAC | RequireRole, UserRole enum, CUSTOMER/STAFF/ADMIN | ✅ |
+| M13 Editora/Série | publisher, series, taxonomia completa | ✅ |
+| M14 Wishlist + Newsletter | lista de desejos, captação LGPD | ✅ |
+| M15 Faturamento | billing_profile, CPF/CNPJ | ✅ |
+| M16 Frontend dedicado | Jinja2 SPA inline (MVP; Next.js Tier 2) | ✅ |
 
 ---
 
-## Fase 3 — Tier 🔵 (visão completa)
+## Fase Enrichment — em andamento (2026-06-13)
 
-| Marco | Entrega |
-|---|---|
-| **M12** RBAC | `role`/`user_role` + `require_role` (migra `is_staff`) |
-| **M13** Editora/Série | `publisher`, `series` |
-| **M14** Wishlist + Newsletter | lista de desejos + captação (LGPD) |
-| **M15** Faturamento/NF | `billing_profile` + integração fiscal |
-| **M16** Frontend dedicado | após decisão de tecnologia (ADR-005) |
+> Motivação: backend sólido, agora fortalecer segurança (AAA), qualidade visual (FE)
+> e capacidade de busca (DB). Nada fora do contexto "vender e-books".
 
-Migration: `db/migration_tier_blue`. Cross-cutting: métricas/alertas
-([`observability/`](observability/)), OpenAPI client p/ frontend ([`api/openapi-workflow`](api/openapi-workflow.md)).
+### Épico DOC — Documentação e Planning
+
+Atualizar todos os documentos, criar roadmap incisivo e backlog de enrichment.
+
+| Task | Entrega | Motivo |
+|---|---|---|
+| DOC-01 | STATUS.md + CHANGELOG.md atualizados | Fonte de verdade |
+| DOC-02 | .spec/roadmap.md reescrito | Este documento |
+| DOC-03 | .spec/enrichment/ (4 planning docs) | Base para TDD |
+| DOC-04 | .spec/tests/ YAML adversariais | Precisão, sem alucinação |
+| DOC-05 | report/backlog.json (125 tasks) | Rastreabilidade |
+
+### Épico AAA — Authentication, Authorization, Accounting
+
+> **Motivação:** JWT existe, mas faltam: revogação de tokens, 2FA para admin,
+> rastreabilidade de ações do usuário e autenticação programática (API Keys).
+> Esses são os pilares de "coparticipação JWT + segurança" pedidos pelo usuário.
+
+| Task | Entrega | Prioridade |
+|---|---|---|
+| AAA-01..03 | UserActivityLog (modelo, service, log em login) | Alta |
+| AAA-04..06 | Activity log em compra + download + perfil + endpoint /me/activity | Alta |
+| AAA-07 | Testes activity log | Alta |
+| AAA-08..12 | Token blacklist (RevokedToken, service, logout, get_current_user) | Alta |
+| AAA-13..17 | API Keys (modelo, service, endpoints, dependency) | Média |
+| AAA-18..26 | TOTP 2FA (settings, User.totp_secret, service, enroll, verify, login step-2) | Alta |
+| AAA-27..28 | Per-user rate limit + ownership checks reforçados | Média |
+| AAA-29..30 | Spec YAML + revisão cíclica | — |
+
+### Épico FEV — Frontend Visual Enrichment
+
+> **Motivação:** frontend funcional mas minimalista. Cada view precisa de:
+> design system coerente, componentes reutilizáveis, novas views essenciais
+> (conta, biblioteca, carrinho, favoritos) e feedback visual (toast, loading, validation).
+
+| Task | Entrega | Impacto |
+|---|---|---|
+| FEV-01..08 | Design system CSS + componentes base + toast + loading | Alto |
+| FEV-09..16 | Overhaul: index, detalhe, pedido, senha, nav, mobile | Alto |
+| FEV-17..22 | Novas views: conta, biblioteca, carrinho, favoritos, newsletter | Alto |
+| FEV-23..30 | Admin UI enriquecido, errors pages, favicon, meta OG | Médio |
+| FEV-31..35 | Acessibilidade, CSS em arquivo estático, validation JS | Médio |
+| FEV-36..40 | Testes HTML + spec YAML + revisão cíclica | — |
+
+### Épico DBE — Database Enrichment
+
+> **Motivação:** busca atual é LIKE (case-insensitive). PostgreSQL tem suporte nativo a
+> full-text search com ranking e stemming pt-BR via `tsvector`. Índices compostos
+> melhoram queries de relatório admin. Sem mudar o schema de forma quebrada.
+
+| Task | Entrega | Impacto |
+|---|---|---|
+| DBE-01..05 | FTS: tsvector + índice GIN + trigger + SearchService + endpoint | Alto |
+| DBE-06..09 | Índices compostos + pool tuning + EXPLAIN audit | Médio |
+| DBE-10..11 | Migration Alembic + UML atualizado | — |
+| DBE-12..15 | Testes FTS + seed rico + spec YAML + revisão cíclica | — |
+
+### Épico BEE — Backend Enrichment
+
+> **Motivação:** email transacional falta para engajar usuário pós-compra.
+> Endpoints `/me/*` unificam dados do usuário autenticado. Health enrichment
+> e OpenAPI melhoram observabilidade e DX.
+
+| Task | Entrega | Impacto |
+|---|---|---|
+| BEE-01..05 | EmailService pluggável + templates + order_paid + reset + expiring | Alto |
+| BEE-06..08 | Health enrichment (DB latency, disk) + Problem+JSON + OpenAPI | Médio |
+| BEE-09..14 | /me endpoints (orders, library, wishlist, cart, profile) | Alto |
+| BEE-15..20 | Testes + spec YAML + revisão cíclica | — |
 
 ---
 
-## Decisões pendentes que afetam o roadmap
+## Fase 3 — Tier 🔵 (visão futura, não iniciada)
 
-- [ ] Liberar início da codificação (sair da fase só-spec).
-- [ ] Versões exatas (FastAPI/SQLAlchemy/Pydantic em Python 3.14).
-- [ ] uv vs pip; driver Postgres sync vs async.
-- [ ] Tecnologia do frontend; hospedagem de baixo custo.
-- [ ] Provedor de NF (Fase 3).
+| Marco | Entrega | Dependência |
+|---|---|---|
+| Mercado Pago real | Integração sandbox→prod | Conta MP |
+| Frontend Next.js | React/SSR, client gerado de OpenAPI | TypeScript setup |
+| 2FA SMS | OTP via Twilio/Z-API | Conta provedor |
+| Watermark | PDF por comprador | pypdf2 ou pdfminer |
+| Multi-vendedor | marketplace | Decisão produto |
+| NF-e | Nota Fiscal Eletrônica | Provedor fiscal |
+| Observabilidade avançada | Prometheus + Grafana | Infra staging |
+| Testes E2E browser | Playwright | CI configurado |
+| CI/CD completo | GitHub Actions 95% gate | PAT com workflow scope |
+
+---
+
+## Regra de ouro
+
+> **Não sair do contexto:** tudo serve a "vender e-books".
+> Rejeitar trabalho fora do objetivo.
+
+---
 
 ## Manutenção
 
-Atualizar este roadmap ao concluir cada marco (e registrar no [`CHANGELOG.md`](../CHANGELOG.md) raiz e no `STATUS.md`).
+Atualizar este roadmap ao concluir cada épico e registrar no CHANGELOG.md.

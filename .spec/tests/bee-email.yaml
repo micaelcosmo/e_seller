@@ -1,0 +1,54 @@
+topic: "Email Service (Transacional Pluggável)"
+adversarial: true
+description: >
+  Valida que EmailService funciona em modo log-only (sem SMTP) e que
+  os métodos de conveniência constroem o conteúdo correto.
+
+cases:
+  - id: "EMAIL-001"
+    description: "EmailService sem SMTP_HOST não levanta exceção"
+    precondition: "SMTP_HOST vazio nas settings"
+    action: "await email_service.send('test@x.com', 'Assunto', '<p>Corpo</p>')"
+    expected: "Nenhuma exceção; mensagem logada em INFO"
+    adversarial: "Modo log-only NÃO pode falhar a operação principal (ex.: processo do pedido)"
+
+  - id: "EMAIL-002"
+    description: "send_order_paid inclui link de download no corpo"
+    precondition: "OrderPaid com download_links=['https://...']"
+    action: "email_service.send_order_paid('user@x.com', 'REF-001', ['https://link'])"
+    expected: "HTML contém 'REF-001' e 'https://link'"
+    adversarial: "E-mail sem link de download é inútil para o usuário"
+
+  - id: "EMAIL-003"
+    description: "send_password_reset inclui token de reset no link"
+    precondition: "reset_token gerado por JwtService"
+    action: "email_service.send_password_reset('user@x.com', 'https://app/reset?token=abc')"
+    expected: "HTML contém 'https://app/reset?token=abc'"
+    adversarial: "Link errado no e-mail de reset = usuário bloqueado"
+
+  - id: "EMAIL-004"
+    description: "send_download_expiring inclui título do produto e data de expiração"
+    precondition: "Grant expirando em 24h"
+    action: "email_service.send_download_expiring('user@x.com', 'Python Pro', '2026-06-15')"
+    expected: "HTML contém 'Python Pro' e '2026-06-15'"
+    adversarial: "E-mail sem título/data é confuso para o usuário"
+
+  - id: "EMAIL-005"
+    description: "OrderService dispara e-mail após order_paid (integração)"
+    precondition: "Order paga via webhook simulado"
+    action: "Processar webhook de pagamento pago"
+    expected: "EmailService.send_order_paid chamado (mock verificado)"
+    adversarial: "E-mail deve ser disparado APÓS commit da transação (não antes)"
+
+  - id: "EMAIL-006"
+    description: "Falha no envio de e-mail não reverte a transação"
+    precondition: "SMTP configurado mas fora do ar (mock que levanta exceção)"
+    action: "OrderService.process_paid() com SMTP simulado falhando"
+    expected: "Order permanece PAID; exceção de email é capturada e logada"
+    adversarial: "Falha de e-mail não pode reverter uma compra real"
+
+implementation_notes:
+  - "EmailService deve ser injetado nos services que precisam dele (DI no __init__)"
+  - "Template HTML: inline CSS (email clients ignoram <style>)"
+  - "Charset UTF-8 obrigatório (acentos pt-BR)"
+  - "Test: substituir SMTPHandler por mock/caplog"

@@ -1,0 +1,84 @@
+topic: "Frontend Visual — Design System e Views"
+adversarial: true
+description: >
+  Valida presença e comportamento visual nas views Jinja2.
+  Testes via pytest (httpx GET + BeautifulSoup/regex no HTML).
+
+cases:
+  - id: "FEV-001"
+    description: "design-system.css é servido como arquivo estático"
+    action: "GET /static/css/design-system.css"
+    expected: "200 OK; Content-Type: text/css; contém '--accent'"
+    adversarial: "Se 404, todos os templates ficam sem estilo — falha crítica"
+
+  - id: "FEV-002"
+    description: "base.html inclui design-system.css e não tem CSS inline duplicado"
+    action: "GET / (index); verificar HTML"
+    expected: "<link rel='stylesheet' href='/static/css/design-system.css'> presente"
+    adversarial: "CSS inline que contradiz o design system é anti-padrão"
+
+  - id: "FEV-003"
+    description: "Toast container está no base.html"
+    action: "GET /; verificar HTML"
+    expected: "<div id='toast-root'> presente no body"
+    adversarial: "Sem toast-root, mensagens de feedback são silenciosas"
+
+  - id: "FEV-004"
+    description: "Nav exibe links corretos (catálogo, conta, biblioteca)"
+    action: "GET /; verificar elemento <header>"
+    expected: "Links: '/', '#/conta', '#/biblioteca' presentes"
+    adversarial: "Links quebrados na nav = UX zero"
+
+  - id: "FEV-005"
+    description: "Página de produto tem layout 2 colunas (cover + info)"
+    action: "GET /produto/{slug}; verificar HTML"
+    expected: "Elemento .product-cover e .product-info presentes"
+    adversarial: "Sem cover, produto parece um texto sem cara"
+
+  - id: "FEV-006"
+    description: "Order status tem timeline de status"
+    action: "GET /pedido?ref=TEST; verificar HTML"
+    expected: "Elemento .status-timeline ou .status-step presente"
+    adversarial: "Status como texto puro não comunica progresso visualmente"
+
+  - id: "FEV-007"
+    description: "Carrinho (#/carrinho) renderiza com JS"
+    action: "GET /; verificar que carrinho-section existe no DOM"
+    expected: "Elemento com id='cart-section' ou similar; template #carrinho presente"
+    adversarial: "Rota #/carrinho que não existe silencia erros de navegação"
+
+  - id: "FEV-008"
+    description: "Biblioteca (#/biblioteca) renderiza com JS"
+    action: "GET /; verificar que biblioteca-section existe no DOM"
+    expected: "Elemento com id='library-section' ou similar"
+    adversarial: "Usuário que comprou e-book precisa achar o download"
+
+  - id: "FEV-009"
+    description: "Error page 404 tem design consistente"
+    action: "GET /rota-que-nao-existe"
+    expected: "HTML com class .error-page ou similar; link 'Voltar ao início'"
+    adversarial: "FastAPI default 404 é JSON puro, não HTML"
+
+  - id: "FEV-010"
+    description: "Mobile: hamburger menu presente no HTML"
+    action: "GET /; verificar HTML"
+    expected: "Elemento #menu-toggle ou .hamburger presente"
+    adversarial: "Nav sem hamburger em mobile = elementos sobrepostos"
+
+  - id: "FEV-011"
+    description: "Formulário de senha tem validação inline (JS)"
+    action: "GET /recuperar-senha; verificar HTML"
+    expected: "Elemento #password-strength ou similar presente"
+    adversarial: "Sem feedback de força, usuário escolhe senhas fracas"
+
+  - id: "FEV-012"
+    description: "ARIA labels presentes em inputs críticos"
+    action: "GET /recuperar-senha; verificar HTML"
+    expected: "Inputs com aria-label ou aria-describedby"
+    adversarial: "Sem ARIA, leitores de tela descrevem o campo como 'campo de texto'"
+
+implementation_notes:
+  - "Testes devem usar TestClient + response.text (HTML) + regex ou BeautifulSoup"
+  - "JS não é executável em pytest; testar apenas presença no DOM estático"
+  - "Ruff não cobre JS — validar JS manualmente ou via NodeJS lint futuro"
+  - "CSS extraído para arquivo estático evita violações de CSP (unsafe-inline)"

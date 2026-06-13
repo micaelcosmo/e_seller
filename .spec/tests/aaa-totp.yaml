@@ -1,0 +1,76 @@
+topic: "TOTP 2FA (Two-Factor Authentication)"
+adversarial: true
+description: >
+  Valida o fluxo completo de 2FA via TOTP: enrollment, confirmação, login em dois passos
+  e desativação. Verifica que código inválido é rejeitado em todos os casos.
+
+setup:
+  user:
+    email: "totp@test.com"
+    role: "staff"
+  dependencies:
+    - "pyotp instalado"
+    - "totp_encryption_key configurado em Settings"
+
+cases:
+  - id: "TOTP-001"
+    description: "Enrollment gera secret e URI provisioning válidos"
+    precondition: "Usuário sem 2FA; autenticado"
+    action: "POST /api/v1/auth/2fa/enroll"
+    expected: "200 OK; body: {secret, provisioning_uri, qr_base64}"
+    adversarial: "provisioning_uri deve ser URI otpauth:// válida; secret deve ser base32"
+
+  - id: "TOTP-002"
+    description: "Confirmação com código válido ativa 2FA"
+    precondition: "Enrollment feito; código TOTP gerado com pyotp.TOTP(secret).now()"
+    action: "POST /api/v1/auth/2fa/confirm {code}"
+    expected: "200 OK; user.totp_enabled = True"
+    adversarial: "Confirmar que secret foi persistido (cifrado); NOT NULL e não vazio"
+
+  - id: "TOTP-003"
+    description: "Confirmação com código inválido é rejeitada"
+    precondition: "Enrollment feito"
+    action: "POST /api/v1/auth/2fa/confirm {code: '000000'}"
+    expected: "400 Bad Request; 2FA NÃO ativado"
+    adversarial: "Código fixo '000000' nunca deve ser aceito como válido"
+
+  - id: "TOTP-004"
+    description: "Login com 2FA ativo retorna partial_token no passo 1"
+    precondition: "Usuário com totp_enabled=True"
+    action: "POST /api/v1/auth/token {email, password}"
+    expected: "200 OK; body: {partial_token: '...', requires_2fa: true}; SEM access_token"
+    adversarial: "access_token NÃO deve ser retornado no passo 1 quando 2FA está ativo"
+
+  - id: "TOTP-005"
+    description: "Segundo passo com código válido retorna tokens completos"
+    precondition: "partial_token obtido no passo 1"
+    action: "POST /api/v1/auth/2fa/login {partial_token, code}"
+    expected: "200 OK; {access_token, refresh_token}"
+    adversarial: "partial_token é de uso único; segunda chamada com mesmo partial_token deve falhar"
+
+  - id: "TOTP-006"
+    description: "Segundo passo com código inválido é rejeitado"
+    precondition: "partial_token válido"
+    action: "POST /api/v1/auth/2fa/login {partial_token, code: '000000'}"
+    expected: "400 Bad Request; tokens NÃO emitidos"
+    adversarial: "Tentar brute-force: 10 tentativas com códigos inválidos deve bloquear via rate limit"
+
+  - id: "TOTP-007"
+    description: "Desativação exige senha + código TOTP correto"
+    precondition: "totp_enabled=True"
+    action: "POST /api/v1/auth/2fa/disable {password, code}"
+    expected: "200 OK; user.totp_enabled=False; totp_secret_enc=None"
+    adversarial: "Desativação com apenas senha (sem código) deve falhar com 400"
+
+  - id: "TOTP-008"
+    description: "Secret armazenado é cifrado (não em texto plano)"
+    precondition: "totp_enabled=True"
+    action: "Consultar user.totp_secret_enc diretamente no DB"
+    expected: "Valor é string cifrada AES-GCM (base64); não é o secret TOTP original"
+    adversarial: "Secret em texto plano no DB = falha crítica de segurança"
+
+implementation_notes:
+  - "partial_token: JWT de curta duração (5 min) com type='partial_2fa'"
+  - "TOTPService.verify deve usar window=1 (aceita código do minuto anterior)"
+  - "Encryption key deve ser de 32 bytes (AES-256-GCM)"
+  - "NEVER log o secret ou o código TOTP"
