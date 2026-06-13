@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 11:17 (Brasilia) — 🟡 Épico UXR (UX Redesign): audit + pesquisa de mercado (10 sites) + roadmap criados. 25 tasks UXR adicionadas. Iniciando Fase 1 (fundação visual).",
+  "updated": "13/06/2026 11:31 (Brasilia) — 🟡 UXR Fase 1 concluída (UXR-01..06): tokens de superfície + accent quente, escala sombra/radius, fonte display, sprite SVG de ícones, gradiente do hero, espaçamento 4px. Catálogo funcionando. Iniciando Fase 2 (header/navegação).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2120,12 +2120,12 @@
     { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css nem custom_templates_dir de forma estável. Bloqueado até sqladmin>=0.22.", "state": "blocked" },
     { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).", "state": "done" },
 
-    { "id": "UXR-01", "area": "UX Redesign", "title": "Tokens de cor expandidos (superfícies + accent quente)", "desc": "Adicionar a :root tons intermediários de superfície (--surface-1/2/3), accent quente --buy (CTA compra), --accent-soft. Manter --accent roxo #6d5cff como marca. Ref: market-research consenso.", "state": "backlog" },
-    { "id": "UXR-02", "area": "UX Redesign", "title": "Escala de sombras e radius padronizada", "desc": "Definir --shadow-1/2/3 (elevation 1-2dp como consenso de mercado) e --radius-sm/md/lg. Cards passam a usar radius 8px (hoje 14px) alinhado ao consenso 4-12px.", "state": "backlog" },
-    { "id": "UXR-03", "area": "UX Redesign", "title": "Fonte de display no hero e headings", "desc": "Adicionar fonte sans bold de display (self-hosted ou stack) para h1/h2; body mantém 16px system-ui. font-display:swap. Sem custom fonts externas que quebrem custo-zero/offline.", "state": "backlog" },
-    { "id": "UXR-04", "area": "UX Redesign", "title": "Sistema de ícones SVG inline coeso", "desc": "Substituir emojis (📚🛒🧾) por ícones SVG inline consistentes (carrinho, biblioteca, pedidos, busca, coração). Sprite ou símbolos reutilizáveis. Ref: 10/10 sites usam SVG coeso.", "state": "backlog" },
-    { "id": "UXR-05", "area": "UX Redesign", "title": "Gradiente sutil no hero", "desc": "Hero ganha gradiente sutil de fundo (roxo->quente translúcido, ref. Hotmart) sem comprometer contraste do texto. Variável --hero-gradient.", "state": "backlog" },
-    { "id": "UXR-06", "area": "UX Redesign", "title": "Variáveis de espaçamento (escala 4px)", "desc": "Consolidar escala de espaço --space-1..8 (múltiplos de 4px) e aplicar nos componentes principais. Whitespace generoso (consenso 9/10).", "state": "backlog" },
+    { "id": "UXR-01", "area": "UX Redesign", "title": "Tokens de cor expandidos (superfícies + accent quente)", "desc": "Adicionar a :root tons intermediários de superfície (--surface-1/2/3), accent quente --buy (CTA compra), --accent-soft. Manter --accent roxo #6d5cff como marca. Ref: market-research consenso.", "state": "done" },
+    { "id": "UXR-02", "area": "UX Redesign", "title": "Escala de sombras e radius padronizada", "desc": "Definir --shadow-1/2/3 (elevation 1-2dp como consenso de mercado) e --radius-sm/md/lg. Cards passam a usar radius 8px (hoje 14px) alinhado ao consenso 4-12px.", "state": "done" },
+    { "id": "UXR-03", "area": "UX Redesign", "title": "Fonte de display no hero e headings", "desc": "Adicionar fonte sans bold de display (self-hosted ou stack) para h1/h2; body mantém 16px system-ui. font-display:swap. Sem custom fonts externas que quebrem custo-zero/offline.", "state": "done" },
+    { "id": "UXR-04", "area": "UX Redesign", "title": "Sistema de ícones SVG inline coeso", "desc": "Substituir emojis (📚🛒🧾) por ícones SVG inline consistentes (carrinho, biblioteca, pedidos, busca, coração). Sprite ou símbolos reutilizáveis. Ref: 10/10 sites usam SVG coeso.", "state": "done" },
+    { "id": "UXR-05", "area": "UX Redesign", "title": "Gradiente sutil no hero", "desc": "Hero ganha gradiente sutil de fundo (roxo->quente translúcido, ref. Hotmart) sem comprometer contraste do texto. Variável --hero-gradient.", "state": "done" },
+    { "id": "UXR-06", "area": "UX Redesign", "title": "Variáveis de espaçamento (escala 4px)", "desc": "Consolidar escala de espaço --space-1..8 (múltiplos de 4px) e aplicar nos componentes principais. Whitespace generoso (consenso 9/10).", "state": "done" },
 
     { "id": "UXR-07", "area": "UX Redesign", "title": "Badge de contador no carrinho", "desc": "Ícone de carrinho no header com badge numérico de itens (ref. Payhip). Atualiza ao add/remove. Oculto quando vazio.", "state": "backlog" },
     { "id": "UXR-08", "area": "UX Redesign", "title": "Header com ícones SVG e total do carrinho", "desc": "Botões do header (carrinho/biblioteca/pedidos/conta) com ícone SVG + label. Carrinho mostra total R$ em tempo real (ref. Payhip).", "state": "backlog" },

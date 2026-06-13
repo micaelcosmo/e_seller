@@ -1,22 +1,82 @@
-/* Storefront e_seller — tema claro, limpo, inspirado no Sellfy. */
+/* Storefront e_seller — tema claro, limpo. Design system UXR (2026-06-13).
+   Fundação visual: tokens de superfície, accent quente, escala de sombra/radius,
+   espaçamento 4px, fonte de display. Identidade roxa #6d5cff preservada. */
 :root {
-  --bg: #f6f7fb;
-  --ink: #1a1d2b;
+  /* Superfícies — profundidade em camadas (UXR-01) */
+  --bg: #f5f6fb;
+  --surface-1: #ffffff;   /* cards, header, footer */
+  --surface-2: #fbfbfe;   /* fundos sutis alternados */
+  --surface-3: #eef0f8;   /* chips, badges neutros, hovers */
+  --card: var(--surface-1);
+
+  /* Texto */
+  --ink: #15182a;
+  --ink-soft: #3a3f55;
   --muted: #6b7280;
-  --card: #ffffff;
   --line: #e6e8f0;
+
+  /* Marca: accent roxo (identidade) + variações (UXR-01) */
   --accent: #6d5cff;
   --accent-ink: #ffffff;
+  --accent-soft: #efeefe;     /* fundo de tags/chips de marca */
+  --accent-deep: #5743e0;     /* hover do accent */
+
+  /* Accent quente para CTA de compra — diferencial (ref. Hotmart) */
+  --buy: #ff7a3c;
+  --buy-deep: #ed6321;
+  --buy-ink: #ffffff;
+
+  /* Semânticos */
   --ok: #15a05a;
-  --radius: 14px;
-  --shadow: 0 6px 24px rgba(20, 24, 48, .08);
+  --ok-soft: #d4f1e4;
+  --warn: #e6a417;
+  --err: #d3455b;
+  --err-soft: #fde9ec;
+  --star: #f5b14c;
+
+  /* Escala de sombras — elevation 1-3 (UXR-02) */
+  --shadow-1: 0 1px 2px rgba(20, 24, 48, .06), 0 1px 3px rgba(20, 24, 48, .05);
+  --shadow-2: 0 4px 12px rgba(20, 24, 48, .08);
+  --shadow-3: 0 12px 30px rgba(20, 24, 48, .14);
+  --shadow: var(--shadow-2); /* alias retrocompat */
+
+  /* Raios — alinhado ao consenso 4-12px (UXR-02) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --radius: var(--radius-md); /* alias retrocompat */
+
+  /* Escala de espaçamento múltiplos de 4px (UXR-06) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Tipografia (UXR-03) */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-display: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+
+  /* Gradiente sutil do hero — diferencial (UXR-05) */
+  --hero-gradient: radial-gradient(
+      1200px 400px at 50% -10%,
+      rgba(109, 92, 255, .10),
+      rgba(255, 122, 60, .06) 45%,
+      transparent 70%);
 }
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
 a { color: var(--accent); text-decoration: none; }
 img { max-width: 100%; display: block; }
 
@@ -26,14 +86,47 @@ img { max-width: 100%; display: block; }
   padding: 14px 20px; background: var(--card);
   border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;
 }
-.brand { font-weight: 800; font-size: 1.15rem; color: var(--ink); white-space: nowrap; }
-.search { flex: 1; display: flex; justify-content: center; }
-.search input {
-  width: min(520px, 100%); padding: 10px 14px; border: 1px solid var(--line);
-  border-radius: 999px; background: #fff; font: inherit; outline: none;
+.brand {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  font-weight: 800; font-size: 1.15rem; color: var(--ink); white-space: nowrap;
 }
-.search input:focus { border-color: var(--accent); }
-.actions { display: flex; gap: 8px; align-items: center; }
+.brand-icon { color: var(--accent); width: 22px; height: 22px; }
+
+/* Sistema de ícones SVG (UXR-04) */
+.icon { width: 18px; height: 18px; display: inline-block; vertical-align: middle;
+  flex-shrink: 0; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; }
+
+.search { flex: 1; display: flex; justify-content: center; }
+.search-wrap { position: relative; width: min(520px, 100%); }
+.search-icon {
+  position: absolute; left: 14px; top: 50%; margin-top: -9px;
+  color: var(--muted); pointer-events: none;
+}
+.search input {
+  width: 100%; padding: 10px 14px 10px 40px; border: 1px solid var(--line);
+  border-radius: var(--radius-pill); background: var(--surface-1); font: inherit; outline: none;
+  transition: border-color .14s, box-shadow .14s;
+}
+.search input:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.actions { display: flex; gap: var(--space-2); align-items: center; }
+.actions .ghost { display: inline-flex; align-items: center; gap: 6px; }
+
+.btn-label { white-space: nowrap; }
+
+/* Badge de contador do carrinho (UXR-07 — estilo; lógica na Fase 2) */
+.cart-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: var(--buy); color: var(--buy-ink);
+  font-size: .68rem; font-weight: 800; line-height: 1;
+  border-radius: var(--radius-pill);
+}
+
+/* Toggle de menu mobile — oculto no desktop (UXR-09, base na Fase 1) */
+.menu-toggle { display: none; }
 
 /* Botões */
 button, .btn { font: inherit; cursor: pointer; border-radius: 10px; border: 0; }
@@ -41,14 +134,29 @@ button, .btn { font: inherit; cursor: pointer; border-radius: 10px; border: 0; }
 .ghost:hover { border-color: var(--accent); color: var(--accent); }
 .primary {
   background: var(--accent); color: var(--accent-ink); padding: 11px 16px; font-weight: 700;
+  transition: background .14s ease;
 }
-.primary:hover { filter: brightness(1.05); }
+.primary:hover { background: var(--accent-deep); }
 .primary:disabled { opacity: .6; cursor: progress; }
 
-/* Hero */
-.hero { text-align: center; padding: 48px 20px 8px; }
-.hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0 0 6px; }
-.hero p { color: var(--muted); margin: 0; }
+/* CTA de compra — accent quente (UXR-01, diferencial de conversão) */
+.buy {
+  background: var(--buy); color: var(--buy-ink); padding: 11px 16px; font-weight: 700;
+  border: 0; border-radius: var(--radius-sm); transition: background .14s ease;
+}
+.buy:hover { background: var(--buy-deep); }
+.buy:disabled { opacity: .6; cursor: progress; }
+
+/* Hero — gradiente sutil de marca (UXR-05) */
+.hero {
+  text-align: center; padding: var(--space-7) var(--space-5) var(--space-2);
+  background: var(--hero-gradient);
+}
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem); margin: 0 0 var(--space-2);
+  font-weight: 800; line-height: 1.08;
+}
+.hero p { color: var(--ink-soft); margin: 0; font-size: clamp(1rem, 2vw, 1.15rem); }
 
 /* Layout principal */
 main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
@@ -60,11 +168,11 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 .card {
-  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-1); overflow: hidden; display: flex; flex-direction: column;
   transition: transform .12s ease, box-shadow .12s ease;
 }
-.card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(20,24,48,.12); }
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-3); }
 .card .cover {
   aspect-ratio: 3/4; background: linear-gradient(135deg, #eceefb, #dfe3fb);
   display: flex; align-items: center; justify-content: center; font-size: 2.4rem;

@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 11:26 — 🟢 Catálogo voltou a funcionar (era 500: faltava coluna `review.status` no DB; adicionada ao SchemaSync). Endpoints /products, /products/{slug}, /related, featured todos 200. Planning UXR completo (audit + research 10 sites + roadmap + 25 tasks). Iniciando Fase 1 (fundação visual)._
+_Última atualização: 2026-06-13 11:31 — 🟡 UXR Fase 1 concluída (UXR-01..06): design system (tokens de superfície, accent quente #ff7a3c, escala sombra/radius/espaço, fonte display, sprite SVG de ícones, gradiente do hero). Catálogo OK (fix review.status). Próximo: Fase 2 (header/navegação)._
