@@ -29,6 +29,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Épico **DBE** (DB Enrichment) | 🟢 Concluído — pool tuning, SearchService FTS/ILIKE, migration GIN |
 | Épico **BEE** (Backend Enrichment) | 🟢 Concluído — email, /me endpoints, health, Problem+JSON |
 | Épico **SFX** (Storefront Fix) | 🟢 Concluído — footer, newsletter CSS, admin link auth-guard, cover placeholder, schema fixes |
+| Épico **UXR** (UX Redesign) | 🟡 Em andamento — audit feito, pesquisa de mercado em execução |
 
 **Domínios entregues (main):** catálogo + busca, cadastro dinâmico, contas+JWT+RBAC,
 admin SQLAdmin, compra multi-item, pagamento simulado, webhook idempotente,
@@ -106,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 10:21 — 🟢 Épico SFX concluído. Backend healthy (crash loop corrigido: featured+totp+schema). 473 testes verdes. Commit `enrichment` feito. Próximo épico: a definir._
+_Última atualização: 2026-06-13 11:11 — 🟡 Épico UXR iniciado. Audit do frontend criado (.spec/frontend/ux-audit.md), pesquisa de mercado em 12 sites de e-book em andamento. Roadmap + 25 tasks serão criados após pesquisa._

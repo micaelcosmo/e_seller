@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 10:21 (Brasilia) — 🟢 SFX concluído (01-05 done, 06 bloqueado/sqladmin, 07 revisão cíclica). Backend healthy: colunas featured+totp adicionadas. 473 testes verdes.",
+  "updated": "13/06/2026 11:17 (Brasilia) — 🟡 Épico UXR (UX Redesign): audit + pesquisa de mercado (10 sites) + roadmap criados. 25 tasks UXR adicionadas. Iniciando Fase 1 (fundação visual).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2118,7 +2118,38 @@
     { "id": "SFX-04", "area": "Storefront Fix", "title": "Newsletter erro inline (não toast)", "desc": "Validação regex + erro inline em #news-error. Toast removido do fluxo de newsletter.", "state": "done" },
     { "id": "SFX-05", "area": "Storefront Fix", "title": "Cover placeholder profissional", "desc": "Sem cover_url: iniciais do título (2 letras) com background hsl(hash,42%,32%). Sem emoji. _titleHue() usa hash djb2-like.", "state": "done" },
     { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css nem custom_templates_dir de forma estável. Bloqueado até sqladmin>=0.22.", "state": "blocked" },
-    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).", "state": "done" }
+    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).", "state": "done" },
+
+    { "id": "UXR-01", "area": "UX Redesign", "title": "Tokens de cor expandidos (superfícies + accent quente)", "desc": "Adicionar a :root tons intermediários de superfície (--surface-1/2/3), accent quente --buy (CTA compra), --accent-soft. Manter --accent roxo #6d5cff como marca. Ref: market-research consenso.", "state": "backlog" },
+    { "id": "UXR-02", "area": "UX Redesign", "title": "Escala de sombras e radius padronizada", "desc": "Definir --shadow-1/2/3 (elevation 1-2dp como consenso de mercado) e --radius-sm/md/lg. Cards passam a usar radius 8px (hoje 14px) alinhado ao consenso 4-12px.", "state": "backlog" },
+    { "id": "UXR-03", "area": "UX Redesign", "title": "Fonte de display no hero e headings", "desc": "Adicionar fonte sans bold de display (self-hosted ou stack) para h1/h2; body mantém 16px system-ui. font-display:swap. Sem custom fonts externas que quebrem custo-zero/offline.", "state": "backlog" },
+    { "id": "UXR-04", "area": "UX Redesign", "title": "Sistema de ícones SVG inline coeso", "desc": "Substituir emojis (📚🛒🧾) por ícones SVG inline consistentes (carrinho, biblioteca, pedidos, busca, coração). Sprite ou símbolos reutilizáveis. Ref: 10/10 sites usam SVG coeso.", "state": "backlog" },
+    { "id": "UXR-05", "area": "UX Redesign", "title": "Gradiente sutil no hero", "desc": "Hero ganha gradiente sutil de fundo (roxo->quente translúcido, ref. Hotmart) sem comprometer contraste do texto. Variável --hero-gradient.", "state": "backlog" },
+    { "id": "UXR-06", "area": "UX Redesign", "title": "Variáveis de espaçamento (escala 4px)", "desc": "Consolidar escala de espaço --space-1..8 (múltiplos de 4px) e aplicar nos componentes principais. Whitespace generoso (consenso 9/10).", "state": "backlog" },
+
+    { "id": "UXR-07", "area": "UX Redesign", "title": "Badge de contador no carrinho", "desc": "Ícone de carrinho no header com badge numérico de itens (ref. Payhip). Atualiza ao add/remove. Oculto quando vazio.", "state": "backlog" },
+    { "id": "UXR-08", "area": "UX Redesign", "title": "Header com ícones SVG e total do carrinho", "desc": "Botões do header (carrinho/biblioteca/pedidos/conta) com ícone SVG + label. Carrinho mostra total R$ em tempo real (ref. Payhip).", "state": "backlog" },
+    { "id": "UXR-09", "area": "UX Redesign", "title": "Menu hamburguer no mobile", "desc": "Em <768px, ações do header colapsam em menu hamburguer. Busca full-width abaixo. Acessível (aria-expanded).", "state": "backlog" },
+    { "id": "UXR-10", "area": "UX Redesign", "title": "Indicador de conta/avatar logado", "desc": "Usuário logado: botão Conta vira avatar com iniciais (reusa _titleHue do SFX-05). Dropdown com Biblioteca/Pedidos/Sair.", "state": "backlog" },
+
+    { "id": "UXR-11", "area": "UX Redesign", "title": "Card de produto redesenhado", "desc": "Card: capa + título + autor + rating stars + preço + botão comprar visível. Ordem consenso: capa->título->preço->CTA. Radius 8px, sombra sutil.", "state": "backlog" },
+    { "id": "UXR-12", "area": "UX Redesign", "title": "Rating stars nos cards e detalhe", "desc": "Exibir média de estrelas (amarelo, ref. Hotmart) + contagem de reviews nos cards e no detalhe. Fallback 'sem avaliações'.", "state": "backlog" },
+    { "id": "UXR-13", "area": "UX Redesign", "title": "Badges de destaque/novo nos cards", "desc": "Badge 'Destaque' (product.featured) e 'Novo' (created_at < 30d) nos cards. Estilo pill, canto superior. Sem hardcode de datas.", "state": "backlog" },
+    { "id": "UXR-14", "area": "UX Redesign", "title": "Seção 'Destaques' em carrossel horizontal", "desc": "Home: carrossel horizontal de e-books featured (ref. Leanpub shelf). Scroll-snap CSS, sem libs. Setas prev/next acessíveis.", "state": "backlog" },
+    { "id": "UXR-15", "area": "UX Redesign", "title": "Estado de erro do catálogo com retry", "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.", "state": "backlog" },
+    { "id": "UXR-16", "area": "UX Redesign", "title": "Filtro por faixa de preço", "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.", "state": "backlog" },
+
+    { "id": "UXR-17", "area": "UX Redesign", "title": "Hero com CTA e prova social", "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.", "state": "backlog" },
+    { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "backlog" },
+    { "id": "UXR-19", "area": "UX Redesign", "title": "Faixa de confiança (pagamento + download)", "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.", "state": "backlog" },
+
+    { "id": "UXR-20", "area": "UX Redesign", "title": "Breadcrumb na página de detalhe", "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.", "state": "backlog" },
+    { "id": "UXR-21", "area": "UX Redesign", "title": "Selos de garantia no buy-box", "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).", "state": "backlog" },
+    { "id": "UXR-22", "area": "UX Redesign", "title": "Footer com redes sociais e colunas", "desc": "Footer multi-coluna (Sobre / Ajuda / Legal) + ícones de redes sociais SVG + selo segurança. Ref. 10/10 sites. Links via config.", "state": "backlog" },
+    { "id": "UXR-23", "area": "UX Redesign", "title": "Estados vazios desenhados", "desc": "Biblioteca/carrinho/favoritos vazios: ilustração SVG + mensagem + CTA ('Explorar catálogo'). Hoje é texto seco ou nada.", "state": "backlog" },
+    { "id": "UXR-24", "area": "UX Redesign", "title": "Loading global e skeleton em listas", "desc": "Skeleton (hoje só no catálogo) estendido a detalhe, biblioteca, pedidos. Indicador de loading global em navegação de rota.", "state": "backlog" },
+
+    { "id": "UXR-25", "area": "UX Redesign", "title": "Revisão cíclica épico UXR", "desc": "Parecer de competência (Lighthouse mobile >=90, responsividade, zero hardcode), auto-repair, incremento de backlog. Valida critérios de aceite do roadmap-uxr.md.", "state": "backlog" }
   ],
   "links": {
     "app": "https://competition-cat-stan-wheel.trycloudflare.com",
