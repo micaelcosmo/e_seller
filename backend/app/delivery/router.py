@@ -48,6 +48,8 @@ async def download(
     Levanta GrantNotFound (404), GrantExpired (410), DownloadLimitReached (429)
     ou FileMissing (404) via handler global de exceções de domínio.
     """
+    from app.accounts.services_aaa import UserActivityLogService
+
     grant = await validator.consume(token)
     content, file_name = await streamer.read_for_grant(grant)
 
@@ -55,6 +57,14 @@ async def download(
     client_ip = request.client.host if request.client is not None else ""
     ip_hash = hashlib.sha256(client_ip.encode("utf-8")).hexdigest()
     session.add(DownloadLog(download_grant_id=grant.id, ip_hash=ip_hash))
+
+    activity = UserActivityLogService(session)
+    await activity.log(
+        "download",
+        user_id=None,
+        grant_id=grant.id,
+        product_id=grant.product_id,
+    )
 
     headers = {"Content-Disposition": f'attachment; filename="{file_name}"'}
     return Response(

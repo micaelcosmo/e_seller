@@ -22,11 +22,11 @@ Agora expandimos segurança, UX e qualidade de dados.
 | Planning | 🟢 Concluído (aprovado, congelado) |
 | Unit specs | 🟢 ~100 units (MVP + visão completa) |
 | Trilhas vivas (api/ops/observability/security) | 🟢 criadas |
-| Testes | 🟢 **437 passando** (pytest async) + Ruff verde |
+| Testes | 🟢 **451 passando** (437 MVP + 14 AAA) + Ruff verde |
 | Código de produção (MVP) | 🟢 **Backend completo NO AR em Docker** |
-| Épico **DOC** (enrich) | 🟡 Em andamento — roadmap, planning, backlog |
-| Épico **AAA** (enrichment) | ⚪ Aguardando |
-| Épico **FEV** (Frontend Visual) | ⚪ Aguardando |
+| Épico **DOC** (enrich) | 🟢 Concluído — roadmap, planning, backlog (125 tasks) |
+| Épico **AAA** (enrichment) | 🟢 Concluído — blacklist, TOTP 2FA, API Keys, activity log |
+| Épico **FEV** (Frontend Visual) | 🟡 Em andamento |
 | Épico **DBE** (DB Enrichment) | ⚪ Aguardando |
 | Épico **BEE** (Backend Enrichment) | ⚪ Aguardando |
 

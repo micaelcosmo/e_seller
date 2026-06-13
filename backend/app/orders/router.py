@@ -75,15 +75,23 @@ async def create_order(
     data: OrderCreateIn,
     creator: OrderCreator = Depends(get_order_creator),
     user: User | None = Depends(get_optional_user),
+    session: AsyncSession = Depends(get_session),
 ) -> object:
     """Cria um pedido pendente; vincula à conta se o comprador estiver logado.
 
     Levanta ProductNotFound (404) ou CouponInvalid (422) via handler global.
+    Registra evento 'purchase' no UserActivityLog quando há usuário autenticado.
     """
+    from app.accounts.services_aaa import UserActivityLogService
+
     user_id = user.id if user is not None else None
-    return await creator.create(
+    order = await creator.create(
         data.product_slug, data.buyer_email, user_id, data.coupon_code
     )
+    if user_id is not None:
+        activity = UserActivityLogService(session)
+        await activity.log("purchase", user_id=user_id, order_ref=order.reference)
+    return order
 
 
 @router.post("/my/{reference}/cancel", response_model=OrderOut)

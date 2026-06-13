@@ -17,6 +17,8 @@ dependencies = [
     "python-multipart==0.0.32",
     "sqladmin==0.21.0",
     "itsdangerous==2.2.0",
+    "pyotp>=2.9",
+    "cryptography>=43",
 ]
 
 [project.optional-dependencies]

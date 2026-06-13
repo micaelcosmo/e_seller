@@ -8,6 +8,22 @@
 
 ## [Não lançado]
 
+### 2026-06-13 — Épico AAA concluído
+
+- **RevokedToken**, **UserActivityLog**, **ApiKey**: novos modelos + migration `d4e5f6g7h8i9`.
+- **User**: colunas `totp_secret_enc` (AES-256-GCM) e `totp_enabled` adicionadas.
+- **JwtService**: claim `jti` (UUID4) adicionado ao `issue()`; `_issue_partial()` para 2FA.
+- **TokenBlacklistService**: `revoke()` / `is_revoked()` via AsyncSession.
+- **get_current_user**: verifica blacklist pós-JWT + autenticação via `X-API-Key`.
+- **POST /logout** (204), **GET /me/activity**, **GET/POST/DELETE /me/api-keys**.
+- **POST /2fa/enroll, /2fa/confirm, /2fa/disable, /2fa/login** (fluxo completo TOTP).
+- **Activity log** integrado em: login, purchase (orders), download (grants).
+- **TOTPService**: AES-256-GCM para secrets, `pyotp` para OTP.
+- **Settings**: `totp_encryption_key`, `two_fa_required_roles`, pool config.
+- **14 testes novos** (blacklist 4, activity 3, api-keys 4, totp 3) — todos verdes.
+- **UML atualizado** com 3 novos modelos e 2 novas colunas em User.
+- **Revisão cíclica AAA** concluída: competência validada, 0 hardcodes, Ruff limpo.
+
 ### 2026-06-13 — Branch enrichment: análise, roadmap e planning
 
 - **Branch `enrichment`** criada de `main` (HEAD `96ca46f`).

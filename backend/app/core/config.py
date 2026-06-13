@@ -56,6 +56,16 @@ class Settings(BaseSettings):
     db_echo: bool = False
     # Limiar (ms) para logar queries lentas (0 = desativado).
     db_slow_query_ms: int = 0
+    # 2FA/TOTP: chave AES-256-GCM em base64 (32 bytes) para cifrar secrets TOTP.
+    # Gerar: python -c "import base64,secrets; print(base64.b64encode(secrets.token_bytes(32)).decode())"  # noqa: E501
+    totp_encryption_key: str = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    # Papéis que exigem 2FA ativo para fazer login completo.
+    two_fa_required_roles: list[str] = ["admin", "staff"]
+    # DB Connection pool (async SQLAlchemy).
+    db_pool_size: int = 10
+    db_pool_max_overflow: int = 20
+    db_pool_timeout: int = 30
+    db_pool_pre_ping: bool = True
 
 
 @lru_cache

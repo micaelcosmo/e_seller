@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import json
 import time
+import uuid
 
 
 class InvalidToken(Exception):
@@ -36,10 +37,15 @@ class JwtService:
         self.refresh_ttl_seconds = refresh_ttl_seconds
 
     def issue(self, subject: str, now: int | None = None) -> str:
-        """Emite um access token JWT para o `subject`, com `iat`/`exp`."""
+        """Emite um access token JWT para o `subject`, com `iat`/`exp`/`jti`."""
         issued = now if now is not None else int(time.time())
         header = {"alg": "HS256", "typ": "JWT"}
-        payload = {"sub": subject, "iat": issued, "exp": issued + self.ttl_seconds}
+        payload = {
+            "sub": subject,
+            "iat": issued,
+            "exp": issued + self.ttl_seconds,
+            "jti": str(uuid.uuid4()),
+        }
         signing_input = f"{self._encode(header)}.{self._encode(payload)}"
         signature = self._sign(signing_input)
         return f"{signing_input}.{signature}"
@@ -82,6 +88,20 @@ class JwtService:
         if not sub:
             raise InvalidToken("subject ausente")
         return sub
+
+    def _issue_partial(self, subject: str, now: int | None = None) -> str:
+        """Emite token parcial para 2FA (type='partial_2fa', TTL 5 min)."""
+        issued = now if now is not None else int(time.time())
+        header = {"alg": "HS256", "typ": "JWT"}
+        payload = {
+            "sub": subject,
+            "iat": issued,
+            "exp": issued + 300,
+            "type": "partial_2fa",
+        }
+        signing_input = f"{self._encode(header)}.{self._encode(payload)}"
+        signature = self._sign(signing_input)
+        return f"{signing_input}.{signature}"
 
     def issue_reset(self, email: str, now: int | None = None) -> str:
         """Emite token de redefinição de senha com TTL de 1 hora (`type='reset'`)."""

@@ -26,6 +26,8 @@ classDiagram
         +bool is_active
         +datetime created_at
         +datetime? deleted_at  %% LGPD soft-delete
+        +str? totp_secret_enc  %% AES-256-GCM encrypted
+        +bool totp_enabled
     }
 
     class Product {
@@ -226,6 +228,34 @@ classDiagram
         +bool is_active
     }
 
+    class RevokedToken {
+        +int id
+        +str jti [unique, idx]
+        +datetime expires_at
+        +datetime revoked_at
+    }
+
+    class UserActivityLog {
+        +int id
+        +int? user_id [FK, idx]
+        +str event_type [idx]
+        +dict? meta
+        +datetime created_at [idx]
+        %% COMPOUND IDX (user_id, created_at)
+    }
+
+    class ApiKey {
+        +int id
+        +int user_id [FK, idx]
+        +str name
+        +str key_hash [unique, idx]  %% SHA-256
+        +str prefix  %% primeiros 8 chars
+        +bool is_active
+        +datetime? last_used_at
+        +datetime? expires_at
+        +datetime created_at
+    }
+
     %% Associações M2M
     class product_author {
         +int product_id [PK, FK]
@@ -238,6 +268,9 @@ classDiagram
     }
 
     %% Relações
+    User "1" --> "*" RevokedToken
+    User "1" --> "*" UserActivityLog
+    User "1" --> "*" ApiKey
     User "1" --> "0..1" BillingProfile
     User "1" --> "0..1" Cart
     User "1" --> "0..1" Wishlist
@@ -272,5 +305,6 @@ classDiagram
 
 | Data       | Mudança |
 |------------|---------|
+| 2026-06-13 | Épico AAA: adicionados RevokedToken, UserActivityLog, ApiKey. User ganha totp_secret_enc e totp_enabled. Migration: d4e5f6g7h8i9. |
 | 2026-06-10 | Adicionados: Author, Publisher, Series, Tag, product_author/tag M2M, ProductFile, ProductImage, BillingProfile, Refund, Cart, Wishlist, NewsletterSubscriber, Coupon. Corrigido Decimal nos campos monetários. Adicionados constraints CHECK (price≥0, rating 1-5, quantity>0), updated_at em Order, deleted_at em User (LGPD). Índices FK explícitos em todos os modelos. |
 | 2026-06-07 | Versão inicial com User, Product, Category, Order, OrderItem, Payment, DownloadGrant, DownloadLog, Entitlement, Review. |

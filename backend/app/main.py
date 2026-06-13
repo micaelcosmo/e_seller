@@ -2,10 +2,14 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Importa os módulos de models para registrá-los na metadata antes do create_all.
 from app.accounts import models as _accounts_models  # noqa: F401
@@ -176,6 +180,31 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(billing_router)
     app.include_router(refunds_router)
     app.include_router(web_router)
+
+    _static_dir = Path(__file__).parent / "web" / "static"
+    app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
+
+    _tmpl_dir = str(Path(__file__).parent / "web" / "templates")
+    _templates = Jinja2Templates(directory=_tmpl_dir)
+
+    async def _handle_404(request: Request, exc: Exception) -> HTMLResponse:
+        """Renderiza 404 HTML para browser ou JSON para /api/."""
+        if request.url.path.startswith("/api/"):
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=404, content={"detail": "Não encontrado"})
+        html = _templates.get_template("custom_404.html").render({"request": request})
+        return HTMLResponse(html, status_code=404)
+
+    async def _handle_500(request: Request, exc: Exception) -> HTMLResponse:
+        """Renderiza 500 HTML para browser ou JSON para /api/."""
+        if request.url.path.startswith("/api/"):
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=500, content={"detail": "Erro interno"})
+        html = _templates.get_template("custom_500.html").render({"request": request})
+        return HTMLResponse(html, status_code=500)
+
+    app.add_exception_handler(404, _handle_404)  # type: ignore[arg-type]
+    app.add_exception_handler(500, _handle_500)  # type: ignore[arg-type]
 
     # Painel administrativo (SQLAdmin) protegido por login de staff/admin.
     admin_jwt = JwtService(
