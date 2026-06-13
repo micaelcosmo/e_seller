@@ -11,6 +11,7 @@ from app.catalog.schemas import (
     ProductOut,
     TaxonomyLabel,
 )
+from app.catalog.search import SearchService
 from app.catalog.services import ProductCatalog
 from app.catalog.taxonomy_service import TaxonomyService
 from app.core.db import get_session
@@ -23,11 +24,30 @@ def get_product_catalog(session: AsyncSession = Depends(get_session)) -> Product
     return ProductCatalog(session)
 
 
+def get_search_service(session: AsyncSession = Depends(get_session)) -> SearchService:
+    """Constrói o SearchService com a sessão injetada."""
+    return SearchService(session)
+
+
 def get_taxonomy_service(
     session: AsyncSession = Depends(get_session),
 ) -> TaxonomyService:
     """Constrói o serviço de taxonomia com a sessão injetada."""
     return TaxonomyService(session)
+
+
+@router.get("/search", response_model=list[ProductListItem])
+async def search_products(
+    q: str = Query(min_length=2, description="Texto de busca (mínimo 2 caracteres)"),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    search: SearchService = Depends(get_search_service),
+) -> list:
+    """Busca produtos publicados via FTS (PostgreSQL) ou ILIKE (SQLite/testes).
+
+    Retorna produtos correspondentes ao texto em título, autor ou descrição.
+    """
+    return await search.search(q, skip=skip, limit=limit)
 
 
 @router.get("/authors", response_model=list[TaxonomyLabel])

@@ -115,6 +115,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         active_settings.database_url,
         echo=active_settings.db_echo,
         slow_query_ms=active_settings.db_slow_query_ms,
+        pool_size=active_settings.db_pool_size,
+        pool_max_overflow=active_settings.db_pool_max_overflow,
+        pool_timeout=active_settings.db_pool_timeout,
+        pool_pre_ping=active_settings.db_pool_pre_ping,
     )
     app.state.settings = active_settings
     app.state.rate_store = _InMemoryStore()

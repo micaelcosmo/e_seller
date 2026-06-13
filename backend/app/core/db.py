@@ -77,10 +77,24 @@ class Database:
         database_url: str,
         echo: bool = False,
         slow_query_ms: int = 0,
+        pool_size: int = 10,
+        pool_max_overflow: int = 20,
+        pool_timeout: int = 30,
+        pool_pre_ping: bool = True,
     ) -> None:
-        """Cria o engine assíncrono, a fábrica de sessões e listeners de obs."""
+        """Cria o engine assíncrono, a fábrica de sessões e listeners de obs.
+
+        Os parâmetros de pool são ignorados para SQLite (NullPool implícito).
+        """
         self.slow_query_ms = slow_query_ms
-        self.engine = create_async_engine(database_url, future=True, echo=echo)
+        is_sqlite = database_url.startswith("sqlite")
+        engine_kwargs: dict = {"future": True, "echo": echo}
+        if not is_sqlite:
+            engine_kwargs["pool_size"] = pool_size
+            engine_kwargs["max_overflow"] = pool_max_overflow
+            engine_kwargs["pool_timeout"] = pool_timeout
+            engine_kwargs["pool_pre_ping"] = pool_pre_ping
+        self.engine = create_async_engine(database_url, **engine_kwargs)
         self.session_factory = async_sessionmaker(
             self.engine, expire_on_commit=False
         )
