@@ -107,4 +107,4 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 11:31 — 🟡 UXR Fase 1 concluída (UXR-01..06): design system (tokens de superfície, accent quente #ff7a3c, escala sombra/radius/espaço, fonte display, sprite SVG de ícones, gradiente do hero). Catálogo OK (fix review.status). Próximo: Fase 2 (header/navegação)._
+_Última atualização: 2026-06-13 11:33 — 🟡 UXR Fase 2 concluída (UXR-07..10): badge de contador no carrinho com total R$, ícones SVG no header, menu hamburguer mobile, avatar com iniciais. Fase 1 (design system) e fix do catálogo já no ar. Próximo: Fase 3 (catálogo e cards)._

@@ -608,8 +608,19 @@ function decodeJwtRole(token) {
   } catch (e) { return null; }
 }
 
+function initials(text) {
+  // Deriva até 2 iniciais maiúsculas de um nome ou e-mail (para avatar).
+  const clean = (text || "").split("@")[0].replace(/[._-]+/g, " ").trim();
+  const parts = clean.split(/\s+/);
+  let result = "";
+  for (const part of parts) {
+    if (part && result.length < 2) { result += part[0].toUpperCase(); }
+  }
+  return result || "?";
+}
+
 function refreshAuthButton() {
-  // Mostra "Entrar" ou o e-mail logado; exibe botões de Biblioteca/Carrinho/Conta quando logado.
+  // Mostra "Entrar" ou avatar do usuário logado; exibe botões de Biblioteca/Carrinho/Conta quando logado.
   // Exibe link Admin apenas se o JWT indicar role admin ou staff.
   const btn = document.getElementById("auth-btn");
   const lib = document.getElementById("lib-btn");
@@ -619,8 +630,17 @@ function refreshAuthButton() {
   const adminLink = document.getElementById("admin-link");
   const email = localStorage.getItem("email");
   const token = localStorage.getItem("token");
-  if (email) { btn.textContent = "Sair (" + email.split("@")[0] + ")"; btn.title = "Sair da conta"; }
-  else { btn.textContent = "Entrar"; btn.title = "Entrar ou criar conta"; }
+  if (email) {
+    // Avatar com iniciais (UXR-10); cor derivada do e-mail reusando _titleHue (SFX-05).
+    const hue = _titleHue(email);
+    btn.innerHTML = '<span class="avatar" style="background:hsl(' + hue +
+      ',42%,38%)">' + escapeHtml(initials(email)) + "</span>" +
+      '<span class="btn-label">Sair</span>';
+    btn.title = "Sair da conta (" + email + ")";
+  } else {
+    btn.innerHTML = '<span class="btn-label">Entrar</span>';
+    btn.title = "Entrar ou criar conta";
+  }
   lib.classList.toggle("hidden", !email);
   cart.classList.toggle("hidden", !email);
   account.classList.toggle("hidden", !email);
@@ -628,6 +648,33 @@ function refreshAuthButton() {
   if (adminLink) {
     const role = token ? decodeJwtRole(token) : null;
     adminLink.classList.toggle("hidden", role !== "admin" && role !== "staff");
+  }
+  refreshCartCount();
+}
+
+async function refreshCartCount() {
+  // Atualiza o badge de contagem e o total do carrinho no header (UXR-07/08).
+  // Silencioso: se não logado ou em erro, zera o badge.
+  const badge = document.getElementById("cart-count");
+  if (!badge) { return; }
+  if (!localStorage.getItem("token")) {
+    badge.classList.add("hidden"); badge.textContent = "0"; return;
+  }
+  try {
+    const items = await api("/cart");
+    const count = items.length;
+    badge.textContent = String(count);
+    badge.classList.toggle("hidden", count === 0);
+    let total = 0;
+    for (const item of items) { total += Number(item.price); }
+    const cartBtn = document.getElementById("cart-btn");
+    if (cartBtn) {
+      cartBtn.title = count
+        ? count + " item(ns) — " + money(total)
+        : "Seu carrinho";
+    }
+  } catch (e) {
+    badge.classList.add("hidden");
   }
 }
 
@@ -637,6 +684,7 @@ async function addToCart(slug) {
   try {
     await api("/cart/" + slug, { method: "POST" });
     toast("Adicionado ao carrinho!", "ok");
+    refreshCartCount();
   } catch (e) { toast(e.message, "err"); }
 }
 
@@ -670,6 +718,7 @@ async function renderCart() {
       b.addEventListener("click", async function () {
         await api("/cart/" + b.getAttribute("data-rm"), { method: "DELETE" });
         renderCart();
+        refreshCartCount();
       });
     }
     document.getElementById("cart-checkout").addEventListener("click", cartCheckout);
@@ -948,4 +997,23 @@ window.addEventListener("DOMContentLoaded", function () {
       errEl.textContent = e.message || "Erro ao inscrever. Tente novamente.";
     }
   });
+  setupMobileMenu();
 });
+
+function setupMobileMenu() {
+  // Menu hamburguer no mobile (UXR-09): alterna a barra de ações.
+  const toggle = document.getElementById("menu-toggle");
+  const actions = document.querySelector(".actions");
+  if (!toggle || !actions) { return; }
+  toggle.addEventListener("click", function () {
+    const open = actions.classList.toggle("actions-open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  // Fecha o menu ao escolher uma ação (navegação).
+  actions.addEventListener("click", function (ev) {
+    if (ev.target.closest("button, a")) {
+      actions.classList.remove("actions-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  });
+}

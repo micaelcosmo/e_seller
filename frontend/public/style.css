@@ -361,9 +361,35 @@ main { max-width: 1080px; margin: 0 auto; padding: 16px 20px 48px; }
 .order-status.err { background: #fde9ec; color: #d3455b; }
 .order-amount { font-weight: 800; font-size: 1rem; }
 
-/* Responsivo */
+/* Avatar do usuário logado (UXR-10) */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  color: #fff; font-size: .72rem; font-weight: 800; letter-spacing: .3px;
+}
+#auth-btn { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Responsivo — tablet */
+@media (max-width: 860px) {
+  .actions .btn-label { display: none; } /* só ícones em telas médias */
+  #auth-btn .btn-label { display: inline; }
+}
+
+/* Responsivo — mobile: menu hamburguer (UXR-09) */
+@media (max-width: 680px) {
+  .topbar { flex-wrap: wrap; gap: var(--space-3); }
+  .menu-toggle { display: inline-flex; order: 3; }
+  .search { order: 4; flex-basis: 100%; }
+  .actions {
+    order: 5; flex-basis: 100%; flex-direction: column; align-items: stretch;
+    gap: var(--space-1); display: none;
+  }
+  .actions.actions-open { display: flex; }
+  .actions .ghost { justify-content: flex-start; width: 100%; padding: 10px 14px; }
+  .actions .btn-label { display: inline; }
+  .cart-count { margin-left: auto; }
+}
+
 @media (max-width: 640px) {
   .detail { grid-template-columns: 1fr; }
-  .search { order: 3; flex-basis: 100%; }
-  .topbar { flex-wrap: wrap; }
 }
