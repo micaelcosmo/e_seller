@@ -1,0 +1,32 @@
+auditoria:
+  pontos_auditados: 79
+  observacao: >
+    Rodada 4 (final) do `/qa completo`, sobre o build com todos os ajustes (QAF-01..17 e 23, lista de
+    avaliações do painel com formatadores, respiro das capas, relacionados em 2 colunas no celular).
+    54/54 pontos de integração e 20/20 jornadas válidos, conferidos pelos `.json` e pelos prints; bases
+    de visitante, cliente e sem_compras sem problema. Erros de console iguais aos da rodada 3 (recusas
+    provocadas pelas próprias jornadas e os 401 dos painéis da D18).
+
+pontos:
+  - dominio: base-visual
+    nome: "Base visual - admin (monitor)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      Só os painéis HTML `06`/`07` (`/api/v1/admin/*/panel`, "Não autenticado" sem cabeçalho
+      `Authorization`) — decisão bloqueante D18, guardada para o dono. `01` a `05` do SQLAdmin certos.
+
+comentarios:
+  - {arquivo: backend/app/accounts/router_admin.py, linha: 159, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/catalog/router_admin.py, linha: 230, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 275, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 279, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/orders/models.py, linha: 40, veredito: aceitavel, porque: "agora descreve o presente ('um ou mais itens'); a menção a fase saiu"}
+  - {arquivo: backend/app/orders/router.py, linha: 234, veredito: aceitavel, porque: "descreve o comportamento atual do endpoint"}
+  - {arquivo: backend/app/orders/services.py, linha: 46, veredito: aceitavel, porque: "descreve o que o método faz hoje"}
+  - {arquivo: backend/app/orders/services.py, linha: 133, veredito: aceitavel, porque: "restrição presente do formato de data aceito"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 37, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 41, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 45, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 49, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: qa-harness/testes/api/teste_compra.py, linha: 239, veredito: aceitavel, porque: "docstring no presente do que o ponto faz"}
+

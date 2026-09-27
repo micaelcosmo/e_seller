@@ -1,0 +1,62 @@
+auditoria:
+  pontos_auditados: 78
+  observacao: >
+    Rodada 2 do `/qa completo`, depois dos ajustes do épico QAF e do tapa visual (VIS). Auditei os
+    53 pontos de integração pelos `.json`, as 20 jornadas pelos prints e pelo `evidencias.json`, e
+    as 4 bases visuais pelas métricas e pelos prints. Placar automático: 75 válidos e 3 falhas.
+    Uma delas era evidência inválida (teste com o corpo antigo da tela) — healing na execução
+    2026-09-27-0536 (integração, mesmo build): 53/53. As outras duas são produto: a lista de
+    avaliações do painel respondia 500 (erro da correção QAF-11: `column_filters` com atributo em
+    vez de filtro — o teste unitário só olhava atributos; corrigido com teste que renderiza a
+    página) e os painéis HTML de `/api/v1/admin/*/panel` (decisão bloqueante D18).
+
+pontos:
+  - dominio: acesso
+    nome: "Ponto 6 - Perfil fiscal enviado como a tela envia é salvo"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: >
+      O teste ainda enviava o corpo antigo da tela (`person_type` "PF"); a tela passou a enviar
+      `individual` (QAF-08). Evidência inválida — o ponto provava a tela de antes. Corrigido o teste
+      (plano e suíte com o corpo atual); no healing (2026-09-27-0536) a API responde 200 com o perfil.
+      A jornada "Comprador salva o perfil fiscal" confirma na tela ("Perfil salvo").
+
+  - dominio: administracao
+    nome: "Jornada - Administrador procura a avaliação pendente para moderar"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      Confirmado pelo print do passo 2: `/admin/review/list` mostra "Internal Server Error". Causa
+      no produto: `ReviewAdmin.column_filters = [Review.status]` — o SQLAdmin 0.21 exige objeto de
+      filtro (`AttributeError ... parameter_name`). Ajuste feito depois da rodada (StaticValuesFilter
+      + teste que renderiza a lista); prova visual fica para a rodada 3.
+
+  - dominio: base-visual
+    nome: "Base visual - admin (monitor)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      `01` painel, `02` produtos, `03` pedidos e `05` cupons agora abrem (login do SQLAdmin com CSRF e
+      `Host` com porta resolvidos). `04-avaliacoes` renderiza só "Internal Server Error" (mesma causa
+      da jornada de moderação). `06` e `07` (painéis HTML em `/api/v1/admin/*/panel`) seguem com
+      "Não autenticado": exigem cabeçalho `Authorization` — decisão bloqueante D18, não implementada.
+
+  - dominio: base-visual
+    nome: "Base visual - visitante (monitor)"
+    veredito: VALIDO
+    motivo: >
+      `05-privacidade` e `06-termos` agora entregam as páginas certas (nginx repassa ao backend, no
+      tema claro da loja); título da aba volta ao padrão em carrinho e 404.
+
+comentarios:
+  - {arquivo: backend/app/accounts/router_admin.py, linha: 159, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/catalog/router_admin.py, linha: 230, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 275, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 279, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/orders/models.py, linha: 40, veredito: violacao, categoria: narrativa, o_que: "docstring 'no MVP, 1 item' — já corrigida depois da rodada ('um ou mais itens')", destino: ".spec/planning/06-escopo-mvp.md"}
+  - {arquivo: backend/app/orders/router.py, linha: 234, veredito: aceitavel, porque: "descreve o comportamento atual do endpoint"}
+  - {arquivo: backend/app/orders/services.py, linha: 46, veredito: aceitavel, porque: "descreve o que o método faz hoje"}
+  - {arquivo: backend/app/orders/services.py, linha: 133, veredito: aceitavel, porque: "restrição presente do formato de data aceito"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 37, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 41, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 45, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 49, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: qa-harness/testes/api/teste_compra.py, linha: 239, veredito: aceitavel, porque: "docstring no presente do que o ponto faz"}

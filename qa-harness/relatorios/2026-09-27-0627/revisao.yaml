@@ -1,0 +1,16 @@
+auditoria:
+  pontos_auditados: 8
+  observacao: >
+    Reconferência de responsividade depois do ajuste do template do painel (tabela rola dentro do
+    card; filtros com 220px até 1440px). Loja sem rolagem horizontal em notebook e celular; a lista de
+    avaliações do painel deixou de passar da largura no notebook. Restam só os painéis HTML da D18.
+
+pontos:
+  - dominio: base-visual
+    nome: "Base visual - admin (notebook)"
+    veredito: FALHA DE PRODUTO
+    motivo: "Só `06`/`07` (`/api/v1/admin/*/panel` sem cabeçalho `Authorization`) — decisão bloqueante D18."
+  - dominio: base-visual
+    nome: "Base visual - admin (celular)"
+    veredito: FALHA DE PRODUTO
+    motivo: "Só `06`/`07` (D18); `01-painel` curto é desenho do SQLAdmin (menu no hambúrguer)."

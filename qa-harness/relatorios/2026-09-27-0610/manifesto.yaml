@@ -1,0 +1,2507 @@
+execucao: 2026-09-27-0610
+executado_em: '2026-09-27T06:16:53'
+modo: completo
+projeto: e_seller
+branch: enrichment
+commit: 67eadb2
+url_da_aplicacao: http://127.0.0.1:48273
+motor: 1.3.0
+viewports:
+- monitor
+placar:
+  VALIDO: 78
+  FALHA DE PRODUTO: 1
+  EVIDENCIA INVALIDA: 0
+  INCONCLUSIVO: 0
+lint_historias: []
+linhas_do_projeto: {}
+comentarios:
+  arquivo: qa-harness/relatorios/2026-09-27-0610/comentarios.json
+  regra: .spec/code/convencao-de-comentarios.md
+  total: 13
+  por_categoria:
+    codigo-comentado: 4
+    narrativa: 9
+impedimentos: []
+pontos:
+- nome: Ponto 1 - Cadastro cria conta de comprador
+  historia: História 1 - Visitante cria uma conta de comprador
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O cadastro responde 201 com o e-mail enviado e o papel `customer`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/01-cadastro.json
+- nome: Ponto 2 - E-mail já cadastrado é recusado
+  historia: História 1 - Visitante cria uma conta de comprador
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O segundo cadastro com o mesmo e-mail responde 409 "E-mail já cadastrado".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/02-cadastro-duplicado.json
+- nome: Ponto 3 - Login com senha correta devolve os tokens
+  historia: História 2 - Comprador entra e sai da conta
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O login responde 200 com `access_token` e `refresh_token` (mascarados na evidência).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/03-login-correto.json
+- nome: Ponto 4 - Senha errada é recusada
+  historia: História 2 - Comprador entra e sai da conta
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A senha errada responde 401 "Credenciais inválidas".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/04-login-senha-errada.json
+- nome: Ponto 5 - Token do logout deixa de valer
+  historia: História 2 - Comprador entra e sai da conta
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O `/me` responde 200 antes do logout e 401 com o mesmo token depois.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/05-me-antes-do-logout.json
+  - qa-harness/evidencias/api/acesso/06-logout.json
+  - qa-harness/evidencias/api/acesso/07-me-depois-do-logout.json
+- nome: Ponto 6 - Perfil fiscal enviado como a tela envia é salvo
+  historia: História 3 - Comprador mantém o perfil fiscal
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O perfil fiscal com o corpo da tela é salvo (200).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/08-perfil-fiscal-da-tela.json
+- nome: Ponto 7 - Perfil fiscal sem login é recusado
+  historia: História 3 - Comprador mantém o perfil fiscal
+  dominio: acesso
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Sem sessão o perfil fiscal responde 401.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/acesso/09-perfil-fiscal-sem-login.json
+- nome: Ponto 1 - Comprador não acessa a administração
+  historia: História 1 - Administrador entra no painel administrativo
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: '`cliente` recebe 403 na API de administração.'
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/01-admin-como-comprador.json
+- nome: Ponto 2 - Sem login a administração recusa
+  historia: História 1 - Administrador entra no painel administrativo
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: '`visitante` recebe 401 na API de administração.'
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/02-admin-sem-login.json
+- nome: Ponto 3 - Formulário de login do painel abre o painel
+  historia: História 1 - Administrador entra no painel administrativo
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Sem token o login é recusado (403); com o token que a página põe no formulário ele redireciona
+    para o painel `/admin/`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/03-painel-formulario-de-login.json
+  - qa-harness/evidencias/api/administracao/04-painel-login-sem-csrf.json
+  - qa-harness/evidencias/api/administracao/05-painel-enviar-login.json
+- nome: Ponto 4 - E-book novo nasce como rascunho fora da vitrine
+  historia: História 2 - Administrador cadastra e publica um e-book
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O e-book `qa-e-book-27061112` é criado (201) e não abre na vitrine enquanto rascunho.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/06-cadastrar-ebook.json
+  - qa-harness/evidencias/api/administracao/07-rascunho-na-vitrine.json
+- nome: Ponto 5 - Arquivo exe é recusado como e-book
+  historia: História 2 - Administrador cadastra e publica um e-book
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: 'O `.exe` é recusado: 422 "Formato não suportado: .exe. Use pdf, epub ou txt.".'
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/08-upload-exe.json
+- nome: Ponto 6 - Publicar põe o e-book na vitrine
+  historia: História 2 - Administrador cadastra e publica um e-book
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Depois de publicado, `qa-e-book-27061112` aparece no catálogo público.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/09-publicar-ebook.json
+  - qa-harness/evidencias/api/administracao/10-catalogo-depois-de-publicar.json
+- nome: Ponto 7 - Lista de pedidos traz status, valor e data
+  historia: História 3 - Administrador acompanha as vendas
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Cada pedido da lista traz status, valor e data.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/11-lista-de-pedidos.json
+- nome: Ponto 8 - Detalhe do pedido traz itens e status
+  historia: História 3 - Administrador acompanha as vendas
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O detalhe traz o pedido pago de 99.80 com os 2 itens.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/12-detalhe-do-pedido.json
+- nome: Ponto 9 - Relatório de vendas do período soma os pedidos pagos
+  historia: História 3 - Administrador acompanha as vendas
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O relatório do período conta 3 pedido(s) pago(s), receita 189.6.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/13-relatorio-de-vendas.json
+- nome: Ponto 10 - Avaliação pendente está na fila de moderação
+  historia: História 4 - Administrador modera as avaliações
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A fila de moderação contém a avaliação `qa-avaliacao-pendente`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/14-fila-de-moderacao.json
+- nome: Ponto 11 - Aprovar publica a avaliação na página do e-book
+  historia: História 4 - Administrador modera as avaliações
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O comentário não aparece antes e aparece na lista pública depois da aprovação.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/15-fila-antes-de-aprovar.json
+  - qa-harness/evidencias/api/administracao/16-avaliacoes-publicas-antes.json
+  - qa-harness/evidencias/api/administracao/17-aprovar-avaliacao.json
+  - qa-harness/evidencias/api/administracao/18-avaliacoes-publicas-depois.json
+- nome: Ponto 12 - Cupom criado passa a valer
+  historia: História 5 - Administrador gerencia cupons de desconto
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: 'O cupom `QA-27061112` é criado e vale: 39.90 → 31.92.'
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/19-criar-cupom.json
+  - qa-harness/evidencias/api/administracao/20-validar-cupom-criado.json
+- nome: Ponto 13 - Cupom desativado deixa de valer
+  historia: História 5 - Administrador gerencia cupons de desconto
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Desativado, o cupom é recusado na validação (422).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/21-desativar-cupom.json
+  - qa-harness/evidencias/api/administracao/22-validar-cupom-desativado.json
+- nome: Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra
+  historia: História 2 - Administrador cadastra e publica um e-book
+  dominio: administracao
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O e-book novo, com o .txt enviado pelo admin, é entregue como anexo a quem compra.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/administracao/23-upload-txt.json
+  - qa-harness/evidencias/api/administracao/24-pedido-do-ebook-novo.json
+  - qa-harness/evidencias/api/administracao/25-webhook-do-ebook-novo.json
+  - qa-harness/evidencias/api/administracao/26-pedido-do-ebook-novo-pago.json
+  - qa-harness/evidencias/api/administracao/27-download-do-ebook-novo.json
+- nome: Ponto 1 - Biblioteca do comprador traz os e-books pagos
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A biblioteca do cliente traz `python-na-pratica` e `arquitetura-limpa-web`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/01-biblioteca-cliente.json
+- nome: Ponto 2 - Biblioteca de quem não comprou está vazia
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A biblioteca de `sem_compras` é uma lista vazia.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/02-biblioteca-sem-compras.json
+- nome: Ponto 3 - Link válido entrega o arquivo sem expor o caminho
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O link válido entrega o arquivo como anexo, com o texto do e-book e sem caminho do servidor.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/03-download-valido.json
+- nome: Ponto 4 - Link expirado é negado
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O link responde 410 "Link de download expirado" sem arquivo.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/04-download-expirado.json
+- nome: Ponto 5 - Link que atingiu o limite é negado
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O link responde 429 "Limite de downloads atingido" sem arquivo.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/05-download-esgotado.json
+- nome: Ponto 6 - Quem não possui o e-book não gera link
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Quem não possui recebe 403; o dono recebe um link de download.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/06-link-de-quem-nao-possui.json
+  - qa-harness/evidencias/api/biblioteca/07-link-do-dono.json
+- nome: Ponto 7 - Favorito entra na lista de favoritos
+  historia: História 2 - Comprador guarda e-books nos favoritos
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Depois de favoritar (204), `fastapi-do-zero` está nos favoritos.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/08-favoritar.json
+  - qa-harness/evidencias/api/biblioteca/09-favoritos.json
+- nome: Ponto 8 - Comprador verificado envia avaliação
+  historia: História 3 - Comprador avalia um e-book que comprou
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A avaliação do dono é criada (201) com o comentário enviado.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/10-avaliacao-do-dono.json
+- nome: Ponto 9 - Quem não comprou não avalia
+  historia: História 3 - Comprador avalia um e-book que comprou
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Sem posse, a avaliação responde 403 "Só quem comprou pode avaliar".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/11-avaliacao-sem-posse.json
+- nome: Ponto 10 - Avaliação pendente não aparece para o público
+  historia: História 3 - Comprador avalia um e-book que comprou
+  dominio: biblioteca
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A lista pública de avaliações não contém o comentário pendente.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/biblioteca/12-avaliacoes-publicas.json
+- nome: Ponto 1 - Carrinho recebe o e-book e mostra o preço
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O carrinho lista `fastapi-do-zero` a 49.90 depois da adição (204).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/01-carrinho-adicionar.json
+  - qa-harness/evidencias/api/compra/02-carrinho-listar.json
+- nome: Ponto 2 - Finalizar o carrinho cria pedido pendente com link de pagamento
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O checkout cria o pedido pendente de 49.90 com referência própria.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/03-carrinho-finalizar.json
+- nome: Ponto 3 - Aprovar no simulador deixa o pedido pago com download
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O confirm redireciona para o pedido, que mostra "✓ Pago" e "Baixar".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/04-carrinho-simulador.json
+  - qa-harness/evidencias/api/compra/05-carrinho-aprovar.json
+  - qa-harness/evidencias/api/compra/06-carrinho-pedido-pago.json
+- nome: Ponto 4 - Páginas de pagamento recebem o visual da loja
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A folha de estilo do simulador e do pedido chega como `text/css`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/07-estilo-das-paginas-de-pagamento.json
+- nome: Ponto 5 - E-book pago entra na biblioteca do comprador
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A biblioteca do cliente passa a conter `fastapi-do-zero`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/08-biblioteca-depois-de-pago.json
+- nome: Ponto 6 - Convidado cria pedido pendente com link de pagamento
+  historia: História 2 - Visitante compra um e-book sem ter conta
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O pedido de convidado nasce pendente com `checkout_url` para o simulador.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/09-pedido-convidado.json
+- nome: Ponto 7 - Cupom válido calcula o total com desconto
+  historia: História 3 - Comprador usa um cupom de desconto
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: BEMVINDO10 sobre 39.90 é válido com total 35.91.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/10-cupom-valido.json
+- nome: Ponto 8 - Cupom inexistente é recusado
+  historia: História 3 - Comprador usa um cupom de desconto
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Cupom inexistente responde 422 "Cupom inválido".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/11-cupom-inexistente.json
+- nome: Ponto 9 - Pedido com cupom é gravado com o desconto
+  historia: História 3 - Comprador usa um cupom de desconto
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O pedido com BEMVINDO10 é gravado com `amount` 35.91.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/12-pedido-com-cupom.json
+- nome: Ponto 10 - Cupom digitado em minúsculas vale no pedido como vale na prévia
+  historia: História 3 - Comprador usa um cupom de desconto
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Digitado em minúsculas, o cupom vale no pedido como vale na prévia (35.91).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/13-cupom-previa-da-tela.json
+  - qa-harness/evidencias/api/compra/14-pedido-cupom-minusculo.json
+- nome: Ponto 11 - Pedido pendente em Meus pedidos traz como pagar
+  historia: História 4 - Comprador acompanha os pedidos e retoma um pagamento pendente
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O pedido pendente aparece com status, valor e `checkout_url` para pagar.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/15-pedido-pendente-da-conta.json
+  - qa-harness/evidencias/api/compra/16-meus-pedidos.json
+- nome: Ponto 12 - Webhook aprovado paga o pedido
+  historia: História 5 - Sistema confirma o pagamento pelo webhook
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O webhook é aplicado e a página do pedido mostra "✓ Pago" com "Baixar".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/17-webhook-aprovado.json
+  - qa-harness/evidencias/api/compra/18-webhook-pedido-pago.json
+- nome: Ponto 13 - Webhook repetido não repete efeito
+  historia: História 5 - Sistema confirma o pagamento pelo webhook
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A repetição volta ALREADY_PROCESSED e o pedido mantém 1 link(s) de download.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/19-webhook-repetido.json
+  - qa-harness/evidencias/api/compra/20-webhook-pedido-depois-da-repeticao.json
+- nome: Ponto 14 - Pedido pendente não libera download
+  historia: História 5 - Sistema confirma o pagamento pelo webhook
+  dominio: compra
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O pedido pendente mostra "Aguardando" e nenhum link de download.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/compra/21-pedido-pendente-convidado.json
+  - qa-harness/evidencias/api/compra/22-pedido-pendente-pagina.json
+- nome: Ponto 1 - Catálogo público lista os três publicados sem o rascunho
+  historia: História 1 - Visitante conhece a loja e o catálogo
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O catálogo lista exatamente os 3 publicados, cada um com título, autor e preço, e não mostra
+    o rascunho.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/01-catalogo-publico.json
+- nome: Ponto 2 - Rascunho não abre pelo endereço direto
+  historia: História 1 - Visitante conhece a loja e o catálogo
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: 'O endereço direto do rascunho responde 404: ele não existe para a vitrine.'
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/02-rascunho-direto.json
+- nome: Ponto 3 - Busca por FastAPI traz só o e-book certo
+  historia: História 2 - Visitante busca um e-book por título ou autor
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A busca por FastAPI traz `fastapi-do-zero` e não traz `python-na-pratica`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/03-busca-fastapi.json
+- nome: Ponto 4 - Filtro a partir de 50 reais traz só o e-book mais caro
+  historia: História 3 - Visitante filtra e ordena o catálogo por preço
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: Com `price_min=50` só vem `arquitetura-limpa-web` (R$ 59,90).
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/04-filtro-preco-50.json
+- nome: Ponto 5 - Ordenação por menor preço começa pelo mais barato
+  historia: História 3 - Visitante filtra e ordena o catálogo por preço
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: A lista começa por `python-na-pratica` (39,90) e os preços vêm em ordem crescente.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/05-ordenacao-menor-preco.json
+- nome: Ponto 6 - Detalhe traz título, autor, descrição e preço
+  historia: História 4 - Visitante vê o detalhe de um e-book
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O detalhe traz título, autor, descrição e preço 39.90 de `python-na-pratica`.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/06-detalhe-python.json
+- nome: Ponto 7 - Newsletter aceita a inscrição e a repetição sem duplicar
+  historia: História 5 - Visitante assina a newsletter
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: As duas inscrições do mesmo e-mail respondem sucesso com `status` subscribed.
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/07-newsletter-primeira.json
+  - qa-harness/evidencias/api/vitrine/08-newsletter-repetida.json
+- nome: Ponto 8 - Endereço da política de privacidade entrega a política
+  historia: História 6 - Visitante lê a política de privacidade e os termos
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O endereço `/privacidade` entrega a página com o título "Política de Privacidade".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/09-privacidade.json
+- nome: Ponto 9 - Endereço dos termos de uso entrega os termos
+  historia: História 6 - Visitante lê a política de privacidade e os termos
+  dominio: vitrine
+  suite: integracao
+  viewport: ''
+  veredito: VALIDO
+  detalhe: O endereço `/termos` entrega a página com o título "Termos de Uso".
+  ciclos_de_healing: 0
+  percurso: []
+  evidencias:
+  - qa-harness/evidencias/api/vitrine/10-termos.json
+- nome: Jornada - Visitante cria uma conta e já entra
+  historia: História 1 - Visitante cria uma conta de comprador
+  dominio: acesso
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 16/16 passos; 1 erro(s) de console, do início ao fim, com todas as conferências confirmadas
+    na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/01-abre-a-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Entrar
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/02-clica-em-entrar.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 3
+    marco: passo
+    rotulo: Escolhe Criar conta
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/03-escolhe-criar-conta.png
+    observado:
+      clicou_em: seletor=.tab[data-tab='register']
+      url_final: http://127.0.0.1:48273/
+  - ordem: 4
+    marco: passo
+    rotulo: Digita o nome
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/04-digita-o-nome.png
+    observado:
+      campo: '#reg-name'
+      valor: QA Jornada
+  - ordem: 5
+    marco: passo
+    rotulo: Digita o e-mail
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/05-digita-o-e-mail.png
+    observado:
+      campo: '[name="email"]'
+      valor: qa-novo-27061221@eseller-qa.test
+  - ordem: 6
+    marco: passo
+    rotulo: Digita a senha
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/06-digita-a-senha.png
+    observado:
+      campo: '[name="password"]'
+      valor: qa-senha-27061221
+  - ordem: 7
+    marco: passo
+    rotulo: Clica em Criar conta
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/07-clica-em-criar-conta.png
+    observado:
+      clicou_em: seletor=#auth-submit
+      url_final: http://127.0.0.1:48273/
+  - ordem: 8
+    marco: passo
+    rotulo: Vê as boas-vindas
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/08-ve-as-boas-vindas.png
+    observado:
+      conferiu_texto: Bem-vindo
+      dentro_de: body
+  - ordem: 9
+    marco: passo
+    rotulo: Vê a Biblioteca liberada no topo
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/09-ve-a-biblioteca-liberada-no-topo.png
+    observado:
+      conferiu_elemento: '#lib-btn'
+  - ordem: 10
+    marco: passo
+    rotulo: Sai da conta
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/10-sai-da-conta.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 11
+    marco: passo
+    rotulo: Abre de novo o Entrar
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/11-abre-de-novo-o-entrar.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 12
+    marco: passo
+    rotulo: Escolhe Criar conta de novo
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/12-escolhe-criar-conta-de-novo.png
+    observado:
+      clicou_em: seletor=.tab[data-tab='register']
+      url_final: http://127.0.0.1:48273/
+  - ordem: 13
+    marco: passo
+    rotulo: Digita o mesmo e-mail
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/13-digita-o-mesmo-e-mail.png
+    observado:
+      campo: '[name="email"]'
+      valor: qa-novo-27061221@eseller-qa.test
+  - ordem: 14
+    marco: passo
+    rotulo: Digita a senha
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/14-digita-a-senha.png
+    observado:
+      campo: '[name="password"]'
+      valor: qa-senha-27061221
+  - ordem: 15
+    marco: passo
+    rotulo: Tenta criar a conta repetida
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/15-tenta-criar-a-conta-repetida.png
+    observado:
+      clicou_em: seletor=#auth-submit
+      url_final: http://127.0.0.1:48273/
+  - ordem: 16
+    marco: FIM
+    rotulo: Vê a recusa do e-mail repetido
+    captura: qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/16-ve-a-recusa-do-e-mail-repetido.png
+    observado:
+      conferiu_texto: E-mail já cadastrado
+      dentro_de: '#auth-error'
+  evidencias:
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/01-abre-a-loja.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/02-clica-em-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/03-escolhe-criar-conta.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/04-digita-o-nome.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/05-digita-o-e-mail.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/06-digita-a-senha.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/07-clica-em-criar-conta.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/08-ve-as-boas-vindas.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/09-ve-a-biblioteca-liberada-no-topo.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/10-sai-da-conta.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/11-abre-de-novo-o-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/12-escolhe-criar-conta-de-novo.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/13-digita-o-mesmo-e-mail.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/14-digita-a-senha.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/15-tenta-criar-a-conta-repetida.png
+  - qa-harness/evidencias/jornadas/acesso/visitante-cria-conta/monitor/16-ve-a-recusa-do-e-mail-repetido.png
+  jornada: visitante-cria-conta
+  jornada_arquivo: .spec/test/jornadas/acesso.yaml
+  ator: visitante
+  passos_declarados: 16
+  passos_executados: 16
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 409 (Conflict)'
+  segundos: 36.0
+- nome: Jornada - Comprador erra a senha, entra e sai da conta
+  historia: História 2 - Comprador entra e sai da conta
+  dominio: acesso
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 19/19 passos; 1 erro(s) de console, do início ao fim, com todas as conferências confirmadas
+    na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/01-abre-a-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Entrar
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/02-clica-em-entrar.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 3
+    marco: passo
+    rotulo: Cria a conta que vai entrar e sair
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/03-cria-a-conta-que-vai-entrar-e-sair.png
+    observado:
+      clicou_em: seletor=.tab[data-tab='register']
+      url_final: http://127.0.0.1:48273/
+  - ordem: 4
+    marco: passo
+    rotulo: Digita o e-mail da conta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/04-digita-o-e-mail-da-conta.png
+    observado:
+      campo: '[name="email"]'
+      valor: qa-novo-login-27061221@eseller-qa.test
+  - ordem: 5
+    marco: passo
+    rotulo: Digita a senha da conta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/05-digita-a-senha-da-conta.png
+    observado:
+      campo: '[name="password"]'
+      valor: qa-senha-27061221
+  - ordem: 6
+    marco: passo
+    rotulo: Cria a conta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/06-cria-a-conta.png
+    observado:
+      clicou_em: seletor=#auth-submit
+      url_final: http://127.0.0.1:48273/
+  - ordem: 7
+    marco: passo
+    rotulo: Está dentro da conta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/07-esta-dentro-da-conta.png
+    observado:
+      conferiu_texto: Sair
+      dentro_de: '#auth-btn'
+  - ordem: 8
+    marco: passo
+    rotulo: Clica em Sair
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/08-clica-em-sair.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 9
+    marco: passo
+    rotulo: Vê o botão Entrar de volta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/09-ve-o-botao-entrar-de-volta.png
+    observado:
+      conferiu_texto: Entrar
+      dentro_de: '#auth-btn'
+  - ordem: 10
+    marco: passo
+    rotulo: Clica em Entrar
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/10-clica-em-entrar.png
+    observado:
+      clicou_em: seletor=#auth-btn
+      url_final: http://127.0.0.1:48273/
+  - ordem: 11
+    marco: passo
+    rotulo: Escolhe a aba Entrar
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/11-escolhe-a-aba-entrar.png
+    observado:
+      clicou_em: seletor=.tab[data-tab='login']
+      url_final: http://127.0.0.1:48273/
+  - ordem: 12
+    marco: passo
+    rotulo: Digita o e-mail
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/12-digita-o-e-mail.png
+    observado:
+      campo: '[name="email"]'
+      valor: qa-novo-login-27061221@eseller-qa.test
+  - ordem: 13
+    marco: passo
+    rotulo: Digita a senha errada
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/13-digita-a-senha-errada.png
+    observado:
+      campo: '[name="password"]'
+      valor: senha-errada-27061221
+  - ordem: 14
+    marco: passo
+    rotulo: Tenta entrar
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/14-tenta-entrar.png
+    observado:
+      clicou_em: seletor=#auth-submit
+      url_final: http://127.0.0.1:48273/
+  - ordem: 15
+    marco: passo
+    rotulo: Vê a recusa da senha errada
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/15-ve-a-recusa-da-senha-errada.png
+    observado:
+      conferiu_texto: Credenciais inválidas
+      dentro_de: '#auth-error'
+  - ordem: 16
+    marco: passo
+    rotulo: Digita a senha certa
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/16-digita-a-senha-certa.png
+    observado:
+      campo: '[name="password"]'
+      valor: qa-senha-27061221
+  - ordem: 17
+    marco: passo
+    rotulo: Entra
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/17-entra.png
+    observado:
+      clicou_em: seletor=#auth-submit
+      url_final: http://127.0.0.1:48273/
+  - ordem: 18
+    marco: passo
+    rotulo: Vê Pedidos liberado no topo
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/18-ve-pedidos-liberado-no-topo.png
+    observado:
+      conferiu_elemento: '#orders-btn'
+  - ordem: 19
+    marco: FIM
+    rotulo: Está dentro da conta de novo
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/19-esta-dentro-da-conta-de-novo.png
+    observado:
+      conferiu_texto: Sair
+      dentro_de: '#auth-btn'
+  evidencias:
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/01-abre-a-loja.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/02-clica-em-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/03-cria-a-conta-que-vai-entrar-e-sair.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/04-digita-o-e-mail-da-conta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/05-digita-a-senha-da-conta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/06-cria-a-conta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/07-esta-dentro-da-conta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/08-clica-em-sair.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/09-ve-o-botao-entrar-de-volta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/10-clica-em-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/11-escolhe-a-aba-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/12-digita-o-e-mail.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/13-digita-a-senha-errada.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/14-tenta-entrar.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/15-ve-a-recusa-da-senha-errada.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/16-digita-a-senha-certa.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/17-entra.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/18-ve-pedidos-liberado-no-topo.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-entra-e-sai/monitor/19-esta-dentro-da-conta-de-novo.png
+  jornada: comprador-entra-e-sai
+  jornada_arquivo: .spec/test/jornadas/acesso.yaml
+  ator: comprador
+  passos_declarados: 19
+  passos_executados: 19
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  segundos: 34.6
+- nome: Jornada - Comprador salva o perfil fiscal
+  historia: História 3 - Comprador mantém o perfil fiscal
+  dominio: acesso
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 10/10 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre Minha Conta
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/01-abre-minha-conta.png
+    observado:
+      rota_pedida: /#/conta
+      url_final: http://127.0.0.1:48273/#/conta
+  - ordem: 2
+    marco: passo
+    rotulo: Vê o formulário do perfil fiscal
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/02-ve-o-formulario-do-perfil-fiscal.png
+    observado:
+      conferiu_texto: Minha Conta
+      dentro_de: body
+  - ordem: 3
+    marco: passo
+    rotulo: Digita o nome completo
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/03-digita-o-nome-completo.png
+    observado:
+      campo: '[name="legal_name"]'
+      valor: QA Cliente
+  - ordem: 4
+    marco: passo
+    rotulo: Digita o CPF
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/04-digita-o-cpf.png
+    observado:
+      campo: '[name="document"]'
+      valor: 529.982.247-25
+  - ordem: 5
+    marco: passo
+    rotulo: Digita o endereço
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/05-digita-o-endereco.png
+    observado:
+      campo: '[name="address_line"]'
+      valor: Rua do Teste, 100
+  - ordem: 6
+    marco: passo
+    rotulo: Digita a cidade
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/06-digita-a-cidade.png
+    observado:
+      campo: '[name="city"]'
+      valor: São Paulo
+  - ordem: 7
+    marco: passo
+    rotulo: Digita a UF
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/07-digita-a-uf.png
+    observado:
+      campo: '[name="state"]'
+      valor: SP
+  - ordem: 8
+    marco: passo
+    rotulo: Digita o CEP
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/08-digita-o-cep.png
+    observado:
+      campo: '[name="postal_code"]'
+      valor: 01001-000
+  - ordem: 9
+    marco: passo
+    rotulo: Clica em Salvar perfil
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/09-clica-em-salvar-perfil.png
+    observado:
+      clicou_em: seletor=#account-form button[type=submit]
+      url_final: http://127.0.0.1:48273/#/conta
+  - ordem: 10
+    marco: FIM
+    rotulo: Vê a confirmação de perfil salvo
+    captura: qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/10-ve-a-confirmacao-de-perfil-salvo.png
+    observado:
+      conferiu_texto: Perfil salvo
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/01-abre-minha-conta.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/02-ve-o-formulario-do-perfil-fiscal.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/03-digita-o-nome-completo.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/04-digita-o-cpf.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/05-digita-o-endereco.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/06-digita-a-cidade.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/07-digita-a-uf.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/08-digita-o-cep.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/09-clica-em-salvar-perfil.png
+  - qa-harness/evidencias/jornadas/acesso/comprador-salva-perfil-fiscal/monitor/10-ve-a-confirmacao-de-perfil-salvo.png
+  jornada: comprador-salva-perfil-fiscal
+  jornada_arquivo: .spec/test/jornadas/acesso.yaml
+  ator: comprador
+  passos_declarados: 10
+  passos_executados: 10
+  erros_de_console: []
+  segundos: 11.5
+- nome: Jornada - Administrador entra no painel pelo formulário de login
+  historia: História 1 - Administrador entra no painel administrativo
+  dominio: administracao
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 3/3 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o painel administrativo
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/01-abre-o-painel-administrativo.png
+    observado:
+      rota_pedida: /admin/
+      url_final: http://127.0.0.1:48273/admin/
+  - ordem: 2
+    marco: passo
+    rotulo: Vê o cadastro de Produtos no painel
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/02-ve-o-cadastro-de-produtos-no-painel.png
+    observado:
+      conferiu_texto: Produtos
+      dentro_de: body
+  - ordem: 3
+    marco: FIM
+    rotulo: Vê o cadastro de Pedidos no painel
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/03-ve-o-cadastro-de-pedidos-no-painel.png
+    observado:
+      conferiu_texto: Pedidos
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/01-abre-o-painel-administrativo.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/02-ve-o-cadastro-de-produtos-no-painel.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-entra-no-painel/monitor/03-ve-o-cadastro-de-pedidos-no-painel.png
+  jornada: administrador-entra-no-painel
+  jornada_arquivo: .spec/test/jornadas/administracao.yaml
+  ator: administrador
+  passos_declarados: 3
+  passos_executados: 3
+  erros_de_console: []
+  segundos: 7.8
+- nome: Jornada - Administrador vê a lista de e-books no painel
+  historia: História 2 - Administrador cadastra e publica um e-book
+  dominio: administracao
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 2/2 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a lista de produtos
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-produtos/monitor/01-abre-a-lista-de-produtos.png
+    observado:
+      rota_pedida: /admin/product/list
+      url_final: http://127.0.0.1:48273/admin/product/list
+  - ordem: 2
+    marco: FIM
+    rotulo: Vê um e-book do catálogo na lista
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-produtos/monitor/02-ve-um-e-book-do-catalogo-na-lista.png
+    observado:
+      conferiu_texto: Arquitetura Limpa na Web
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-produtos/monitor/01-abre-a-lista-de-produtos.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-produtos/monitor/02-ve-um-e-book-do-catalogo-na-lista.png
+  jornada: administrador-ve-os-produtos
+  jornada_arquivo: .spec/test/jornadas/administracao.yaml
+  ator: administrador
+  passos_declarados: 2
+  passos_executados: 2
+  erros_de_console: []
+  segundos: 10.2
+- nome: Jornada - Administrador vê os pedidos com status, valor e data
+  historia: História 3 - Administrador acompanha as vendas
+  dominio: administracao
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 3/3 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a lista de pedidos
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/01-abre-a-lista-de-pedidos.png
+    observado:
+      rota_pedida: /admin/order/list
+      url_final: http://127.0.0.1:48273/admin/order/list
+  - ordem: 2
+    marco: passo
+    rotulo: Vê o pedido do cliente na lista
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/02-ve-o-pedido-do-cliente-na-lista.png
+    observado:
+      conferiu_texto: qa-cliente@eseller-qa.test
+      dentro_de: body
+  - ordem: 3
+    marco: FIM
+    rotulo: Vê o valor do pedido
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/03-ve-o-valor-do-pedido.png
+    observado:
+      conferiu_texto: '99.80'
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/01-abre-a-lista-de-pedidos.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/02-ve-o-pedido-do-cliente-na-lista.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-pedidos/monitor/03-ve-o-valor-do-pedido.png
+  jornada: administrador-ve-os-pedidos
+  jornada_arquivo: .spec/test/jornadas/administracao.yaml
+  ator: administrador
+  passos_declarados: 3
+  passos_executados: 3
+  erros_de_console: []
+  segundos: 8.1
+- nome: Jornada - Administrador procura a avaliação pendente para moderar
+  historia: História 4 - Administrador modera as avaliações
+  dominio: administracao
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 2/2 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a lista de avaliações
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-a-fila-de-moderacao/monitor/01-abre-a-lista-de-avaliacoes.png
+    observado:
+      rota_pedida: /admin/review/list
+      url_final: http://127.0.0.1:48273/admin/review/list
+  - ordem: 2
+    marco: FIM
+    rotulo: Vê o comentário da avaliação pendente
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-a-fila-de-moderacao/monitor/02-ve-o-comentario-da-avaliacao-pendente.png
+    observado:
+      conferiu_texto: qa-avaliacao-pendente
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-a-fila-de-moderacao/monitor/01-abre-a-lista-de-avaliacoes.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-a-fila-de-moderacao/monitor/02-ve-o-comentario-da-avaliacao-pendente.png
+  jornada: administrador-ve-a-fila-de-moderacao
+  jornada_arquivo: .spec/test/jornadas/administracao.yaml
+  ator: administrador
+  passos_declarados: 2
+  passos_executados: 2
+  erros_de_console: []
+  segundos: 6.1
+- nome: Jornada - Administrador vê os cupons de desconto
+  historia: História 5 - Administrador gerencia cupons de desconto
+  dominio: administracao
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 2/2 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a lista de cupons
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-cupons/monitor/01-abre-a-lista-de-cupons.png
+    observado:
+      rota_pedida: /admin/coupon/list
+      url_final: http://127.0.0.1:48273/admin/coupon/list
+  - ordem: 2
+    marco: FIM
+    rotulo: Vê o cupom BEMVINDO10
+    captura: qa-harness/evidencias/jornadas/administracao/administrador-ve-os-cupons/monitor/02-ve-o-cupom-bemvindo10.png
+    observado:
+      conferiu_texto: BEMVINDO10
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-cupons/monitor/01-abre-a-lista-de-cupons.png
+  - qa-harness/evidencias/jornadas/administracao/administrador-ve-os-cupons/monitor/02-ve-o-cupom-bemvindo10.png
+  jornada: administrador-ve-os-cupons
+  jornada_arquivo: .spec/test/jornadas/administracao.yaml
+  ator: administrador
+  passos_declarados: 2
+  passos_executados: 2
+  erros_de_console: []
+  segundos: 8.3
+- nome: Jornada - Comprador vê os e-books comprados e quem não comprou vê a biblioteca vazia
+  historia: História 1 - Comprador baixa um e-book da biblioteca
+  dominio: biblioteca
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 7/7 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja com a conta
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/01-abre-a-loja-com-a-conta.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Biblioteca
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/02-clica-em-biblioteca.png
+    observado:
+      clicou_em: seletor=#lib-btn
+      url_final: http://127.0.0.1:48273/#/biblioteca
+  - ordem: 3
+    marco: passo
+    rotulo: Vê a biblioteca
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/03-ve-a-biblioteca.png
+    observado:
+      conferiu_texto: Minha biblioteca
+      dentro_de: body
+  - ordem: 4
+    marco: passo
+    rotulo: Vê um e-book comprado
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/04-ve-um-e-book-comprado.png
+    observado:
+      conferiu_texto: Python na Prática
+      dentro_de: '#view'
+  - ordem: 5
+    marco: passo
+    rotulo: Vê o botão Baixar do e-book
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/05-ve-o-botao-baixar-do-e-book.png
+    observado:
+      conferiu_elemento: '#view button[data-slug=''python-na-pratica'']'
+  - ordem: 6
+    marco: passo
+    rotulo: Troca para a conta que não comprou nada
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/06-troca-para-a-conta-que-nao-comprou-nada.png
+    observado:
+      entrou_como: sem_compras
+      url_final: http://127.0.0.1:48273/#/biblioteca
+  - ordem: 7
+    marco: FIM
+    rotulo: Vê a biblioteca vazia
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/07-ve-a-biblioteca-vazia.png
+    observado:
+      conferiu_texto: Sua biblioteca está vazia
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/01-abre-a-loja-com-a-conta.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/02-clica-em-biblioteca.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/03-ve-a-biblioteca.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/04-ve-um-e-book-comprado.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/05-ve-o-botao-baixar-do-e-book.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/06-troca-para-a-conta-que-nao-comprou-nada.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-ve-a-biblioteca/monitor/07-ve-a-biblioteca-vazia.png
+  jornada: comprador-ve-a-biblioteca
+  jornada_arquivo: .spec/test/jornadas/biblioteca.yaml
+  ator: comprador
+  passos_declarados: 7
+  passos_executados: 7
+  erros_de_console: []
+  segundos: 12.1
+- nome: Jornada - Comprador marca um e-book com o coração e o vê nos favoritos
+  historia: História 2 - Comprador guarda e-books nos favoritos
+  dominio: biblioteca
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o catálogo com a conta
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/01-abre-o-catalogo-com-a-conta.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica no coração de FastAPI do Zero
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/02-clica-no-coracao-de-fastapi-do-zero.png
+    observado:
+      clicou_em: seletor=#product-grid a.card[href='#/produto/fastapi-do-zero'] .btn-wish
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 3
+    marco: passo
+    rotulo: Vê o coração marcado
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/03-ve-o-coracao-marcado.png
+    observado:
+      conferiu_elemento: '#product-grid a.card[href=''#/produto/fastapi-do-zero''] .btn-wish.wished'
+  - ordem: 4
+    marco: passo
+    rotulo: Clica em Favoritos
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/04-clica-em-favoritos.png
+    observado:
+      clicou_em: seletor=#wish-btn
+      url_final: http://127.0.0.1:48273/#/favoritos
+  - ordem: 5
+    marco: passo
+    rotulo: Vê a página de favoritos
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/05-ve-a-pagina-de-favoritos.png
+    observado:
+      conferiu_texto: Meus favoritos
+      dentro_de: body
+  - ordem: 6
+    marco: FIM
+    rotulo: Vê o e-book favoritado
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/06-ve-o-e-book-favoritado.png
+    observado:
+      conferiu_texto: FastAPI do Zero
+      dentro_de: '#view'
+  evidencias:
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/01-abre-o-catalogo-com-a-conta.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/02-clica-no-coracao-de-fastapi-do-zero.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/03-ve-o-coracao-marcado.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/04-clica-em-favoritos.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/05-ve-a-pagina-de-favoritos.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-favorita-um-ebook/monitor/06-ve-o-e-book-favoritado.png
+  jornada: comprador-favorita-um-ebook
+  jornada_arquivo: .spec/test/jornadas/biblioteca.yaml
+  ator: comprador
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console: []
+  segundos: 9.8
+- nome: Jornada - Comprador avalia um e-book que comprou e quem não comprou é recusado
+  historia: História 3 - Comprador avalia um e-book que comprou
+  dominio: biblioteca
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 10/10 passos; 1 erro(s) de console, do início ao fim, com todas as conferências confirmadas
+    na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre um e-book que comprou
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/01-abre-um-e-book-que-comprou.png
+    observado:
+      rota_pedida: /#/produto/python-na-pratica
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 2
+    marco: passo
+    rotulo: Escolhe a nota 4
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/02-escolhe-a-nota-4.png
+    observado:
+      campo: '#rev-rating'
+      escolheu: ★★★★
+  - ordem: 3
+    marco: passo
+    rotulo: Escreve o comentário
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/03-escreve-o-comentario.png
+    observado:
+      campo: '#rev-comment'
+      valor: qa-avaliacao-jornada-27061221
+  - ordem: 4
+    marco: passo
+    rotulo: Clica em Avaliar
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/04-clica-em-avaliar.png
+    observado:
+      clicou_em: seletor=#rev-send
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 5
+    marco: passo
+    rotulo: Vê a avaliação enviada
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/05-ve-a-avaliacao-enviada.png
+    observado:
+      conferiu_texto: Avaliação enviada
+      dentro_de: body
+  - ordem: 6
+    marco: passo
+    rotulo: A avaliação ainda não aparece (aguarda moderação)
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/06-a-avaliacao-ainda-nao-aparece-aguarda-moderacao.png
+    observado:
+      conferiu_ausencia: qa-avaliacao-jornada-27061221
+      dentro_de: '#reviews'
+  - ordem: 7
+    marco: passo
+    rotulo: Troca para quem não comprou
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/07-troca-para-quem-nao-comprou.png
+    observado:
+      entrou_como: sem_compras
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 8
+    marco: passo
+    rotulo: Escreve um comentário
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/08-escreve-um-comentario.png
+    observado:
+      campo: '#rev-comment'
+      valor: qa-avaliacao-sem-posse-27061221
+  - ordem: 9
+    marco: passo
+    rotulo: Tenta avaliar
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/09-tenta-avaliar.png
+    observado:
+      clicou_em: seletor=#rev-send
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 10
+    marco: FIM
+    rotulo: Vê a recusa
+    captura: qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/10-ve-a-recusa.png
+    observado:
+      conferiu_texto: Só quem comprou pode avaliar
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/01-abre-um-e-book-que-comprou.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/02-escolhe-a-nota-4.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/03-escreve-o-comentario.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/04-clica-em-avaliar.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/05-ve-a-avaliacao-enviada.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/06-a-avaliacao-ainda-nao-aparece-aguarda-moderacao.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/07-troca-para-quem-nao-comprou.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/08-escreve-um-comentario.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/09-tenta-avaliar.png
+  - qa-harness/evidencias/jornadas/biblioteca/comprador-avalia-um-ebook/monitor/10-ve-a-recusa.png
+  jornada: comprador-avalia-um-ebook
+  jornada_arquivo: .spec/test/jornadas/biblioteca.yaml
+  ator: comprador
+  passos_declarados: 10
+  passos_executados: 10
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 403 (Forbidden)'
+  segundos: 14.7
+- nome: Jornada - Comprador compra pelo carrinho, paga e recebe o e-book
+  historia: História 1 - Comprador compra pelo carrinho e paga
+  dominio: compra
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 14/14 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o e-book FastAPI do Zero
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/01-abre-o-e-book-fastapi-do-zero.png
+    observado:
+      rota_pedida: /#/produto/fastapi-do-zero
+      url_final: http://127.0.0.1:48273/#/produto/fastapi-do-zero
+  - ordem: 2
+    marco: passo
+    rotulo: Adiciona ao carrinho
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/02-adiciona-ao-carrinho.png
+    observado:
+      clicou_em: seletor=#cart-add-btn
+      url_final: http://127.0.0.1:48273/#/produto/fastapi-do-zero
+  - ordem: 3
+    marco: passo
+    rotulo: Abre o carrinho
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/03-abre-o-carrinho.png
+    observado:
+      clicou_em: seletor=#cart-btn
+      url_final: http://127.0.0.1:48273/#/carrinho
+  - ordem: 4
+    marco: passo
+    rotulo: Vê o e-book no carrinho
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/04-ve-o-e-book-no-carrinho.png
+    observado:
+      conferiu_texto: FastAPI do Zero
+      dentro_de: '#view'
+  - ordem: 5
+    marco: passo
+    rotulo: Vê o total do carrinho
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/05-ve-o-total-do-carrinho.png
+    observado:
+      conferiu_texto: 49,90
+      dentro_de: '#view'
+  - ordem: 6
+    marco: passo
+    rotulo: Clica em Finalizar compra
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/06-clica-em-finalizar-compra.png
+    observado:
+      clicou_em: seletor=#cart-checkout
+      url_final: http://127.0.0.1:48273/pay/simulate/b1c9b8a6-b811-4255-a42d-2ceecdf79d86
+  - ordem: 7
+    marco: passo
+    rotulo: Chega à página de pagamento
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/07-chega-a-pagina-de-pagamento.png
+    observado:
+      url_final: http://127.0.0.1:48273/pay/simulate/b1c9b8a6-b811-4255-a42d-2ceecdf79d86
+  - ordem: 8
+    marco: passo
+    rotulo: Vê o pagamento do pedido
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/08-ve-o-pagamento-do-pedido.png
+    observado:
+      conferiu_texto: Simulador de pagamento
+      dentro_de: body
+  - ordem: 9
+    marco: passo
+    rotulo: Aprova o pagamento
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/09-aprova-o-pagamento.png
+    observado:
+      clicou_em: texto=Aprovar pagamento
+      url_final: http://127.0.0.1:48273/pedido/b1c9b8a6-b811-4255-a42d-2ceecdf79d86
+  - ordem: 10
+    marco: passo
+    rotulo: Chega à página do pedido
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/10-chega-a-pagina-do-pedido.png
+    observado:
+      url_final: http://127.0.0.1:48273/pedido/b1c9b8a6-b811-4255-a42d-2ceecdf79d86
+  - ordem: 11
+    marco: passo
+    rotulo: Vê o pedido pago
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/11-ve-o-pedido-pago.png
+    observado:
+      conferiu_texto: Pago
+      dentro_de: body
+  - ordem: 12
+    marco: passo
+    rotulo: Vê o download disponível
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/12-ve-o-download-disponivel.png
+    observado:
+      conferiu_texto: Baixar
+      dentro_de: body
+  - ordem: 13
+    marco: passo
+    rotulo: Abre a biblioteca
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/13-abre-a-biblioteca.png
+    observado:
+      rota_pedida: /#/biblioteca
+      url_final: http://127.0.0.1:48273/#/biblioteca
+  - ordem: 14
+    marco: FIM
+    rotulo: Vê o e-book comprado na biblioteca
+    captura: qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/14-ve-o-e-book-comprado-na-biblioteca.png
+    observado:
+      conferiu_texto: FastAPI do Zero
+      dentro_de: '#view'
+  evidencias:
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/01-abre-o-e-book-fastapi-do-zero.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/02-adiciona-ao-carrinho.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/03-abre-o-carrinho.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/04-ve-o-e-book-no-carrinho.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/05-ve-o-total-do-carrinho.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/06-clica-em-finalizar-compra.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/07-chega-a-pagina-de-pagamento.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/08-ve-o-pagamento-do-pedido.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/09-aprova-o-pagamento.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/10-chega-a-pagina-do-pedido.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/11-ve-o-pedido-pago.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/12-ve-o-download-disponivel.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/13-abre-a-biblioteca.png
+  - qa-harness/evidencias/jornadas/compra/comprador-compra-pelo-carrinho/monitor/14-ve-o-e-book-comprado-na-biblioteca.png
+  jornada: comprador-compra-pelo-carrinho
+  jornada_arquivo: .spec/test/jornadas/compra.yaml
+  ator: comprador
+  passos_declarados: 14
+  passos_executados: 14
+  erros_de_console: []
+  segundos: 16.0
+- nome: Jornada - Visitante compra informando só o e-mail
+  historia: História 2 - Visitante compra um e-book sem ter conta
+  dominio: compra
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 7/7 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o e-book Python na Prática
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/01-abre-o-e-book-python-na-pratica.png
+    observado:
+      rota_pedida: /#/produto/python-na-pratica
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Comprar e baixar sem e-mail
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/02-clica-em-comprar-e-baixar-sem-e-mail.png
+    observado:
+      clicou_em: seletor=#buy-btn
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 3
+    marco: passo
+    rotulo: Vê o pedido de e-mail válido
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/03-ve-o-pedido-de-e-mail-valido.png
+    observado:
+      conferiu_texto: Informe um e-mail válido
+      dentro_de: body
+  - ordem: 4
+    marco: passo
+    rotulo: Digita o e-mail
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/04-digita-o-e-mail.png
+    observado:
+      campo: '#buy-email'
+      valor: qa-convidado-jornada-27061221@eseller-qa.test
+  - ordem: 5
+    marco: passo
+    rotulo: Clica em Comprar e baixar
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/05-clica-em-comprar-e-baixar.png
+    observado:
+      clicou_em: seletor=#buy-btn
+      url_final: http://127.0.0.1:48273/pay/simulate/7009e252-2810-45b8-85f3-de8f32b0c77c
+  - ordem: 6
+    marco: passo
+    rotulo: Chega à página de pagamento do pedido
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/06-chega-a-pagina-de-pagamento-do-pedido.png
+    observado:
+      url_final: http://127.0.0.1:48273/pay/simulate/7009e252-2810-45b8-85f3-de8f32b0c77c
+  - ordem: 7
+    marco: FIM
+    rotulo: Vê o pagamento do pedido
+    captura: qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/07-ve-o-pagamento-do-pedido.png
+    observado:
+      conferiu_texto: Simulador de pagamento
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/01-abre-o-e-book-python-na-pratica.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/02-clica-em-comprar-e-baixar-sem-e-mail.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/03-ve-o-pedido-de-e-mail-valido.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/04-digita-o-e-mail.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/05-clica-em-comprar-e-baixar.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/06-chega-a-pagina-de-pagamento-do-pedido.png
+  - qa-harness/evidencias/jornadas/compra/visitante-compra-sem-conta/monitor/07-ve-o-pagamento-do-pedido.png
+  jornada: visitante-compra-sem-conta
+  jornada_arquivo: .spec/test/jornadas/compra.yaml
+  ator: visitante
+  passos_declarados: 7
+  passos_executados: 7
+  erros_de_console: []
+  segundos: 9.3
+- nome: Jornada - Comprador confere um cupom de desconto
+  historia: História 3 - Comprador usa um cupom de desconto
+  dominio: compra
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos; 1 erro(s) de console, do início ao fim, com todas as conferências confirmadas na
+    tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o e-book Python na Prática
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/01-abre-o-e-book-python-na-pratica.png
+    observado:
+      rota_pedida: /#/produto/python-na-pratica
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 2
+    marco: passo
+    rotulo: Digita o cupom BEMVINDO10
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/02-digita-o-cupom-bemvindo10.png
+    observado:
+      campo: '#buy-coupon'
+      valor: BEMVINDO10
+  - ordem: 3
+    marco: passo
+    rotulo: Vê o cupom aceito
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/03-ve-o-cupom-aceito.png
+    observado:
+      conferiu_texto: Cupom válido
+      dentro_de: '#coupon-feedback'
+  - ordem: 4
+    marco: passo
+    rotulo: Vê o total com desconto
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/04-ve-o-total-com-desconto.png
+    observado:
+      conferiu_texto: 35,91
+      dentro_de: '#coupon-feedback'
+  - ordem: 5
+    marco: passo
+    rotulo: Digita um cupom inexistente
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/05-digita-um-cupom-inexistente.png
+    observado:
+      campo: '#buy-coupon'
+      valor: QA-NAO-EXISTE
+  - ordem: 6
+    marco: FIM
+    rotulo: Vê o cupom recusado
+    captura: qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/06-ve-o-cupom-recusado.png
+    observado:
+      conferiu_texto: Cupom inválido ou expirado
+      dentro_de: '#coupon-feedback'
+  evidencias:
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/01-abre-o-e-book-python-na-pratica.png
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/02-digita-o-cupom-bemvindo10.png
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/03-ve-o-cupom-aceito.png
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/04-ve-o-total-com-desconto.png
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/05-digita-um-cupom-inexistente.png
+  - qa-harness/evidencias/jornadas/compra/comprador-usa-cupom/monitor/06-ve-o-cupom-recusado.png
+  jornada: comprador-usa-cupom
+  jornada_arquivo: .spec/test/jornadas/compra.yaml
+  ator: comprador
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 422 (Unprocessable Content)'
+  segundos: 9.2
+- nome: Jornada - Comprador vê os pedidos e tenta pagar o pendente
+  historia: História 4 - Comprador acompanha os pedidos e retoma um pagamento pendente
+  dominio: compra
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja com a conta
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/01-abre-a-loja-com-a-conta.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Pedidos
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/02-clica-em-pedidos.png
+    observado:
+      clicou_em: seletor=#orders-btn
+      url_final: http://127.0.0.1:48273/#/pedidos
+  - ordem: 3
+    marco: passo
+    rotulo: Vê a lista de pedidos
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/03-ve-a-lista-de-pedidos.png
+    observado:
+      conferiu_texto: Meus pedidos
+      dentro_de: body
+  - ordem: 4
+    marco: passo
+    rotulo: Vê o pedido pendente
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/04-ve-o-pedido-pendente.png
+    observado:
+      conferiu_texto: Pendente
+      dentro_de: .orders-list
+  - ordem: 5
+    marco: passo
+    rotulo: Vê o valor do pedido
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/05-ve-o-valor-do-pedido.png
+    observado:
+      conferiu_texto: 59,90
+      dentro_de: .orders-list
+  - ordem: 6
+    marco: FIM
+    rotulo: Vê como pagar o pedido pendente
+    captura: qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/06-ve-como-pagar-o-pedido-pendente.png
+    observado:
+      conferiu_texto: Pagar
+      dentro_de: .orders-list
+  evidencias:
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/01-abre-a-loja-com-a-conta.png
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/02-clica-em-pedidos.png
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/03-ve-a-lista-de-pedidos.png
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/04-ve-o-pedido-pendente.png
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/05-ve-o-valor-do-pedido.png
+  - qa-harness/evidencias/jornadas/compra/comprador-retoma-pedido-pendente/monitor/06-ve-como-pagar-o-pedido-pendente.png
+  jornada: comprador-retoma-pedido-pendente
+  jornada_arquivo: .spec/test/jornadas/compra.yaml
+  ator: comprador
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console: []
+  segundos: 9.3
+- nome: Jornada - Visitante conhece a loja e vê o catálogo
+  historia: História 1 - Visitante conhece a loja e o catálogo
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a página inicial da loja
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/01-abre-a-pagina-inicial-da-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 2
+    marco: passo
+    rotulo: Vê a proposta da loja
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/02-ve-a-proposta-da-loja.png
+    observado:
+      conferiu_texto: E-books, na hora.
+      dentro_de: body
+  - ordem: 3
+    marco: passo
+    rotulo: Vê a prova social com o número de e-books
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/03-ve-a-prova-social-com-o-numero-de-e-books.png
+    observado:
+      conferiu_texto: e-books disponíveis
+      dentro_de: '#hero-proof'
+  - ordem: 4
+    marco: passo
+    rotulo: Clica em Ver catálogo
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/04-clica-em-ver-catalogo.png
+    observado:
+      clicou_em: seletor=#hero-cta
+      url_final: http://127.0.0.1:48273/
+  - ordem: 5
+    marco: passo
+    rotulo: Vê os e-books publicados no catálogo
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/05-ve-os-e-books-publicados-no-catalogo.png
+    observado:
+      conferiu_texto: Arquitetura Limpa na Web
+      dentro_de: '#product-grid'
+  - ordem: 6
+    marco: FIM
+    rotulo: Não vê o e-book em rascunho
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/06-nao-ve-o-e-book-em-rascunho.png
+    observado:
+      conferiu_ausencia: Rascunho
+      dentro_de: '#view'
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/01-abre-a-pagina-inicial-da-loja.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/02-ve-a-proposta-da-loja.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/03-ve-a-prova-social-com-o-numero-de-e-books.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/04-clica-em-ver-catalogo.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/05-ve-os-e-books-publicados-no-catalogo.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-conhece-a-loja/monitor/06-nao-ve-o-e-book-em-rascunho.png
+  jornada: visitante-conhece-a-loja
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console: []
+  segundos: 11.5
+- nome: Jornada - Visitante busca um e-book pelo título
+  historia: História 2 - Visitante busca um e-book por título ou autor
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 5/5 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o catálogo
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/01-abre-o-catalogo.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Digita FastAPI na busca
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/02-digita-fastapi-na-busca.png
+    observado:
+      campo: '#search-input'
+      valor: FastAPI
+  - ordem: 3
+    marco: passo
+    rotulo: Tecla Enter para buscar
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/03-tecla-enter-para-buscar.png
+    observado:
+      teclou: Enter
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 4
+    marco: passo
+    rotulo: Vê o e-book procurado no resultado
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/04-ve-o-e-book-procurado-no-resultado.png
+    observado:
+      conferiu_texto: FastAPI do Zero
+      dentro_de: '#product-grid'
+  - ordem: 5
+    marco: FIM
+    rotulo: Não vê e-book que não bate com a busca
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/05-nao-ve-e-book-que-nao-bate-com-a-busca.png
+    observado:
+      conferiu_ausencia: Python na Prática
+      dentro_de: '#product-grid'
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/01-abre-o-catalogo.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/02-digita-fastapi-na-busca.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/03-tecla-enter-para-buscar.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/04-ve-o-e-book-procurado-no-resultado.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-busca-por-titulo/monitor/05-nao-ve-e-book-que-nao-bate-com-a-busca.png
+  jornada: visitante-busca-por-titulo
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 5
+  passos_executados: 5
+  erros_de_console: []
+  segundos: 7.6
+- nome: Jornada - Visitante ordena e filtra o catálogo por preço
+  historia: História 3 - Visitante filtra e ordena o catálogo por preço
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o catálogo
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/01-abre-o-catalogo.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Ordena por menor preço
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/02-ordena-por-menor-preco.png
+    observado:
+      campo: '#sort-select'
+      escolheu: Menor preço
+  - ordem: 3
+    marco: passo
+    rotulo: Vê o catálogo ordenado
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/03-ve-o-catalogo-ordenado.png
+    observado:
+      conferiu_texto: Python na Prática
+      dentro_de: '#product-grid'
+  - ordem: 4
+    marco: passo
+    rotulo: Escolhe a faixa de preço R$ 50+
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/04-escolhe-a-faixa-de-preco-r-50.png
+    observado:
+      clicou_em: texto=R$ 50+
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 5
+    marco: passo
+    rotulo: Vê o e-book da faixa escolhida
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/05-ve-o-e-book-da-faixa-escolhida.png
+    observado:
+      conferiu_texto: Arquitetura Limpa na Web
+      dentro_de: '#product-grid'
+  - ordem: 6
+    marco: FIM
+    rotulo: Não vê e-book fora da faixa
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/06-nao-ve-e-book-fora-da-faixa.png
+    observado:
+      conferiu_ausencia: Python na Prática
+      dentro_de: '#product-grid'
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/01-abre-o-catalogo.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/02-ordena-por-menor-preco.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/03-ve-o-catalogo-ordenado.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/04-escolhe-a-faixa-de-preco-r-50.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/05-ve-o-e-book-da-faixa-escolhida.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-filtra-por-preco/monitor/06-nao-ve-e-book-fora-da-faixa.png
+  jornada: visitante-filtra-por-preco
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console: []
+  segundos: 7.8
+- nome: Jornada - Visitante abre a página de um e-book
+  historia: História 4 - Visitante vê o detalhe de um e-book
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 9/9 passos; 1 erro(s) de console, do início ao fim, com todas as conferências confirmadas na
+    tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre o catálogo
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/01-abre-o-catalogo.png
+    observado:
+      rota_pedida: /#/
+      url_final: http://127.0.0.1:48273/#/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica no cartão de Python na Prática
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/02-clica-no-cartao-de-python-na-pratica.png
+    observado:
+      clicou_em: seletor=#product-grid a.card[href='#/produto/python-na-pratica']
+      url_final: http://127.0.0.1:48273/#/produto/python-na-pratica
+  - ordem: 3
+    marco: passo
+    rotulo: Vê o título do e-book
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/03-ve-o-titulo-do-e-book.png
+    observado:
+      conferiu_texto: Python na Prática
+      dentro_de: .detail
+  - ordem: 4
+    marco: passo
+    rotulo: Vê a descrição
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/04-ve-a-descricao.png
+    observado:
+      conferiu_texto: Um guia direto ao ponto
+      dentro_de: .detail
+  - ordem: 5
+    marco: passo
+    rotulo: Vê o preço
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/05-ve-o-preco.png
+    observado:
+      conferiu_texto: 39,90
+      dentro_de: .detail
+  - ordem: 6
+    marco: passo
+    rotulo: Vê o caminho de volta ao início
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/06-ve-o-caminho-de-volta-ao-inicio.png
+    observado:
+      conferiu_texto: Início
+      dentro_de: .breadcrumb
+  - ordem: 7
+    marco: passo
+    rotulo: Vê a caixa de compra
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/07-ve-a-caixa-de-compra.png
+    observado:
+      conferiu_texto: Comprar agora
+      dentro_de: .buy-box
+  - ordem: 8
+    marco: passo
+    rotulo: Abre o endereço de um e-book que não existe
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/08-abre-o-endereco-de-um-e-book-que-nao-existe.png
+    observado:
+      rota_pedida: /#/produto/qa-nao-existe
+      url_final: http://127.0.0.1:48273/#/produto/qa-nao-existe
+  - ordem: 9
+    marco: FIM
+    rotulo: Vê o aviso de e-book não encontrado
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/09-ve-o-aviso-de-e-book-nao-encontrado.png
+    observado:
+      conferiu_texto: Produto não encontrado
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/01-abre-o-catalogo.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/02-clica-no-cartao-de-python-na-pratica.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/03-ve-o-titulo-do-e-book.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/04-ve-a-descricao.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/05-ve-o-preco.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/06-ve-o-caminho-de-volta-ao-inicio.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/07-ve-a-caixa-de-compra.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/08-abre-o-endereco-de-um-e-book-que-nao-existe.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-ve-o-detalhe/monitor/09-ve-o-aviso-de-e-book-nao-encontrado.png
+  jornada: visitante-ve-o-detalhe
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 9
+  passos_executados: 9
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 404 (Not Found)'
+  segundos: 10.3
+- nome: Jornada - Visitante assina a newsletter pelo rodapé
+  historia: História 5 - Visitante assina a newsletter
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 4/4 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/01-abre-a-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 2
+    marco: passo
+    rotulo: Digita o e-mail no rodapé
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/02-digita-o-e-mail-no-rodape.png
+    observado:
+      campo: '#news-email'
+      valor: qa-news-jornada-27061221@eseller-qa.test
+  - ordem: 3
+    marco: passo
+    rotulo: Clica em Assinar
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/03-clica-em-assinar.png
+    observado:
+      clicou_em: seletor=#news-form button[type=submit]
+      url_final: http://127.0.0.1:48273/
+  - ordem: 4
+    marco: FIM
+    rotulo: Vê a confirmação da inscrição
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/04-ve-a-confirmacao-da-inscricao.png
+    observado:
+      conferiu_texto: Inscrição feita
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/01-abre-a-loja.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/02-digita-o-e-mail-no-rodape.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/03-clica-em-assinar.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-assina-a-newsletter/monitor/04-ve-a-confirmacao-da-inscricao.png
+  jornada: visitante-assina-a-newsletter
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 4
+  passos_executados: 4
+  erros_de_console: []
+  segundos: 7.4
+- nome: Jornada - Visitante abre a política de privacidade e os termos pelo rodapé
+  historia: História 6 - Visitante lê a política de privacidade e os termos
+  dominio: vitrine
+  suite: jornada
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 6/6 passos, do início ao fim, com todas as conferências confirmadas na tela.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: INICIO
+    rotulo: Abre a loja
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/01-abre-a-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 2
+    marco: passo
+    rotulo: Clica em Privacidade no rodapé
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/02-clica-em-privacidade-no-rodape.png
+    observado:
+      clicou_em: seletor=footer a[href='/privacidade']
+      url_final: http://127.0.0.1:48273/privacidade
+  - ordem: 3
+    marco: passo
+    rotulo: Vê a política de privacidade
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/03-ve-a-politica-de-privacidade.png
+    observado:
+      conferiu_texto: Política de Privacidade
+      dentro_de: body
+  - ordem: 4
+    marco: passo
+    rotulo: Volta para a loja
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/04-volta-para-a-loja.png
+    observado:
+      rota_pedida: /
+      url_final: http://127.0.0.1:48273/
+  - ordem: 5
+    marco: passo
+    rotulo: Clica em Termos de uso no rodapé
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/05-clica-em-termos-de-uso-no-rodape.png
+    observado:
+      clicou_em: seletor=footer a[href='/termos']
+      url_final: http://127.0.0.1:48273/termos
+  - ordem: 6
+    marco: FIM
+    rotulo: Vê os termos de uso
+    captura: qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/06-ve-os-termos-de-uso.png
+    observado:
+      conferiu_texto: Termos de Uso
+      dentro_de: body
+  evidencias:
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/01-abre-a-loja.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/02-clica-em-privacidade-no-rodape.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/03-ve-a-politica-de-privacidade.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/04-volta-para-a-loja.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/05-clica-em-termos-de-uso-no-rodape.png
+  - qa-harness/evidencias/jornadas/vitrine/visitante-le-privacidade-e-termos/monitor/06-ve-os-termos-de-uso.png
+  jornada: visitante-le-privacidade-e-termos
+  jornada_arquivo: .spec/test/jornadas/vitrine.yaml
+  ator: visitante
+  passos_declarados: 6
+  passos_executados: 6
+  erros_de_console: []
+  segundos: 11.8
+- nome: Base visual - visitante (monitor)
+  historia: Base visual - visitante
+  dominio: base-visual
+  suite: base
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 7 tela(s) em monitor. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home — /
+    captura: qa-harness/evidencias/_base/visitante/monitor/01-home.png
+    observado:
+      url: http://127.0.0.1:48273/
+      texto_renderizado: 1272
+  - ordem: 2
+    marco: tela
+    rotulo: 02-detalhe-do-ebook — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/visitante/monitor/02-detalhe-do-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 853
+  - ordem: 3
+    marco: tela
+    rotulo: 03-carrinho-sem-conta — /#/carrinho
+    captura: qa-harness/evidencias/_base/visitante/monitor/03-carrinho-sem-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 328
+  - ordem: 4
+    marco: tela
+    rotulo: 04-pagina-inexistente — /#/qa-rota-inexistente
+    captura: qa-harness/evidencias/_base/visitante/monitor/04-pagina-inexistente.png
+    observado:
+      url: http://127.0.0.1:48273/#/qa-rota-inexistente
+      texto_renderizado: 332
+  - ordem: 5
+    marco: tela
+    rotulo: 05-privacidade — /privacidade
+    captura: qa-harness/evidencias/_base/visitante/monitor/05-privacidade.png
+    observado:
+      url: http://127.0.0.1:48273/privacidade
+      texto_renderizado: 2253
+  - ordem: 6
+    marco: tela
+    rotulo: 06-termos — /termos
+    captura: qa-harness/evidencias/_base/visitante/monitor/06-termos.png
+    observado:
+      url: http://127.0.0.1:48273/termos
+      texto_renderizado: 2248
+  - ordem: 7
+    marco: tela
+    rotulo: 07-login-do-painel — /admin/login
+    captura: qa-harness/evidencias/_base/visitante/monitor/07-login-do-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/login
+      texto_renderizado: 49
+  evidencias:
+  - qa-harness/evidencias/_base/visitante/monitor/01-home.png
+  - qa-harness/evidencias/_base/visitante/monitor/02-detalhe-do-ebook.png
+  - qa-harness/evidencias/_base/visitante/monitor/03-carrinho-sem-conta.png
+  - qa-harness/evidencias/_base/visitante/monitor/04-pagina-inexistente.png
+  - qa-harness/evidencias/_base/visitante/monitor/05-privacidade.png
+  - qa-harness/evidencias/_base/visitante/monitor/06-termos.png
+  - qa-harness/evidencias/_base/visitante/monitor/07-login-do-painel.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - cliente (monitor)
+  historia: Base visual - cliente
+  dominio: base-visual
+  suite: base
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 7 tela(s) em monitor. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home-com-conta — /#/
+    captura: qa-harness/evidencias/_base/cliente/monitor/01-home-com-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/
+      texto_renderizado: 1308
+  - ordem: 2
+    marco: tela
+    rotulo: 02-biblioteca — /#/biblioteca
+    captura: qa-harness/evidencias/_base/cliente/monitor/02-biblioteca.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 533
+  - ordem: 3
+    marco: tela
+    rotulo: 03-favoritos — /#/favoritos
+    captura: qa-harness/evidencias/_base/cliente/monitor/03-favoritos.png
+    observado:
+      url: http://127.0.0.1:48273/#/favoritos
+      texto_renderizado: 400
+  - ordem: 4
+    marco: tela
+    rotulo: 04-carrinho — /#/carrinho
+    captura: qa-harness/evidencias/_base/cliente/monitor/04-carrinho.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 377
+  - ordem: 5
+    marco: tela
+    rotulo: 05-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/cliente/monitor/05-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 398
+  - ordem: 6
+    marco: tela
+    rotulo: 06-conta — /#/conta
+    captura: qa-harness/evidencias/_base/cliente/monitor/06-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/conta
+      texto_renderizado: 387
+  - ordem: 7
+    marco: tela
+    rotulo: 07-detalhe-de-ebook-comprado — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/cliente/monitor/07-detalhe-de-ebook-comprado.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 938
+  evidencias:
+  - qa-harness/evidencias/_base/cliente/monitor/01-home-com-conta.png
+  - qa-harness/evidencias/_base/cliente/monitor/02-biblioteca.png
+  - qa-harness/evidencias/_base/cliente/monitor/03-favoritos.png
+  - qa-harness/evidencias/_base/cliente/monitor/04-carrinho.png
+  - qa-harness/evidencias/_base/cliente/monitor/05-pedidos.png
+  - qa-harness/evidencias/_base/cliente/monitor/06-conta.png
+  - qa-harness/evidencias/_base/cliente/monitor/07-detalhe-de-ebook-comprado.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - sem_compras (monitor)
+  historia: Base visual - sem_compras
+  dominio: base-visual
+  suite: base
+  viewport: monitor
+  veredito: VALIDO
+  detalhe: 2 tela(s) em monitor. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-biblioteca-vazia — /#/biblioteca
+    captura: qa-harness/evidencias/_base/sem_compras/monitor/01-biblioteca-vazia.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 391
+  - ordem: 2
+    marco: tela
+    rotulo: 02-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/sem_compras/monitor/02-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 418
+  evidencias:
+  - qa-harness/evidencias/_base/sem_compras/monitor/01-biblioteca-vazia.png
+  - qa-harness/evidencias/_base/sem_compras/monitor/02-pedidos.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - admin (monitor)
+  historia: Base visual - admin
+  dominio: base-visual
+  suite: base
+  viewport: monitor
+  veredito: FALHA DE PRODUTO
+  detalhe: '7 tela(s) em monitor; 2 erro(s) de console. Problemas: 06-painel-html-de-pedidos renderizou
+    só 28 caracteres; 07-painel-html-novo-ebook renderizou só 28 caracteres'
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-painel — /admin/
+    captura: qa-harness/evidencias/_base/admin/monitor/01-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/
+      texto_renderizado: 169
+  - ordem: 2
+    marco: tela
+    rotulo: 02-produtos — /admin/product/list
+    captura: qa-harness/evidencias/_base/admin/monitor/02-produtos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/product/list
+      texto_renderizado: 681
+  - ordem: 3
+    marco: tela
+    rotulo: 03-pedidos — /admin/order/list
+    captura: qa-harness/evidencias/_base/admin/monitor/03-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/order/list
+      texto_renderizado: 1430
+  - ordem: 4
+    marco: tela
+    rotulo: 04-avaliacoes — /admin/review/list
+    captura: qa-harness/evidencias/_base/admin/monitor/04-avaliacoes.png
+    observado:
+      url: http://127.0.0.1:48273/admin/review/list
+      texto_renderizado: 510
+  - ordem: 5
+    marco: tela
+    rotulo: 05-cupons — /admin/coupon/list
+    captura: qa-harness/evidencias/_base/admin/monitor/05-cupons.png
+    observado:
+      url: http://127.0.0.1:48273/admin/coupon/list
+      texto_renderizado: 406
+  - ordem: 6
+    marco: tela
+    rotulo: 06-painel-html-de-pedidos — /api/v1/admin/orders/panel
+    captura: qa-harness/evidencias/_base/admin/monitor/06-painel-html-de-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/orders/panel
+      texto_renderizado: 28
+  - ordem: 7
+    marco: tela
+    rotulo: 07-painel-html-novo-ebook — /api/v1/admin/products/new
+    captura: qa-harness/evidencias/_base/admin/monitor/07-painel-html-novo-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/products/new
+      texto_renderizado: 28
+  evidencias:
+  - qa-harness/evidencias/_base/admin/monitor/01-painel.png
+  - qa-harness/evidencias/_base/admin/monitor/02-produtos.png
+  - qa-harness/evidencias/_base/admin/monitor/03-pedidos.png
+  - qa-harness/evidencias/_base/admin/monitor/04-avaliacoes.png
+  - qa-harness/evidencias/_base/admin/monitor/05-cupons.png
+  - qa-harness/evidencias/_base/admin/monitor/06-painel-html-de-pedidos.png
+  - qa-harness/evidencias/_base/admin/monitor/07-painel-html-novo-ebook.png
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  problemas:
+  - 06-painel-html-de-pedidos renderizou só 28 caracteres
+  - 07-painel-html-novo-ebook renderizou só 28 caracteres
+  veredito_automatico: FALHA DE PRODUTO
+  revisao_motivo: Só os painéis HTML `06`/`07` (`/api/v1/admin/*/panel`, "Não autenticado" sem cabeçalho
+    `Authorization`) — decisão bloqueante D18, guardada para o dono. `01` a `05` do SQLAdmin certos.
+revisao:
+  arquivo: qa-harness/relatorios/2026-09-27-0610/revisao.yaml
+  auditoria:
+    pontos_auditados: 79
+    observacao: 'Rodada 4 (final) do `/qa completo`, sobre o build com todos os ajustes (QAF-01..17 e
+      23, lista de avaliações do painel com formatadores, respiro das capas, relacionados em 2 colunas
+      no celular). 54/54 pontos de integração e 20/20 jornadas válidos, conferidos pelos `.json` e pelos
+      prints; bases de visitante, cliente e sem_compras sem problema. Erros de console iguais aos da rodada
+      3 (recusas provocadas pelas próprias jornadas e os 401 dos painéis da D18).
+
+      '
+  vereditos_alterados: 0
+  pontos_nao_encontrados: []
+  comentarios:
+  - arquivo: backend/app/accounts/router_admin.py
+    linha: 159
+    veredito: aceitavel
+    porque: CSS dentro de f-string (chaves dobradas), não é código comentado
+  - arquivo: backend/app/catalog/router_admin.py
+    linha: 230
+    veredito: aceitavel
+    porque: CSS dentro de f-string (chaves dobradas), não é código comentado
+  - arquivo: backend/app/coupons/router_admin.py
+    linha: 275
+    veredito: aceitavel
+    porque: CSS dentro de f-string (chaves dobradas), não é código comentado
+  - arquivo: backend/app/coupons/router_admin.py
+    linha: 279
+    veredito: aceitavel
+    porque: CSS dentro de f-string (chaves dobradas), não é código comentado
+  - arquivo: backend/app/orders/models.py
+    linha: 40
+    veredito: aceitavel
+    porque: agora descreve o presente ('um ou mais itens'); a menção a fase saiu
+  - arquivo: backend/app/orders/router.py
+    linha: 234
+    veredito: aceitavel
+    porque: descreve o comportamento atual do endpoint
+  - arquivo: backend/app/orders/services.py
+    linha: 46
+    veredito: aceitavel
+    porque: descreve o que o método faz hoje
+  - arquivo: backend/app/orders/services.py
+    linha: 133
+    veredito: aceitavel
+    porque: restrição presente do formato de data aceito
+  - arquivo: backend/app/orders/state_machine.py
+    linha: 37
+    veredito: aceitavel
+    porque: docstring no presente da transição de estado
+  - arquivo: backend/app/orders/state_machine.py
+    linha: 41
+    veredito: aceitavel
+    porque: docstring no presente da transição de estado
+  - arquivo: backend/app/orders/state_machine.py
+    linha: 45
+    veredito: aceitavel
+    porque: docstring no presente da transição de estado
+  - arquivo: backend/app/orders/state_machine.py
+    linha: 49
+    veredito: aceitavel
+    porque: docstring no presente da transição de estado
+  - arquivo: qa-harness/testes/api/teste_compra.py
+    linha: 239
+    veredito: aceitavel
+    porque: docstring no presente do que o ponto faz
+  criados_nesta_execucao: []

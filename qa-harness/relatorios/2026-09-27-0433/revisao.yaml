@@ -1,0 +1,163 @@
+auditoria:
+  pontos_auditados: 78
+  observacao: >
+    Rodada 1 do `/qa completo` no e_seller. Auditei os 53 pontos de integração pelos `.json`
+    (corpo e contraste), as 20 jornadas pelos prints e pelo `evidencias.json` de cada passo, e as
+    4 bases visuais pelas métricas de captura (URL final, título, tamanho do texto) e por imagem
+    onde a métrica levantou dúvida. Healing de evidência feito uma vez (execução 2026-09-27-0457,
+    modo `visual`, mesmo build do produto): o adaptador deixava a aba em `/` depois de gravar a
+    sessão e o `abrir /#/...` seguinte só trocava o hash — o topo do SPA ficava no estado sem
+    sessão. Corrigido o teste (adaptador sai para `about:blank`), nunca o produto. As imagens das
+    pastas de evidência são as do healing.
+
+pontos:
+  - dominio: vitrine
+    nome: "Ponto 3 - Busca por FastAPI traz só o e-book certo"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      Confirmado: `GET /api/v1/products?q=FastAPI` responde 500 no Postgres (`SELECT DISTINCT` com
+      `ORDER BY CASE` de relevância). O SPA não cai nisso porque sempre manda `sort` (sem relevância) —
+      por isso a jornada de busca é válida — mas o contrato `?q=` sem `sort` quebra.
+
+  - dominio: vitrine
+    nome: "Jornada - Visitante busca um e-book pelo título"
+    veredito: VALIDO
+    motivo: >
+      Print do passo 4 mostra só "FastAPI do Zero" com a busca preenchida; o SPA envia `sort=newest`
+      e escapa do erro do Ponto 3.
+
+  - dominio: base-visual
+    nome: "Base visual - visitante (monitor)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      Veredito automático VALIDO pelo limiar de texto, mas `05-privacidade` e `06-termos` renderizam a
+      home do SPA (mesmo texto de 997 caracteres de `01-home`): o nginx não repassa `/privacidade` e
+      `/termos` ao backend. E `03-carrinho-sem-conta` e `04-pagina-inexistente` ficam com o título da
+      aba "Python na Prática — e_seller" herdado da página anterior.
+
+  - dominio: base-visual
+    nome: "Base visual - cliente (monitor)"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: >
+      Na rodada o topo aparecia com "Entrar" apesar do conteúdo logado (defeito do adaptador). Depois
+      do healing o topo mostra Carrinho, Biblioteca, Favoritos, Pedidos, Conta e o avatar com "Sair",
+      e as telas batem com a massa (biblioteca com os e-books, pedido pago de 99,80).
+
+  - dominio: base-visual
+    nome: "Base visual - sem_compras (monitor)"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: Mesmo defeito do adaptador; após o healing, biblioteca vazia e pedido pendente com a conta logada.
+
+  - dominio: base-visual
+    nome: "Base visual - admin (monitor)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      `01` a `05` terminam em `chrome-error://` (conexão recusada): o login do SQLAdmin é barrado pelo
+      CSRF (403) e o redirecionamento do painel vai para `http://127.0.0.1/admin/...` sem a porta — o
+      nginx repassa `Host $host`. O console mostra os estáticos do painel vindo de `127.0.0.1` sem porta
+      e barrados pela CSP. `06` e `07` (painéis HTML em `/api/v1/admin/*/panel`) mostram só
+      "Não autenticado": exigem cabeçalho `Authorization`, que o navegador não envia.
+
+  - dominio: acesso
+    nome: "Jornada - Comprador salva o perfil fiscal"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: >
+      Na rodada parou cedo pelo defeito do adaptador; no healing percorreu os 10 passos e o toast
+      "Perfil salvo" não aparece: a API responde 422 (`person_type` "PF" — a API espera
+      `individual`/`company`), igual ao Ponto 6 de acesso.
+
+  - dominio: administracao
+    nome: "Jornada - Administrador entra no painel pelo formulário de login"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: >
+      Automático EVIDENCIA INVALIDA (navegação recusada), mas a causa é o produto: login do SQLAdmin
+      barrado pelo CSRF e redirecionamento sem a porta (`Host $host` no nginx). Repetiu igual no healing.
+
+  - dominio: administracao
+    nome: "Jornada - Administrador vê a lista de e-books no painel"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: Mesma causa do login do painel (CSRF + `Host` sem porta); a lista nunca abre.
+
+  - dominio: administracao
+    nome: "Jornada - Administrador vê os pedidos com status, valor e data"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: Mesma causa do login do painel (CSRF + `Host` sem porta); a lista nunca abre.
+
+  - dominio: administracao
+    nome: "Jornada - Administrador procura a avaliação pendente para moderar"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: >
+      Mesma causa do login do painel. Além disso, o código mostra que a lista de avaliações do painel
+      não tem comentário nem status (`ReviewAdmin.column_list`) e não permite editar: moderar pela
+      tela seria às cegas.
+
+  - dominio: administracao
+    nome: "Jornada - Administrador vê os cupons de desconto"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: Mesma causa do login do painel (CSRF + `Host` sem porta); a lista nunca abre.
+
+  - dominio: biblioteca
+    nome: "Jornada - Comprador vê os e-books comprados e quem não comprou vê a biblioteca vazia"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: Botão Biblioteca escondido pelo defeito do adaptador; no healing os 7 passos passam (cliente com os e-books, `sem_compras` com a biblioteca vazia).
+
+  - dominio: biblioteca
+    nome: "Jornada - Comprador marca um e-book com o coração e o vê nos favoritos"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: >
+      Válida no healing (coração marcado, e-book em "Meus favoritos"). O console registrou um 500 em
+      `POST /api/v1/wishlist/fastapi-do-zero`: o clique dispara dois pedidos (o SPA liga o botão duas
+      vezes) e o segundo estoura a UNIQUE no Postgres — achado de produto registrado à parte (QAF-16).
+
+  - dominio: compra
+    nome: "Jornada - Comprador compra pelo carrinho, paga e recebe o e-book"
+    veredito: VALIDO
+    ciclos_de_healing: 1
+    motivo: >
+      Válida no healing (14/14: carrinho 49,90, simulador, pedido pago com "Baixar", e-book na
+      biblioteca). Os prints do simulador e do pedido mostram HTML sem estilo (o CSS de `/static/`
+      volta como a página do SPA), o que já é a falha do Ponto 4 de compra.
+
+  - dominio: compra
+    nome: "Jornada - Comprador vê os pedidos e tenta pagar o pendente"
+    veredito: FALHA DE PRODUTO
+    ciclos_de_healing: 1
+    motivo: Chega aos pedidos no healing; o pedido pendente aparece sem "Pagar" (`checkout_url` nulo em `/orders/my`) — RF-25.
+
+comentarios:
+  - {arquivo: backend/app/accounts/router_admin.py, linha: 159, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/catalog/router_admin.py, linha: 230, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 275, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 279, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/orders/models.py, linha: 40, veredito: violacao, categoria: narrativa, o_que: "docstring diz 'no MVP, 1 item' — história de fase, e o pedido já é multi-item", destino: ".spec/planning/06-escopo-mvp.md"}
+  - {arquivo: backend/app/orders/router.py, linha: 212, veredito: aceitavel, porque: "descreve o comportamento atual do endpoint (paginação e X-Total-Count)"}
+  - {arquivo: backend/app/orders/services.py, linha: 46, veredito: aceitavel, porque: "descreve o que o método faz hoje"}
+  - {arquivo: backend/app/orders/services.py, linha: 112, veredito: aceitavel, porque: "restrição presente do formato de data aceito"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 37, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 41, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 45, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 49, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: frontend/public/style.css, linha: 1, veredito: violacao, categoria: narrativa, o_que: "cabeçalho com data e épico ('Design system UXR (2026-06-13)')", destino: ".spec/frontend/roadmap-uxr.md"}
+  - {arquivo: frontend/public/style.css, linha: 119, veredito: violacao, categoria: narrativa, o_que: "'UXR-07 — estilo; lógica na Fase 2' conta o plano de fases", destino: ".spec/frontend/roadmap-uxr.md"}
+  - {arquivo: frontend/public/style.css, linha: 128, veredito: violacao, categoria: narrativa, o_que: "'UXR-09, base na Fase 1' conta o plano de fases", destino: ".spec/frontend/roadmap-uxr.md"}
+  - {arquivo: qa-harness/testes/api/teste_compra.py, linha: 239, veredito: aceitavel, porque: "docstring no presente do que o ponto faz"}
+
+criados_nesta_execucao:
+  - {caminho: qa-harness/config.yaml, o_que: "configuração do harness (stack própria, perfis, caminhos em .spec/)", derivado_de: "adotar.md da skill /qa"}
+  - {caminho: qa-harness/adaptador.py, o_que: "autenticação OAuth2, sessão no localStorage do SPA, login do SQLAdmin, massa", derivado_de: "adotar.md + mapa do produto"}
+  - {caminho: qa-harness/massa_de_dados.py, o_que: "estado conhecido com prefixo qa- e contrastes", derivado_de: "metodologia §5"}
+  - {caminho: qa-harness/ambiente/, o_que: "stack eseller-qa (compose, portas livres, credenciais locais)", derivado_de: "decisões D03, D04, D05"}
+  - {caminho: qa-harness/testes/api/, o_que: "5 suítes (vitrine, acesso, compra, biblioteca, administração) + base com máscara de segredos", derivado_de: ".spec/test/planos/*.yaml"}
+  - {caminho: .spec/test/historias/, o_que: "22 histórias em 5 domínios", derivado_de: ".spec/test/historias/_instrucao.md"}
+  - {caminho: .spec/test/planos/, o_que: "53 pontos de integração + catálogo da base visual", derivado_de: "histórias"}
+  - {caminho: .spec/test/jornadas/, o_que: "20 jornadas", derivado_de: "histórias com tela"}

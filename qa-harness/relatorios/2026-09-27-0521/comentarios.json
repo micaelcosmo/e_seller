@@ -1,0 +1,199 @@
+{
+  "regra": ".spec/code/convencao-de-comentarios.md",
+  "natureza": "candidatos a warning — quem julga é a IA na etapa /qa comentarios",
+  "total": 13,
+  "por_categoria": {
+    "codigo-comentado": 4,
+    "narrativa": 9
+  },
+  "candidatos": [
+    {
+      "categoria": "codigo-comentado",
+      "motivos": [
+        "bloco de código comentado; o histórico é do git"
+      ],
+      "destino_sugerido": "remover (ou virar linha no planejamento)",
+      "arquivo": "backend/app/accounts/router_admin.py",
+      "linha": 159,
+      "documentacao": false,
+      "trecho": [
+        "#msg{{margin:.5rem 0;padding:.4rem .75rem;border-radius:6px;display:none;font-size:.85rem}}",
+        "#msg.ok{{background:#d4f1e4;color:#15a05a}}",
+        "#msg.err{{background:#fde9ec;color:#d3455b}}"
+      ]
+    },
+    {
+      "categoria": "codigo-comentado",
+      "motivos": [
+        "bloco de código comentado; o histórico é do git"
+      ],
+      "destino_sugerido": "remover (ou virar linha no planejamento)",
+      "arquivo": "backend/app/catalog/router_admin.py",
+      "linha": 230,
+      "documentacao": false,
+      "trecho": [
+        "#confirm-overlay{{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:10}}",
+        "#confirm-overlay.show{{display:flex}}",
+        "#confirm-box{{background:#fff;border-radius:12px;padding:24px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}}",
+        "#confirm-box h3{{margin:0 0 8px}}",
+        "#confirm-box p{{color:#555;margin:0 0 16px}}"
+      ]
+    },
+    {
+      "categoria": "codigo-comentado",
+      "motivos": [
+        "bloco de código comentado; o histórico é do git"
+      ],
+      "destino_sugerido": "remover (ou virar linha no planejamento)",
+      "arquivo": "backend/app/coupons/router_admin.py",
+      "linha": 275,
+      "documentacao": false,
+      "trecho": [
+        "#msg{{margin:.5rem 0;padding:.4rem .75rem;border-radius:6px;display:none;font-size:.85rem}}",
+        "#msg.ok{{background:#d4f1e4;color:#15a05a}}",
+        "#msg.err{{background:#fde9ec;color:#d3455b}}"
+      ]
+    },
+    {
+      "categoria": "codigo-comentado",
+      "motivos": [
+        "bloco de código comentado; o histórico é do git"
+      ],
+      "destino_sugerido": "remover (ou virar linha no planejamento)",
+      "arquivo": "backend/app/coupons/router_admin.py",
+      "linha": 279,
+      "documentacao": false,
+      "trecho": [
+        "#overlay{{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:10}}",
+        "#overlay.show{{display:flex}}",
+        "#modal{{background:#fff;border-radius:12px;padding:24px;max-width:400px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}}",
+        "#modal h3{{margin:0 0 14px}}"
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/models.py",
+      "linha": 40,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Pedido de compra (multi-item; no MVP, 1 item).\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "data"
+      ],
+      "destino_sugerido": "changelog ou documento de status do projeto",
+      "arquivo": "backend/app/orders/router.py",
+      "linha": 234,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Lista pedidos para administradores com paginação, filtros e total no header.",
+        "",
+        "Retorna X-Total-Count com o número total de pedidos para a query atual.",
+        "Suporta filtros ?date_from= e ?date_to= (ISO 8601: 2026-01-01).",
+        "?buyer_email= e ?q= fazem busca parcial case-insensitive no e-mail do comprador.",
+        "\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/services.py",
+      "linha": 46,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Cria um pedido de 1 item (preço congelado), aplica cupom e checkout.\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "data"
+      ],
+      "destino_sugerido": "changelog ou documento de status do projeto",
+      "arquivo": "backend/app/orders/services.py",
+      "linha": 133,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Constrói o statement base com os filtros aplicados (sem paginação).",
+        "",
+        "date_from e date_to devem ser strings ISO 8601 (ex.: '2026-01-01').",
+        "\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/state_machine.py",
+      "linha": 37,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Transiciona o pedido de PENDING para PAID.\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/state_machine.py",
+      "linha": 41,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Transiciona o pedido de PENDING para FAILED.\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/state_machine.py",
+      "linha": 45,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Transiciona o pedido de PENDING para CANCELLED.\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "backend/app/orders/state_machine.py",
+      "linha": 49,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Transiciona o pedido de PAID para REFUNDED.\"\"\""
+      ]
+    },
+    {
+      "categoria": "narrativa",
+      "motivos": [
+        "pedido"
+      ],
+      "destino_sugerido": "registro de decisões do projeto (ADR / decisões)",
+      "arquivo": "qa-harness/testes/api/teste_compra.py",
+      "linha": 239,
+      "documentacao": true,
+      "trecho": [
+        "\"\"\"Webhook aprovado paga o pedido do convidado.\"\"\""
+      ]
+    }
+  ]
+}

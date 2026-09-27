@@ -1,0 +1,8 @@
+auditoria:
+  pontos_auditados: 53
+  observacao: >
+    Execução de healing (ciclo 1) da rodada 2 — só integração, mesmo build do produto. O ponto 6 de
+    acesso passou a enviar o corpo atual da tela (`person_type` individual) e responde 200. Os
+    demais 52 pontos repetem o resultado da rodada 2. Vereditos consolidados em 2026-09-27-0521.
+
+pontos: []

@@ -1,0 +1,25 @@
+auditoria:
+  pontos_auditados: 8
+  observacao: >
+    `/qa responsividade` (base visual em notebook 1366px e celular 390px, 4 perfis) sobre o build da
+    rodada 3 + respiro das capas no carrinho/biblioteca. Foco: quebra de layout, rolagem horizontal e
+    elemento inacessível. Loja (visitante, cliente, sem_compras): nenhuma tela com rolagem
+    horizontal (`scrollWidth` = `innerWidth` em todas), textos e ações visíveis; no celular a app bar
+    fica em duas linhas com o menu em folha, grade em 2 colunas, carrossel com rolagem lateral.
+
+pontos:
+  - dominio: base-visual
+    nome: "Base visual - admin (notebook)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      `04-avaliacoes` com rolagem horizontal (1624px > 1366px): comentário inteiro e data com
+      microssegundos na lista do painel — corrigido depois desta execução (comentário resumido em 60
+      caracteres e data curta, com teste). `06`/`07` são os painéis HTML da decisão bloqueante D18.
+
+  - dominio: base-visual
+    nome: "Base visual - admin (celular)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      `01-painel` com 23 caracteres é tela curta por desenho do SQLAdmin (a página inicial do painel
+      não tem conteúdo e o menu vai para o hambúrguer) — não é defeito. A falha que resta é a dos
+      painéis HTML `06`/`07` (D18).

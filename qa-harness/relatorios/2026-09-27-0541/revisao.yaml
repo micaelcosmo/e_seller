@@ -1,0 +1,16 @@
+auditoria:
+  pontos_auditados: 54
+  observacao: >
+    Integração de verificação do critério novo "e-book cadastrado com arquivo é entregue a quem
+    compra" (Ponto 14 de administração), antes da correção. 53 pontos válidos; o Ponto 14 prova a
+    falha: o download do e-book criado pelo admin responde 404 "Arquivo indisponível" (o download lia
+    só `Product.file_name`, o upload grava `ProductFile`). Corrigido no QAF-23; válido na rodada 3.
+
+pontos:
+  - dominio: administracao
+    nome: "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra"
+    veredito: FALHA DE PRODUTO
+    motivo: "Confirmado pelo `.json` do download: 404 \"Arquivo indisponível\" com o `.txt` enviado pelo admin (QAF-23)."
+
+criados_nesta_execucao:
+  - {caminho: .spec/test/planos/administracao.yaml, o_que: "Ponto 14", derivado_de: "US-03 + US-06, RF-12, RF-30"}

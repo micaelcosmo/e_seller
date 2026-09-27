@@ -1,0 +1,18 @@
+auditoria:
+  pontos_auditados: 8
+  observacao: >
+    Responsividade sobre o build da rodada 4. Loja sem rolagem horizontal em notebook e celular em
+    todos os perfis. No admin, a lista de avaliações ainda passava da largura no notebook (1515px >
+    1366px): o painel de filtros do SQLAdmin (300px fixos) empurrava a página. Corrigido depois desta
+    execução no template do painel (tabela rola dentro do card; filtros com 220px até 1440px) e
+    reconferido na execução de responsividade seguinte.
+
+pontos:
+  - dominio: base-visual
+    nome: "Base visual - admin (notebook)"
+    veredito: FALHA DE PRODUTO
+    motivo: "`04-avaliacoes` com rolagem horizontal (1515px) pelo painel de filtros; `06`/`07` = D18."
+  - dominio: base-visual
+    nome: "Base visual - admin (celular)"
+    veredito: FALHA DE PRODUTO
+    motivo: "`01-painel` curto é desenho do SQLAdmin (menu no hambúrguer), não defeito; falha restante = `06`/`07` (D18)."

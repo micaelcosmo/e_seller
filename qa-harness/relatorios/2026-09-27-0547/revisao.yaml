@@ -1,0 +1,46 @@
+auditoria:
+  pontos_auditados: 79
+  observacao: >
+    Rodada 3 do `/qa completo` (build com todos os ajustes QAF, inclusive o QAF-23 e a lista de
+    avaliações do painel). Auditei os 54 pontos de integração pelos `.json`, as 20 jornadas pelos
+    prints e pelo `evidencias.json`, e as 4 bases visuais pelas métricas (URL, título, texto,
+    rolagem) e pelos prints. Erros de console conferidos: todos são as recusas que as próprias
+    jornadas provocam (401 senha errada, 409 e-mail repetido, 403 avaliação sem posse, 422 cupom
+    inválido, 404 e-book inexistente) ou os painéis da decisão D18; um `ERR_NO_BUFFER_SPACE` na base
+    do cliente é ruído de rede do Windows sob carga (pytest em paralelo), sem efeito na tela.
+
+pontos:
+  - dominio: base-visual
+    nome: "Base visual - admin (monitor)"
+    veredito: FALHA DE PRODUTO
+    motivo: >
+      Confirmado e restrito aos painéis HTML: `01` a `05` (painel, produtos, pedidos, avaliações com
+      comentário/status/filtro, cupons) abrem certos. `06` e `07` (`/api/v1/admin/*/panel`) seguem
+      com "Não autenticado" — exigem cabeçalho `Authorization`. Decisão bloqueante D18, guardada
+      para o dono; não é regressão.
+
+  - dominio: administracao
+    nome: "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra"
+    veredito: VALIDO
+    motivo: >
+      Critério novo desta rodada: o `.txt` enviado pelo admin chega como anexo a quem compra (texto
+      sentinela `qa-conteudo-do-ebook` no corpo do download). Na integração de verificação anterior
+      o mesmo ponto dava 404 "Arquivo indisponível" — corrigido no QAF-23.
+
+comentarios:
+  - {arquivo: backend/app/accounts/router_admin.py, linha: 159, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/catalog/router_admin.py, linha: 230, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 275, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/coupons/router_admin.py, linha: 279, veredito: aceitavel, porque: "CSS dentro de f-string (chaves dobradas), não é código comentado"}
+  - {arquivo: backend/app/orders/models.py, linha: 40, veredito: aceitavel, porque: "agora descreve o presente ('um ou mais itens'); a menção a fase saiu"}
+  - {arquivo: backend/app/orders/router.py, linha: 234, veredito: aceitavel, porque: "descreve o comportamento atual do endpoint"}
+  - {arquivo: backend/app/orders/services.py, linha: 46, veredito: aceitavel, porque: "descreve o que o método faz hoje"}
+  - {arquivo: backend/app/orders/services.py, linha: 133, veredito: aceitavel, porque: "restrição presente do formato de data aceito"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 37, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 41, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 45, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: backend/app/orders/state_machine.py, linha: 49, veredito: aceitavel, porque: "docstring no presente da transição de estado"}
+  - {arquivo: qa-harness/testes/api/teste_compra.py, linha: 239, veredito: aceitavel, porque: "docstring no presente do que o ponto faz"}
+
+criados_nesta_execucao:
+  - {caminho: .spec/test/planos/administracao.yaml, o_que: "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra", derivado_de: "US-03 + US-06, RF-12, RF-30 (critério novo na História 2 de administração)"}

@@ -1,0 +1,522 @@
+execucao: 2026-09-27-0619
+executado_em: '2026-09-27T06:21:50'
+modo: responsividade
+projeto: e_seller
+branch: enrichment
+commit: 67eadb2
+url_da_aplicacao: http://127.0.0.1:48273
+motor: 1.3.0
+viewports:
+- notebook
+- celular
+placar:
+  VALIDO: 6
+  FALHA DE PRODUTO: 2
+  EVIDENCIA INVALIDA: 0
+  INCONCLUSIVO: 0
+lint_historias: []
+linhas_do_projeto: {}
+comentarios: {}
+impedimentos: []
+pontos:
+- nome: Base visual - visitante (notebook)
+  historia: Base visual - visitante
+  dominio: base-visual
+  suite: base
+  viewport: notebook
+  veredito: VALIDO
+  detalhe: 7 tela(s) em notebook. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home — /
+    captura: qa-harness/evidencias/_base/visitante/notebook/01-home.png
+    observado:
+      url: http://127.0.0.1:48273/
+      texto_renderizado: 1191
+  - ordem: 2
+    marco: tela
+    rotulo: 02-detalhe-do-ebook — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/visitante/notebook/02-detalhe-do-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 853
+  - ordem: 3
+    marco: tela
+    rotulo: 03-carrinho-sem-conta — /#/carrinho
+    captura: qa-harness/evidencias/_base/visitante/notebook/03-carrinho-sem-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 328
+  - ordem: 4
+    marco: tela
+    rotulo: 04-pagina-inexistente — /#/qa-rota-inexistente
+    captura: qa-harness/evidencias/_base/visitante/notebook/04-pagina-inexistente.png
+    observado:
+      url: http://127.0.0.1:48273/#/qa-rota-inexistente
+      texto_renderizado: 332
+  - ordem: 5
+    marco: tela
+    rotulo: 05-privacidade — /privacidade
+    captura: qa-harness/evidencias/_base/visitante/notebook/05-privacidade.png
+    observado:
+      url: http://127.0.0.1:48273/privacidade
+      texto_renderizado: 2253
+  - ordem: 6
+    marco: tela
+    rotulo: 06-termos — /termos
+    captura: qa-harness/evidencias/_base/visitante/notebook/06-termos.png
+    observado:
+      url: http://127.0.0.1:48273/termos
+      texto_renderizado: 2248
+  - ordem: 7
+    marco: tela
+    rotulo: 07-login-do-painel — /admin/login
+    captura: qa-harness/evidencias/_base/visitante/notebook/07-login-do-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/login
+      texto_renderizado: 49
+  evidencias:
+  - qa-harness/evidencias/_base/visitante/notebook/01-home.png
+  - qa-harness/evidencias/_base/visitante/notebook/02-detalhe-do-ebook.png
+  - qa-harness/evidencias/_base/visitante/notebook/03-carrinho-sem-conta.png
+  - qa-harness/evidencias/_base/visitante/notebook/04-pagina-inexistente.png
+  - qa-harness/evidencias/_base/visitante/notebook/05-privacidade.png
+  - qa-harness/evidencias/_base/visitante/notebook/06-termos.png
+  - qa-harness/evidencias/_base/visitante/notebook/07-login-do-painel.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - cliente (notebook)
+  historia: Base visual - cliente
+  dominio: base-visual
+  suite: base
+  viewport: notebook
+  veredito: VALIDO
+  detalhe: 7 tela(s) em notebook; 1 erro(s) de console. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home-com-conta — /#/
+    captura: qa-harness/evidencias/_base/cliente/notebook/01-home-com-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/
+      texto_renderizado: 1224
+  - ordem: 2
+    marco: tela
+    rotulo: 02-biblioteca — /#/biblioteca
+    captura: qa-harness/evidencias/_base/cliente/notebook/02-biblioteca.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 462
+  - ordem: 3
+    marco: tela
+    rotulo: 03-favoritos — /#/favoritos
+    captura: qa-harness/evidencias/_base/cliente/notebook/03-favoritos.png
+    observado:
+      url: http://127.0.0.1:48273/#/favoritos
+      texto_renderizado: 390
+  - ordem: 4
+    marco: tela
+    rotulo: 04-carrinho — /#/carrinho
+    captura: qa-harness/evidencias/_base/cliente/notebook/04-carrinho.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 377
+  - ordem: 5
+    marco: tela
+    rotulo: 05-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/cliente/notebook/05-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 346
+  - ordem: 6
+    marco: tela
+    rotulo: 06-conta — /#/conta
+    captura: qa-harness/evidencias/_base/cliente/notebook/06-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/conta
+      texto_renderizado: 387
+  - ordem: 7
+    marco: tela
+    rotulo: 07-detalhe-de-ebook-comprado — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/cliente/notebook/07-detalhe-de-ebook-comprado.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 938
+  evidencias:
+  - qa-harness/evidencias/_base/cliente/notebook/01-home-com-conta.png
+  - qa-harness/evidencias/_base/cliente/notebook/02-biblioteca.png
+  - qa-harness/evidencias/_base/cliente/notebook/03-favoritos.png
+  - qa-harness/evidencias/_base/cliente/notebook/04-carrinho.png
+  - qa-harness/evidencias/_base/cliente/notebook/05-pedidos.png
+  - qa-harness/evidencias/_base/cliente/notebook/06-conta.png
+  - qa-harness/evidencias/_base/cliente/notebook/07-detalhe-de-ebook-comprado.png
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 404 (Not Found)'
+  problemas: []
+- nome: Base visual - sem_compras (notebook)
+  historia: Base visual - sem_compras
+  dominio: base-visual
+  suite: base
+  viewport: notebook
+  veredito: VALIDO
+  detalhe: 2 tela(s) em notebook. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-biblioteca-vazia — /#/biblioteca
+    captura: qa-harness/evidencias/_base/sem_compras/notebook/01-biblioteca-vazia.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 391
+  - ordem: 2
+    marco: tela
+    rotulo: 02-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/sem_compras/notebook/02-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 356
+  evidencias:
+  - qa-harness/evidencias/_base/sem_compras/notebook/01-biblioteca-vazia.png
+  - qa-harness/evidencias/_base/sem_compras/notebook/02-pedidos.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - admin (notebook)
+  historia: Base visual - admin
+  dominio: base-visual
+  suite: base
+  viewport: notebook
+  veredito: FALHA DE PRODUTO
+  detalhe: '7 tela(s) em notebook; 2 erro(s) de console. Problemas: 04-avaliacoes tem rolagem horizontal
+    (1515px > 1366px); 06-painel-html-de-pedidos renderizou só 28 caracteres; 07-painel-html-novo-ebook
+    renderizou só 28 caracteres'
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-painel — /admin/
+    captura: qa-harness/evidencias/_base/admin/notebook/01-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/
+      texto_renderizado: 169
+  - ordem: 2
+    marco: tela
+    rotulo: 02-produtos — /admin/product/list
+    captura: qa-harness/evidencias/_base/admin/notebook/02-produtos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/product/list
+      texto_renderizado: 610
+  - ordem: 3
+    marco: tela
+    rotulo: 03-pedidos — /admin/order/list
+    captura: qa-harness/evidencias/_base/admin/notebook/03-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/order/list
+      texto_renderizado: 536
+  - ordem: 4
+    marco: tela
+    rotulo: 04-avaliacoes — /admin/review/list
+    captura: qa-harness/evidencias/_base/admin/notebook/04-avaliacoes.png
+    observado:
+      url: http://127.0.0.1:48273/admin/review/list
+      texto_renderizado: 445
+  - ordem: 5
+    marco: tela
+    rotulo: 05-cupons — /admin/coupon/list
+    captura: qa-harness/evidencias/_base/admin/notebook/05-cupons.png
+    observado:
+      url: http://127.0.0.1:48273/admin/coupon/list
+      texto_renderizado: 370
+  - ordem: 6
+    marco: tela
+    rotulo: 06-painel-html-de-pedidos — /api/v1/admin/orders/panel
+    captura: qa-harness/evidencias/_base/admin/notebook/06-painel-html-de-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/orders/panel
+      texto_renderizado: 28
+  - ordem: 7
+    marco: tela
+    rotulo: 07-painel-html-novo-ebook — /api/v1/admin/products/new
+    captura: qa-harness/evidencias/_base/admin/notebook/07-painel-html-novo-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/products/new
+      texto_renderizado: 28
+  evidencias:
+  - qa-harness/evidencias/_base/admin/notebook/01-painel.png
+  - qa-harness/evidencias/_base/admin/notebook/02-produtos.png
+  - qa-harness/evidencias/_base/admin/notebook/03-pedidos.png
+  - qa-harness/evidencias/_base/admin/notebook/04-avaliacoes.png
+  - qa-harness/evidencias/_base/admin/notebook/05-cupons.png
+  - qa-harness/evidencias/_base/admin/notebook/06-painel-html-de-pedidos.png
+  - qa-harness/evidencias/_base/admin/notebook/07-painel-html-novo-ebook.png
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  problemas:
+  - 04-avaliacoes tem rolagem horizontal (1515px > 1366px)
+  - 06-painel-html-de-pedidos renderizou só 28 caracteres
+  - 07-painel-html-novo-ebook renderizou só 28 caracteres
+  veredito_automatico: FALHA DE PRODUTO
+  revisao_motivo: '`04-avaliacoes` com rolagem horizontal (1515px) pelo painel de filtros; `06`/`07` =
+    D18.'
+- nome: Base visual - visitante (celular)
+  historia: Base visual - visitante
+  dominio: base-visual
+  suite: base
+  viewport: celular
+  veredito: VALIDO
+  detalhe: 7 tela(s) em celular. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home — /
+    captura: qa-harness/evidencias/_base/visitante/celular/01-home.png
+    observado:
+      url: http://127.0.0.1:48273/
+      texto_renderizado: 1184
+  - ordem: 2
+    marco: tela
+    rotulo: 02-detalhe-do-ebook — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/visitante/celular/02-detalhe-do-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 846
+  - ordem: 3
+    marco: tela
+    rotulo: 03-carrinho-sem-conta — /#/carrinho
+    captura: qa-harness/evidencias/_base/visitante/celular/03-carrinho-sem-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 321
+  - ordem: 4
+    marco: tela
+    rotulo: 04-pagina-inexistente — /#/qa-rota-inexistente
+    captura: qa-harness/evidencias/_base/visitante/celular/04-pagina-inexistente.png
+    observado:
+      url: http://127.0.0.1:48273/#/qa-rota-inexistente
+      texto_renderizado: 325
+  - ordem: 5
+    marco: tela
+    rotulo: 05-privacidade — /privacidade
+    captura: qa-harness/evidencias/_base/visitante/celular/05-privacidade.png
+    observado:
+      url: http://127.0.0.1:48273/privacidade
+      texto_renderizado: 2061
+  - ordem: 6
+    marco: tela
+    rotulo: 06-termos — /termos
+    captura: qa-harness/evidencias/_base/visitante/celular/06-termos.png
+    observado:
+      url: http://127.0.0.1:48273/termos
+      texto_renderizado: 2042
+  - ordem: 7
+    marco: tela
+    rotulo: 07-login-do-painel — /admin/login
+    captura: qa-harness/evidencias/_base/visitante/celular/07-login-do-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/login
+      texto_renderizado: 49
+  evidencias:
+  - qa-harness/evidencias/_base/visitante/celular/01-home.png
+  - qa-harness/evidencias/_base/visitante/celular/02-detalhe-do-ebook.png
+  - qa-harness/evidencias/_base/visitante/celular/03-carrinho-sem-conta.png
+  - qa-harness/evidencias/_base/visitante/celular/04-pagina-inexistente.png
+  - qa-harness/evidencias/_base/visitante/celular/05-privacidade.png
+  - qa-harness/evidencias/_base/visitante/celular/06-termos.png
+  - qa-harness/evidencias/_base/visitante/celular/07-login-do-painel.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - cliente (celular)
+  historia: Base visual - cliente
+  dominio: base-visual
+  suite: base
+  viewport: celular
+  veredito: VALIDO
+  detalhe: 7 tela(s) em celular; 1 erro(s) de console. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-home-com-conta — /#/
+    captura: qa-harness/evidencias/_base/cliente/celular/01-home-com-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/
+      texto_renderizado: 1172
+  - ordem: 2
+    marco: tela
+    rotulo: 02-biblioteca — /#/biblioteca
+    captura: qa-harness/evidencias/_base/cliente/celular/02-biblioteca.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 410
+  - ordem: 3
+    marco: tela
+    rotulo: 03-favoritos — /#/favoritos
+    captura: qa-harness/evidencias/_base/cliente/celular/03-favoritos.png
+    observado:
+      url: http://127.0.0.1:48273/#/favoritos
+      texto_renderizado: 338
+  - ordem: 4
+    marco: tela
+    rotulo: 04-carrinho — /#/carrinho
+    captura: qa-harness/evidencias/_base/cliente/celular/04-carrinho.png
+    observado:
+      url: http://127.0.0.1:48273/#/carrinho
+      texto_renderizado: 325
+  - ordem: 5
+    marco: tela
+    rotulo: 05-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/cliente/celular/05-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 294
+  - ordem: 6
+    marco: tela
+    rotulo: 06-conta — /#/conta
+    captura: qa-harness/evidencias/_base/cliente/celular/06-conta.png
+    observado:
+      url: http://127.0.0.1:48273/#/conta
+      texto_renderizado: 335
+  - ordem: 7
+    marco: tela
+    rotulo: 07-detalhe-de-ebook-comprado — /#/produto/python-na-pratica
+    captura: qa-harness/evidencias/_base/cliente/celular/07-detalhe-de-ebook-comprado.png
+    observado:
+      url: http://127.0.0.1:48273/#/produto/python-na-pratica
+      texto_renderizado: 886
+  evidencias:
+  - qa-harness/evidencias/_base/cliente/celular/01-home-com-conta.png
+  - qa-harness/evidencias/_base/cliente/celular/02-biblioteca.png
+  - qa-harness/evidencias/_base/cliente/celular/03-favoritos.png
+  - qa-harness/evidencias/_base/cliente/celular/04-carrinho.png
+  - qa-harness/evidencias/_base/cliente/celular/05-pedidos.png
+  - qa-harness/evidencias/_base/cliente/celular/06-conta.png
+  - qa-harness/evidencias/_base/cliente/celular/07-detalhe-de-ebook-comprado.png
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 404 (Not Found)'
+  problemas: []
+- nome: Base visual - sem_compras (celular)
+  historia: Base visual - sem_compras
+  dominio: base-visual
+  suite: base
+  viewport: celular
+  veredito: VALIDO
+  detalhe: 2 tela(s) em celular. Todas renderizaram conteúdo, sem rolagem horizontal.
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-biblioteca-vazia — /#/biblioteca
+    captura: qa-harness/evidencias/_base/sem_compras/celular/01-biblioteca-vazia.png
+    observado:
+      url: http://127.0.0.1:48273/#/biblioteca
+      texto_renderizado: 339
+  - ordem: 2
+    marco: tela
+    rotulo: 02-pedidos — /#/pedidos
+    captura: qa-harness/evidencias/_base/sem_compras/celular/02-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/#/pedidos
+      texto_renderizado: 304
+  evidencias:
+  - qa-harness/evidencias/_base/sem_compras/celular/01-biblioteca-vazia.png
+  - qa-harness/evidencias/_base/sem_compras/celular/02-pedidos.png
+  erros_de_console: []
+  problemas: []
+- nome: Base visual - admin (celular)
+  historia: Base visual - admin
+  dominio: base-visual
+  suite: base
+  viewport: celular
+  veredito: FALHA DE PRODUTO
+  detalhe: '7 tela(s) em celular; 2 erro(s) de console. Problemas: 01-painel renderizou só 23 caracteres;
+    06-painel-html-de-pedidos renderizou só 28 caracteres; 07-painel-html-novo-ebook renderizou só 28
+    caracteres'
+  ciclos_de_healing: 0
+  percurso:
+  - ordem: 1
+    marco: tela
+    rotulo: 01-painel — /admin/
+    captura: qa-harness/evidencias/_base/admin/celular/01-painel.png
+    observado:
+      url: http://127.0.0.1:48273/admin/
+      texto_renderizado: 23
+  - ordem: 2
+    marco: tela
+    rotulo: 02-produtos — /admin/product/list
+    captura: qa-harness/evidencias/_base/admin/celular/02-produtos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/product/list
+      texto_renderizado: 464
+  - ordem: 3
+    marco: tela
+    rotulo: 03-pedidos — /admin/order/list
+    captura: qa-harness/evidencias/_base/admin/celular/03-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/admin/order/list
+      texto_renderizado: 390
+  - ordem: 4
+    marco: tela
+    rotulo: 04-avaliacoes — /admin/review/list
+    captura: qa-harness/evidencias/_base/admin/celular/04-avaliacoes.png
+    observado:
+      url: http://127.0.0.1:48273/admin/review/list
+      texto_renderizado: 299
+  - ordem: 5
+    marco: tela
+    rotulo: 05-cupons — /admin/coupon/list
+    captura: qa-harness/evidencias/_base/admin/celular/05-cupons.png
+    observado:
+      url: http://127.0.0.1:48273/admin/coupon/list
+      texto_renderizado: 224
+  - ordem: 6
+    marco: tela
+    rotulo: 06-painel-html-de-pedidos — /api/v1/admin/orders/panel
+    captura: qa-harness/evidencias/_base/admin/celular/06-painel-html-de-pedidos.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/orders/panel
+      texto_renderizado: 28
+  - ordem: 7
+    marco: tela
+    rotulo: 07-painel-html-novo-ebook — /api/v1/admin/products/new
+    captura: qa-harness/evidencias/_base/admin/celular/07-painel-html-novo-ebook.png
+    observado:
+      url: http://127.0.0.1:48273/api/v1/admin/products/new
+      texto_renderizado: 28
+  evidencias:
+  - qa-harness/evidencias/_base/admin/celular/01-painel.png
+  - qa-harness/evidencias/_base/admin/celular/02-produtos.png
+  - qa-harness/evidencias/_base/admin/celular/03-pedidos.png
+  - qa-harness/evidencias/_base/admin/celular/04-avaliacoes.png
+  - qa-harness/evidencias/_base/admin/celular/05-cupons.png
+  - qa-harness/evidencias/_base/admin/celular/06-painel-html-de-pedidos.png
+  - qa-harness/evidencias/_base/admin/celular/07-painel-html-novo-ebook.png
+  erros_de_console:
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  - 'Failed to load resource: the server responded with a status of 401 (Unauthorized)'
+  problemas:
+  - 01-painel renderizou só 23 caracteres
+  - 06-painel-html-de-pedidos renderizou só 28 caracteres
+  - 07-painel-html-novo-ebook renderizou só 28 caracteres
+  veredito_automatico: FALHA DE PRODUTO
+  revisao_motivo: '`01-painel` curto é desenho do SQLAdmin (menu no hambúrguer), não defeito; falha restante
+    = `06`/`07` (D18).'
+revisao:
+  arquivo: qa-harness/relatorios/2026-09-27-0619/revisao.yaml
+  auditoria:
+    pontos_auditados: 8
+    observacao: 'Responsividade sobre o build da rodada 4. Loja sem rolagem horizontal em notebook e celular
+      em todos os perfis. No admin, a lista de avaliações ainda passava da largura no notebook (1515px
+      > 1366px): o painel de filtros do SQLAdmin (300px fixos) empurrava a página. Corrigido depois desta
+      execução no template do painel (tabela rola dentro do card; filtros com 220px até 1440px) e reconferido
+      na execução de responsividade seguinte.
+
+      '
+  vereditos_alterados: 0
+  pontos_nao_encontrados: []
+  comentarios: []
+  criados_nesta_execucao: []

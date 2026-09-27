@@ -1,0 +1,36 @@
+auditoria:
+  pontos_auditados: 25
+  observacao: Execução de healing (ciclo 1) da rodada 1 — mesmo build do produto, adaptador corrigido. Os vereditos
+    consolidados da rodada estão em 2026-09-27-0433/revisao.yaml; aqui só se reclassificam os mesmos pontos pelo
+    mesmo motivo.
+pontos:
+- dominio: administracao
+  nome: Jornada - Administrador entra no painel pelo formulário de login
+  veredito: FALHA DE PRODUTO
+  motivo: 'Navegação recusada por causa do produto: login do SQLAdmin barrado pelo CSRF e redirecionamento sem a
+    porta (`Host $host` no nginx).'
+- dominio: administracao
+  nome: Jornada - Administrador vê a lista de e-books no painel
+  veredito: FALHA DE PRODUTO
+  motivo: 'Navegação recusada por causa do produto: login do SQLAdmin barrado pelo CSRF e redirecionamento sem a
+    porta (`Host $host` no nginx).'
+- dominio: administracao
+  nome: Jornada - Administrador vê os pedidos com status, valor e data
+  veredito: FALHA DE PRODUTO
+  motivo: 'Navegação recusada por causa do produto: login do SQLAdmin barrado pelo CSRF e redirecionamento sem a
+    porta (`Host $host` no nginx).'
+- dominio: administracao
+  nome: Jornada - Administrador procura a avaliação pendente para moderar
+  veredito: FALHA DE PRODUTO
+  motivo: 'Navegação recusada por causa do produto: login do SQLAdmin barrado pelo CSRF e redirecionamento sem a
+    porta (`Host $host` no nginx).'
+- dominio: administracao
+  nome: Jornada - Administrador vê os cupons de desconto
+  veredito: FALHA DE PRODUTO
+  motivo: 'Navegação recusada por causa do produto: login do SQLAdmin barrado pelo CSRF e redirecionamento sem a
+    porta (`Host $host` no nginx).'
+- dominio: base-visual
+  nome: Base visual - visitante (monitor)
+  veredito: FALHA DE PRODUTO
+  motivo: '`/privacidade` e `/termos` renderizam a home do SPA; título da aba herdado da página do e-book em carrinho
+    e 404.'
