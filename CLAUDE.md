@@ -62,6 +62,20 @@ Antes de escrever qualquer código, ler [`.spec/standards/`](.spec/standards/). 
 - **NÃO sair do contexto:** tudo serve a "vender e-books"; rejeitar trabalho fora do objetivo.
 - **Fonte de verdade do progresso:** [`report/backlog.json`](report/backlog.json) (alimenta a página de relatório).
 
+### 2.6 Regras do agente (🔒 OBRIGATÓRIO)
+- 🔒 **NUNCA ler, exibir ou commitar `.env` nem qualquer senha/segredo** (inclusive do Docker).
+  Para mudar o `.env`, peça/instrua o usuário; edite apenas `.env.example`.
+- 🔒 **O Claude não executa `git add`, `git commit` nem `git push`** — propõe os comandos em
+  blocos copiáveis e o dono executa. Aplicado por deny + hook em
+  [`.claude/settings.json`](.claude/settings.json) ([hook](.claude/hooks/proteger-git-e-segredos.sh)).
+- **Portas sempre livres:** antes de subir qualquer stack, conferir as portas (o Docker Desktop
+  roda outros projetos). A stack de QA escolhe e regrava portas livres sozinha.
+- **Decisões tomadas sem o dono** vão para [`.spec/decisoes-pendentes.yaml`](.spec/decisoes-pendentes.yaml)
+  (máquina) e [`.spec/decisoes-pendentes.md`](.spec/decisoes-pendentes.md) (resumo mastigado).
+  Decisão **bloqueante** não se implementa: fica guardada lá para o dono.
+- **QA:** skill `/qa` sobre [`qa-harness/`](qa-harness/) — ciclo spec → desenvolvimento → teste →
+  validação/healing com relatório (ver [`.spec/qa/05-harness-metodologia.md`](.spec/qa/05-harness-metodologia.md)).
+
 ---
 
 ## 3. Estrutura de documentação
@@ -86,6 +100,9 @@ Antes de escrever qualquer código, ler [`.spec/standards/`](.spec/standards/). 
 | `.spec/flowcharts/` | Fluxogramas (dev, backend, frontend, navegação cliente/admin) — vivo. |
 | `.spec/roadmap.md` | Roadmap vivo (sequenciamento por marcos/tiers). |
 | `.spec/checklist.md` | Checklist mestre do projeto (vivo). |
+| `.spec/test/` + `.spec/qa/` | Cadeia de QA: histórias → planos → jornadas + metodologia do harness — vivo. |
+| `.spec/decisoes-pendentes.{yaml,md}` | Decisões tomadas pelo agente aguardando o dono — vivo. |
+| `qa-harness/` | Harness de QA black-box (skill `/qa`): stack própria, suítes, evidências, relatórios. |
 
 > **UML do DB:** [`.spec/unit/db/uml-class-diagram.md`](.spec/unit/db/uml-class-diagram.md)
 > deve ser atualizado **a cada migração** (junto da migration Alembic).
@@ -98,11 +115,12 @@ Antes de escrever qualquer código, ler [`.spec/standards/`](.spec/standards/). 
 
 ## 4. Regra de ouro da fase atual
 
-> **Fase atual: especificação de unidades.** Trabalhamos exclusivamente dentro de
-> [`.spec/unit/`](.spec/unit/). Não criar código de produção ainda.
+> **Fase atual: Enrichment + QA** (ver [`STATUS.md`](STATUS.md)). O código de produção existe
+> e roda em Docker; toda mudança segue **spec → desenvolvimento (TDD) → teste → validação `/qa`**.
 >
 > O [planning](.spec/planning/) está completo e aprovado (fase anterior, congelada).
 > Cada unit spec deriva de um ponto do planning e lista seus casos de teste (base do TDD).
+> _Histórico: a regra "só `.spec/unit/`, sem código de produção" valeu na fase de unit specs._
 
 ---
 
