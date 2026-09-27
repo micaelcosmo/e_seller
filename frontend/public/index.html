@@ -12,7 +12,7 @@
   <meta property="og:image" content="/og-image.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="/og-image.svg">
-  <meta name="theme-color" content="#6d5cff">
+  <meta name="theme-color" content="#fcfbff">
   <link rel="canonical" href="/">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>e_seller — sua loja de e-books</title>
@@ -71,7 +71,10 @@
       <div class="search-wrap">
         <svg class="icon search-icon" aria-hidden="true"><use href="#i-search"/></svg>
         <input id="search-input" type="search" placeholder="Buscar por título ou autor…"
-               aria-label="Buscar e-books" title="Digite e tecle Enter para buscar">
+               aria-label="Buscar e-books" title="Digite e tecle Enter para buscar" enterkeyhint="search">
+        <button id="search-btn" class="search-go" type="button" aria-label="Buscar" title="Buscar">
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        </button>
       </div>
     </div>
     <button id="menu-toggle" class="ghost icon-btn menu-toggle" aria-label="Abrir menu"
@@ -107,7 +110,10 @@
 
   <main id="app">
     <section id="hero" class="hero">
-      <h1>E-books, na hora.</h1>
+      <p class="hero-eyebrow">
+        <svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg> Entrega digital imediata
+      </p>
+      <h1>E-books, <span class="hero-accent">na hora.</span></h1>
       <p>Compre, pague e baixe em segundos. Simples assim.</p>
       <div class="hero-actions">
         <button id="hero-cta" class="primary hero-cta" title="Ver todos os e-books">

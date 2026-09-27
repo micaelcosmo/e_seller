@@ -1,5 +1,7 @@
 # Planning Frontend Visual — Enrichment
 
+> **Atualização 2026-09-27 (épico VIS):** o tema escuro das páginas server-rendered foi unificado com o tema claro da loja — ver [`../frontend/roadmap-vis.md`](../frontend/roadmap-vis.md) (VIS-14). Os valores de cor abaixo ficam como histórico do FEV.
+
 > Refatoração e enriquecimento visual de todas as views Jinja2. Stack mantida:
 > Jinja2 + vanilla JS. Next.js é Tier 2 (bloqueado). Última atualização: 2026-06-13.
 

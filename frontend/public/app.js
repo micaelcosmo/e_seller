@@ -4,6 +4,8 @@
 const API = "/api/v1";
 const view = document.getElementById("view");
 const hero = document.getElementById("hero");
+// Título original do index.html: volta a valer ao sair da página de um e-book.
+const DEFAULT_TITLE = document.title;
 
 // ---------- Utilitários ----------
 
@@ -125,19 +127,23 @@ function _titleHue(title) {
 }
 
 function coverHtml(p) {
-  // Renderiza a capa: imagem real se cover_url presente;
-  // caso contrário, placeholder com iniciais do título e cor derivada do slug.
+  // Capa do e-book: a imagem real quando existe; senão, uma capa de livro gerada
+  // (cor derivada do título, lombada, título e autor tipografados) — VIS-04.
   if (p.cover_url) {
     return '<div class="cover"><img src="' + escapeHtml(p.cover_url) +
       '" alt="Capa de ' + escapeHtml(p.title) + '" loading="lazy"></div>';
   }
-  const words = (p.title || "?").trim().split(/\s+/);
-  const initials = (words.length > 1 ? words[0][0] + words[1][0] : words[0].slice(0, 2)).toUpperCase();
   const hue = _titleHue(p.title || p.slug || "");
-  const bg = "hsl(" + hue + ",42%,32%)";
-  return '<div class="cover" style="background:' + bg + ';color:#fff;' +
-    'font-size:2rem;font-weight:800;letter-spacing:-.5px">' +
-    escapeHtml(initials) + "</div>";
+  return (
+    '<div class="cover cover-gen" style="--h:' + hue + '" role="img" aria-label="Capa de ' +
+    escapeHtml(p.title || "e-book") + '">' +
+    '<span class="cover-spine" aria-hidden="true"></span>' +
+    '<span class="cover-kicker" aria-hidden="true">e-book</span>' +
+    '<span class="cover-title" aria-hidden="true">' + escapeHtml(p.title || "") + "</span>" +
+    '<span class="cover-rule" aria-hidden="true"></span>' +
+    '<span class="cover-author" aria-hidden="true">' + escapeHtml(p.author || "e_seller") + "</span>" +
+    "</div>"
+  );
 }
 
 // Slugs na wishlist do usuário logado (Set atualizado por renderHome).
@@ -350,8 +356,11 @@ function sortBar(activeSort) {
 
 function bindWishlistButtons() {
   // Liga os botões de wishlist (coração) nos cards após renderização.
-  const btns = view.querySelectorAll(".btn-wish");
+  // Só os ainda não ligados: a grade e o carrossel chamam esta função na mesma tela,
+  // e um botão ligado duas vezes dispararia dois pedidos por clique.
+  const btns = view.querySelectorAll(".btn-wish:not([data-bound])");
   for (const btn of btns) {
+    btn.setAttribute("data-bound", "1");
     btn.addEventListener("click", function (evt) {
       evt.preventDefault();
       evt.stopPropagation();
@@ -700,6 +709,11 @@ async function submitReview(slug) {
   }
 }
 
+function checkoutUrl(order) {
+  // Link de pagamento do pedido (vem do gateway pela API); sem ele, o simulador same-origin.
+  return order.checkout_url || ("/pay/simulate/" + encodeURIComponent(order.reference));
+}
+
 async function buy(slug) {
   // Cria o pedido e leva ao pagamento (página same-origin, via proxy).
   const email = (document.getElementById("buy-email").value || "").trim();
@@ -715,9 +729,8 @@ async function buy(slug) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    // Navega para a lista de pedidos; o botão "Pagar" na order-card completa o pagamento.
-    toast("Pedido criado! Clique em Pagar para concluir.", "ok");
-    location.hash = "#/pedidos";
+    // Leva direto ao pagamento do pedido (US-04); o link vem do gateway pela API.
+    window.location.href = checkoutUrl(order);
   } catch (e) {
     toast(e.message, "err");
     btn.disabled = false; btn.textContent = "Comprar e baixar";
@@ -738,7 +751,7 @@ async function renderAccount() {
   try {
     profile = (await api("/billing/profile")) || {};
   } catch (e) { /* perfil ainda não criado — exibe formulário vazio */ }
-  const pt = profile.person_type || "PF";
+  const pt = profile.person_type || "individual";
   view.innerHTML =
     '<a class="back" href="#/">← Voltar</a>' +
     '<h2 style="margin:8px 0 16px">Minha Conta</h2>' +
@@ -747,8 +760,8 @@ async function renderAccount() {
     '<form id="account-form" class="form account-form">' +
     '<label class="field-label">Tipo de pessoa' +
     '<select name="person_type" title="Pessoa Física ou Jurídica">' +
-    '<option value="PF"' + (pt !== "PJ" ? " selected" : "") + '>Pessoa Física (CPF)</option>' +
-    '<option value="PJ"' + (pt === "PJ" ? " selected" : "") + '>Pessoa Jurídica (CNPJ)</option>' +
+    '<option value="individual"' + (pt !== "company" ? " selected" : "") + '>Pessoa Física (CPF)</option>' +
+    '<option value="company"' + (pt === "company" ? " selected" : "") + '>Pessoa Jurídica (CNPJ)</option>' +
     '</select></label>' +
     '<input name="legal_name" type="text" placeholder="Nome completo ou Razão Social" required ' +
     'value="' + escapeHtml(profile.legal_name || "") + '" title="Nome completo ou razão social">' +
@@ -792,13 +805,18 @@ async function renderAccount() {
 
 // ---------- Autenticação ----------
 
-function decodeJwtRole(token) {
-  // Extrai o campo role do payload JWT (base64url) sem verificar assinatura.
-  // Usado apenas para controle de visibilidade de UI — autorização real é feita no backend.
+async function refreshAdminLink() {
+  // Mostra o link Admin só para admin/staff, pelo papel que o /auth/me informa.
+  // Só controla a visibilidade — a autorização real é feita no backend.
+  const adminLink = document.getElementById("admin-link");
+  if (!adminLink) { return; }
+  if (!localStorage.getItem("token")) { adminLink.classList.add("hidden"); return; }
   try {
-    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    return payload.role || null;
-  } catch (e) { return null; }
+    const me = await api("/auth/me");
+    adminLink.classList.toggle("hidden", me.role !== "admin" && me.role !== "staff");
+  } catch (e) {
+    adminLink.classList.add("hidden");
+  }
 }
 
 function initials(text) {
@@ -814,16 +832,14 @@ function initials(text) {
 
 function refreshAuthButton() {
   // Mostra "Entrar" ou avatar do usuário logado; exibe botões de Biblioteca/Carrinho/Conta quando logado.
-  // Exibe link Admin apenas se o JWT indicar role admin ou staff.
+  // O link Admin depende do papel informado pelo /auth/me (refreshAdminLink).
   const btn = document.getElementById("auth-btn");
   const lib = document.getElementById("lib-btn");
   const wish = document.getElementById("wish-btn");
   const cart = document.getElementById("cart-btn");
   const account = document.getElementById("account-btn");
   const ordersBtn = document.getElementById("orders-btn");
-  const adminLink = document.getElementById("admin-link");
   const email = localStorage.getItem("email");
-  const token = localStorage.getItem("token");
   if (email) {
     // Avatar com iniciais (UXR-10); cor derivada do e-mail reusando _titleHue (SFX-05).
     const hue = _titleHue(email);
@@ -840,10 +856,7 @@ function refreshAuthButton() {
   cart.classList.toggle("hidden", !email);
   account.classList.toggle("hidden", !email);
   ordersBtn.classList.toggle("hidden", !email);
-  if (adminLink) {
-    const role = token ? decodeJwtRole(token) : null;
-    adminLink.classList.toggle("hidden", role !== "admin" && role !== "staff");
-  }
+  refreshAdminLink();
   refreshCartCount();
 }
 
@@ -945,7 +958,7 @@ async function cartCheckout() {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    window.location.href = "/pay/simulate/" + order.reference;
+    window.location.href = checkoutUrl(order);
   } catch (e) {
     toast(e.message, "err"); btn.disabled = false; btn.textContent = "Finalizar compra";
   }
@@ -1066,7 +1079,7 @@ async function renderOrders() {
         '<span class="order-status ' + statusClass + '">' + statusLabel + "</span>" +
         '<div class="order-amount">' + money(o.amount) + "</div>" +
         (o.checkout_url && o.status === "pending"
-          ? '<a class="btn primary" href="' + escapeHtml(o.checkout_url) + '" target="_blank">Pagar</a>'
+          ? '<a class="btn primary" href="' + escapeHtml(o.checkout_url) + '" title="Ir para o pagamento deste pedido">Pagar</a>'
           : "") +
         "</div>";
     }
@@ -1187,6 +1200,8 @@ function router() {
   // Roteador por hash (#/, #/produto/slug, #/biblioteca, #/carrinho, #/conta).
   // Rotas desconhecidas renderizam a página 404.
   const hash = location.hash || "#/";
+  animateView();
+  if (!hash.startsWith("#/produto/")) { document.title = DEFAULT_TITLE; }
   if (hash === "#/" || hash === "") {
     renderHome(null, null, null);
   } else if (hash.startsWith("#/produto/")) {
@@ -1207,15 +1222,54 @@ function router() {
 }
 
 function setupSearch() {
-  // Busca ao teclar Enter (sem recarregar a página).
+  // Busca ao teclar Enter ou tocar no botão de buscar (sem recarregar a página).
   const input = document.getElementById("search-input");
+  const button = document.getElementById("search-btn");
+  const run = function () {
+    const q = input.value.trim();
+    if (location.hash !== "#/") { location.hash = "#/"; }
+    renderHome(q, null, null);
+  };
   input.addEventListener("keydown", function (ev) {
-    if (ev.key === "Enter") {
-      const q = input.value.trim();
-      if (location.hash !== "#/") { location.hash = "#/"; }
-      renderHome(q, null, null);
-    }
+    if (ev.key === "Enter") { run(); }
   });
+  if (button) { button.addEventListener("click", run); }
+}
+
+function animateView() {
+  // Entrada suave da tela a cada troca de rota (VIS-12).
+  view.classList.remove("view-enter");
+  void view.offsetWidth;
+  view.classList.add("view-enter");
+}
+
+function setupRipple() {
+  // Ripple do Material: uma onda nasce no ponto do toque em botões, chips e cards.
+  const selector = ".primary, .buy, .ghost, .chip-btn, .tab, .btn-load-more, .btn-primary, .search-go, .card, .btn.primary";
+  document.addEventListener("pointerdown", function (ev) {
+    const target = ev.target.closest(selector);
+    if (!target || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const wave = document.createElement("span");
+    wave.className = "ripple";
+    wave.setAttribute("aria-hidden", "true");
+    wave.style.width = size + "px";
+    wave.style.height = size + "px";
+    wave.style.left = (ev.clientX - rect.left - size / 2) + "px";
+    wave.style.top = (ev.clientY - rect.top - size / 2) + "px";
+    target.appendChild(wave);
+    setTimeout(function () { wave.remove(); }, 650);
+  });
+}
+
+function setupAppBar() {
+  // A barra do topo ganha elevação quando a página rola (VIS-02).
+  const bar = document.querySelector(".topbar");
+  if (!bar) { return; }
+  const update = function () { bar.classList.toggle("is-scrolled", window.scrollY > 6); };
+  window.addEventListener("scroll", update, { passive: true });
+  update();
 }
 
 window.addEventListener("hashchange", function () {
@@ -1264,6 +1318,8 @@ window.addEventListener("DOMContentLoaded", function () {
   });
   setupMobileMenu();
   setupHero();
+  setupRipple();
+  setupAppBar();
 });
 
 async function setupHero() {
