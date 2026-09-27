@@ -1,0 +1,32 @@
+{
+  "gravado_em": "2026-09-27T09:11:05+00:00",
+  "ponto": "Ponto 4 - Senha errada é recusada",
+  "acao": "login-senha-errada",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/auth/token",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "qa-novo-api-27061103@eseller-qa.test",
+    "corpo_enviado": {
+      "formulario": {
+        "username": "qa-novo-api-27061103@eseller-qa.test",
+        "password": "[mascarado: 21 caracteres]"
+      }
+    }
+  },
+  "resposta": {
+    "status": 401,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/problem+json",
+    "content_disposition": null,
+    "tamanho_do_corpo": 148,
+    "corpo_json": {
+      "type": "https://e-seller.app/errors/401",
+      "title": "Não autenticado",
+      "status": 401,
+      "detail": "Credenciais inválidas",
+      "instance": "/api/v1/auth/token"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

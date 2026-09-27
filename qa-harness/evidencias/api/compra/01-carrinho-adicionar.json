@@ -1,0 +1,20 @@
+{
+  "gravado_em": "2026-09-27T09:11:07+00:00",
+  "ponto": "Ponto 1 - Carrinho recebe o e-book e mostra o preço",
+  "acao": "carrinho-adicionar",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/cart/fastapi-do-zero",
+    "perfil": "cliente",
+    "identidade_do_perfil": "qa-cliente@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 204,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 0,
+    "corpo_json": null,
+    "corpo_texto_recortado": ""
+  }
+}

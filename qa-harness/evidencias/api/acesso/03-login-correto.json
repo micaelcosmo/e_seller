@@ -1,0 +1,30 @@
+{
+  "gravado_em": "2026-09-27T09:11:05+00:00",
+  "ponto": "Ponto 3 - Login com senha correta devolve os tokens",
+  "acao": "login-correto",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/auth/token",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "qa-novo-api-27061103@eseller-qa.test",
+    "corpo_enviado": {
+      "formulario": {
+        "username": "qa-novo-api-27061103@eseller-qa.test",
+        "password": "[mascarado: 17 caracteres]"
+      }
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "content_disposition": null,
+    "tamanho_do_corpo": 519,
+    "corpo_json": {
+      "access_token": "[mascarado: 248 caracteres]",
+      "refresh_token": "[mascarado: 211 caracteres]",
+      "token_type": "[mascarado: 6 caracteres]"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

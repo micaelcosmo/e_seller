@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:13+00:00",
+  "ponto": "Ponto 3 - Formulário de login do painel abre o painel",
+  "acao": "painel-login-sem-csrf",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/admin/login",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "formulario": {
+        "username": "qa-admin@eseller-qa.test",
+        "password": "[mascarado: 32 caracteres]"
+      }
+    }
+  },
+  "resposta": {
+    "status": 403,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "text/html; charset=utf-8",
+    "content_disposition": null,
+    "tamanho_do_corpo": 21,
+    "corpo_json": null,
+    "corpo_texto_recortado": "Token CSRF inválido."
+  }
+}

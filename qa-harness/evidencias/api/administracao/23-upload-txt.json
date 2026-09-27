@@ -1,0 +1,32 @@
+{
+  "gravado_em": "2026-09-27T09:11:17+00:00",
+  "ponto": "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra",
+  "acao": "upload-txt",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/admin/products/qa-e-book-27061112/upload-file",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "arquivos": [
+        "file=ebook-qa.txt"
+      ]
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "content_disposition": null,
+    "tamanho_do_corpo": 149,
+    "corpo_json": {
+      "id": 7,
+      "product_id": 13,
+      "file_format": "txt",
+      "storage_key": "qa-e-book-27061112/04deb28bad4445488cf3fbe246552cb3.txt",
+      "byte_size": 20,
+      "is_primary": true
+    },
+    "corpo_texto_recortado": ""
+  }
+}

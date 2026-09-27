@@ -1,0 +1,38 @@
+{
+  "gravado_em": "2026-09-27T09:11:06+00:00",
+  "ponto": "Ponto 6 - Perfil fiscal enviado como a tela envia é salvo",
+  "acao": "perfil-fiscal-da-tela",
+  "requisicao": {
+    "metodo": "PUT",
+    "url": "http://127.0.0.1:48273/api/v1/billing/profile",
+    "perfil": "cliente",
+    "identidade_do_perfil": "qa-cliente@eseller-qa.test",
+    "corpo_enviado": {
+      "person_type": "individual",
+      "legal_name": "QA Cliente",
+      "document": "529.982.247-25",
+      "address_line": "Rua do Teste, 100",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01001-000",
+      "country": "BR"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 186,
+    "corpo_json": {
+      "person_type": "individual",
+      "legal_name": "QA Cliente",
+      "document": "52998224725",
+      "address_line": "Rua do Teste, 100",
+      "city": "São Paulo",
+      "state": "SP",
+      "postal_code": "01001000",
+      "country": "BR"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

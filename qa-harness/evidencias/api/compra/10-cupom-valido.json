@@ -1,0 +1,27 @@
+{
+  "gravado_em": "2026-09-27T09:11:08+00:00",
+  "ponto": "Ponto 7 - Cupom válido calcula o total com desconto",
+  "acao": "cupom-valido",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/coupons/validate",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "code": "BEMVINDO10",
+      "amount": "39.90"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 48,
+    "corpo_json": {
+      "valid": true,
+      "total": "35.91",
+      "discount": "3.99"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

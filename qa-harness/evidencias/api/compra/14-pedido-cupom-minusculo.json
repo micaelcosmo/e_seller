@@ -1,0 +1,29 @@
+{
+  "gravado_em": "2026-09-27T09:11:09+00:00",
+  "ponto": "Ponto 10 - Cupom digitado em minúsculas vale no pedido como vale na prévia",
+  "acao": "pedido-cupom-minusculo",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/orders",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "product_slug": "python-na-pratica",
+      "buyer_email": "qa-convidado-minusculo-27061106@eseller-qa.test",
+      "coupon_code": "bemvindo10"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 178,
+    "corpo_json": {
+      "reference": "60a2c785-bfc0-4398-b9c0-7e47c4f5aff4",
+      "status": "pending",
+      "amount": "35.91",
+      "checkout_url": "http://127.0.0.1:48273/pay/simulate/60a2c785-bfc0-4398-b9c0-7e47c4f5aff4"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

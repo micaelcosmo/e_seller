@@ -1,0 +1,32 @@
+{
+  "gravado_em": "2026-09-27T09:11:12+00:00",
+  "ponto": "Ponto 7 - Favorito entra na lista de favoritos",
+  "acao": "favoritos",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/wishlist",
+    "perfil": "cliente",
+    "identidade_do_perfil": "qa-cliente@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 208,
+    "corpo_json": [
+      {
+        "slug": "fastapi-do-zero",
+        "title": "FastAPI do Zero",
+        "author": "Equipe e_seller",
+        "price": "49.90",
+        "cover_url": null,
+        "review_count": 0,
+        "avg_rating": 0.0,
+        "featured": false,
+        "created_at": "2026-09-27T06:58:12.810939Z"
+      }
+    ],
+    "corpo_texto_recortado": ""
+  }
+}

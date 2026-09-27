@@ -1,0 +1,25 @@
+{
+  "gravado_em": "2026-09-27T09:11:08+00:00",
+  "ponto": "Ponto 8 - Cupom inexistente é recusado",
+  "acao": "cupom-inexistente",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/coupons/validate",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "code": "QA-NAO-EXISTE",
+      "amount": "39.90"
+    }
+  },
+  "resposta": {
+    "status": 422,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 27,
+    "corpo_json": {
+      "detail": "Cupom inválido"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

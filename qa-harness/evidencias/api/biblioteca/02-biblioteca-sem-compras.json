@@ -1,0 +1,20 @@
+{
+  "gravado_em": "2026-09-27T09:11:11+00:00",
+  "ponto": "Ponto 2 - Biblioteca de quem não comprou está vazia",
+  "acao": "biblioteca-sem-compras",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/library",
+    "perfil": "sem_compras",
+    "identidade_do_perfil": "qa-sem-compras@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 2,
+    "corpo_json": [],
+    "corpo_texto_recortado": ""
+  }
+}

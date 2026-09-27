@@ -1,0 +1,27 @@
+{
+  "gravado_em": "2026-09-27T09:11:14+00:00",
+  "ponto": "Ponto 3 - Formulário de login do painel abre o painel",
+  "acao": "painel-enviar-login",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/admin/login",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "formulario": {
+        "username": "qa-admin@eseller-qa.test",
+        "password": "[mascarado: 32 caracteres]",
+        "csrf_token": "[mascarado: 64 caracteres]"
+      }
+    }
+  },
+  "resposta": {
+    "status": 302,
+    "cabecalho_location": "http://127.0.0.1:48273/admin/",
+    "tipo_de_conteudo": null,
+    "content_disposition": null,
+    "tamanho_do_corpo": 0,
+    "corpo_json": null,
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "gravado_em": "2026-09-27T09:11:12+00:00",
+  "ponto": "Ponto 9 - Quem não comprou não avalia",
+  "acao": "avaliacao-sem-posse",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/products/python-na-pratica/reviews",
+    "perfil": "sem_compras",
+    "identidade_do_perfil": "qa-sem-compras@eseller-qa.test",
+    "corpo_enviado": {
+      "rating": 5,
+      "comment": "qa-avaliacao-api-27061110"
+    }
+  },
+  "resposta": {
+    "status": 403,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/problem+json",
+    "tamanho_do_corpo": 175,
+    "corpo_json": {
+      "type": "https://e-seller.app/errors/403",
+      "title": "Sem permissão",
+      "status": 403,
+      "detail": "Só quem comprou pode avaliar",
+      "instance": "/api/v1/products/python-na-pratica/reviews"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "gravado_em": "2026-09-27T09:11:08+00:00",
+  "ponto": "Ponto 5 - E-book pago entra na biblioteca do comprador",
+  "acao": "biblioteca-depois-de-pago",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/library",
+    "perfil": "cliente",
+    "identidade_do_perfil": "qa-cliente@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 639,
+    "corpo_json": [
+      {
+        "slug": "fastapi-do-zero",
+        "title": "FastAPI do Zero",
+        "author": "Equipe e_seller",
+        "price": "49.90",
+        "cover_url": null,
+        "review_count": 0,
+        "avg_rating": 0.0,
+        "featured": false,
+        "created_at": "2026-09-27T06:58:12.810939Z"
+      },
+      {
+        "slug": "arquitetura-limpa-web",
+        "title": "Arquitetura Limpa na Web",
+        "author": "Equipe e_seller",
+        "price": "59.90",
+        "cover_url": null,
+        "review_count": 0,
+        "avg_rating": 0.0,
+        "featured": true,
+        "created_at": "2026-09-27T06:58:12.810939Z"
+      },
+      {
+        "slug": "python-na-pratica",
+        "title": "Python na Prática",
+        "author": "Equipe e_seller",
+        "price": "39.90",
+        "cover_url": null,
+        "review_count": 0,
+        "avg_rating": 0.0,
+        "featured": true,
+        "created_at": "2026-09-27T06:58:12.810939Z"
+      }
+    ],
+    "corpo_texto_recortado": ""
+  }
+}

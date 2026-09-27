@@ -1,0 +1,43 @@
+{
+  "gravado_em": "2026-09-27T09:11:15+00:00",
+  "ponto": "Ponto 4 - E-book novo nasce como rascunho fora da vitrine",
+  "acao": "cadastrar-ebook",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/admin/products",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "title": "QA E-book 27061112",
+      "price": "19.90",
+      "author": "Equipe QA",
+      "description": "E-book criado pelo QA."
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 337,
+    "corpo_json": {
+      "slug": "qa-e-book-27061112",
+      "title": "QA E-book 27061112",
+      "author": "Equipe QA",
+      "price": "19.90",
+      "cover_url": null,
+      "review_count": 0,
+      "avg_rating": 0.0,
+      "featured": false,
+      "created_at": "2026-09-27T09:11:15.842440Z",
+      "description": "E-book criado pelo QA.",
+      "view_count": 0,
+      "authors": [],
+      "tags": [],
+      "publisher": null,
+      "series": null,
+      "images": [],
+      "files": []
+    },
+    "corpo_texto_recortado": ""
+  }
+}

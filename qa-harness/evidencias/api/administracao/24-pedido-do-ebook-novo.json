@@ -1,0 +1,28 @@
+{
+  "gravado_em": "2026-09-27T09:11:18+00:00",
+  "ponto": "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra",
+  "acao": "pedido-do-ebook-novo",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/orders",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "product_slug": "qa-e-book-27061112",
+      "buyer_email": "qa-convidado-novo-27061112@eseller-qa.test"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 178,
+    "corpo_json": {
+      "reference": "72251feb-8707-4b95-af93-645fb9afe87a",
+      "status": "pending",
+      "amount": "19.90",
+      "checkout_url": "http://127.0.0.1:48273/pay/simulate/72251feb-8707-4b95-af93-645fb9afe87a"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

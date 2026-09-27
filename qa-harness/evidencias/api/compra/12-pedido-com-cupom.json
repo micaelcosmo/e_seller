@@ -1,0 +1,29 @@
+{
+  "gravado_em": "2026-09-27T09:11:08+00:00",
+  "ponto": "Ponto 9 - Pedido com cupom é gravado com o desconto",
+  "acao": "pedido-com-cupom",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/orders",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "product_slug": "python-na-pratica",
+      "buyer_email": "qa-convidado-cupom-27061106@eseller-qa.test",
+      "coupon_code": "BEMVINDO10"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 178,
+    "corpo_json": {
+      "reference": "c4408700-9efd-4441-9bf5-704c0715d6f8",
+      "status": "pending",
+      "amount": "35.91",
+      "checkout_url": "http://127.0.0.1:48273/pay/simulate/c4408700-9efd-4441-9bf5-704c0715d6f8"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

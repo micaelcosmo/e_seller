@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:11+00:00",
+  "ponto": "Ponto 3 - Link válido entrega o arquivo sem expor o caminho",
+  "acao": "download-valido",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/download/[mascarado]",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/octet-stream",
+    "content_disposition": "attachment; filename=\"python-na-pratica.txt\"",
+    "tamanho_do_corpo": 126,
+    "procurado_no_corpo_inteiro": {
+      "Python na Prática": 1,
+      "/app/storage": 0,
+      "storage/ebooks": 0
+    },
+    "corpo_json": null,
+    "corpo_texto_recortado": "e_seller — e-book de demonstracao\nTitulo: Python na Prática\n\nEste e um arquivo de exemplo entregue apos a compra simulada.\n"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "gravado_em": "2026-09-27T09:11:16+00:00",
+  "ponto": "Ponto 9 - Relatório de vendas do período soma os pedidos pagos",
+  "acao": "relatorio-de-vendas",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/admin/reports/sales?date_from=2026-09-26&date_to=2026-09-28",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 256,
+    "corpo_json": {
+      "period": {
+        "from": "2026-09-26",
+        "to": "2026-09-28"
+      },
+      "orders_paid": 3,
+      "revenue_brl": 189.6,
+      "top_products": [
+        {
+          "product_id": 1,
+          "units_sold": 2,
+          "revenue_brl": 79.8
+        },
+        {
+          "product_id": 2,
+          "units_sold": 1,
+          "revenue_brl": 49.9
+        },
+        {
+          "product_id": 3,
+          "units_sold": 1,
+          "revenue_brl": 59.9
+        }
+      ]
+    },
+    "corpo_texto_recortado": ""
+  }
+}

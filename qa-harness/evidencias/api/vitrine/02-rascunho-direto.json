@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:02+00:00",
+  "ponto": "Ponto 2 - Rascunho não abre pelo endereço direto",
+  "acao": "rascunho-direto",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/products/rascunho-oculto",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 404,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/problem+json",
+    "tamanho_do_corpo": 160,
+    "corpo_json": {
+      "type": "https://e-seller.app/errors/404",
+      "title": "Não encontrado",
+      "status": 404,
+      "detail": "Produto não encontrado",
+      "instance": "/api/v1/products/rascunho-oculto"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

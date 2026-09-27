@@ -1,0 +1,30 @@
+{
+  "gravado_em": "2026-09-27T09:11:17+00:00",
+  "ponto": "Ponto 13 - Cupom desativado deixa de valer",
+  "acao": "desativar-cupom",
+  "requisicao": {
+    "metodo": "PATCH",
+    "url": "http://127.0.0.1:48273/api/v1/admin/coupons/QA-27061112/toggle",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 190,
+    "corpo_json": {
+      "id": 9,
+      "code": "QA-27061112",
+      "discount_type": "percent",
+      "value": 20.0,
+      "active": false,
+      "valid_until": null,
+      "max_redemptions": null,
+      "redemptions_count": 0,
+      "created_at": "2026-09-27T09:11:17.178717Z"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "gravado_em": "2026-09-27T09:11:04+00:00",
+  "ponto": "Ponto 1 - Cadastro cria conta de comprador",
+  "acao": "cadastro",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/auth/register",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "email": "qa-novo-api-27061103@eseller-qa.test",
+      "password": "[mascarado: 17 caracteres]",
+      "full_name": "QA Novo Api"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "content_disposition": null,
+    "tamanho_do_corpo": 92,
+    "corpo_json": {
+      "email": "qa-novo-api-27061103@eseller-qa.test",
+      "role": "customer",
+      "full_name": "QA Novo Api"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

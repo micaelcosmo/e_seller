@@ -1,0 +1,24 @@
+{
+  "gravado_em": "2026-09-27T09:11:03+00:00",
+  "ponto": "Ponto 7 - Newsletter aceita a inscrição e a repetição sem duplicar",
+  "acao": "newsletter-repetida",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/newsletter/subscribe",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "email": "qa-news-27061102@eseller-qa.test"
+    }
+  },
+  "resposta": {
+    "status": 202,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 23,
+    "corpo_json": {
+      "status": "subscribed"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

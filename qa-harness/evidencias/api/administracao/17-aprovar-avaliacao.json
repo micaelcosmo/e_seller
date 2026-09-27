@@ -1,0 +1,25 @@
+{
+  "gravado_em": "2026-09-27T09:11:17+00:00",
+  "ponto": "Ponto 11 - Aprovar publica a avaliação na página do e-book",
+  "acao": "aprovar-avaliacao",
+  "requisicao": {
+    "metodo": "PATCH",
+    "url": "http://127.0.0.1:48273/api/v1/admin/reviews/33/moderate",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "status": "approved"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 29,
+    "corpo_json": {
+      "id": 33,
+      "status": "approved"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

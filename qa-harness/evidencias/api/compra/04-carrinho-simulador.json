@@ -1,0 +1,25 @@
+{
+  "gravado_em": "2026-09-27T09:11:07+00:00",
+  "ponto": "Ponto 3 - Aprovar no simulador deixa o pedido pago com download",
+  "acao": "carrinho-simulador",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/pay/simulate/51ad5a31-2de9-40d4-a962-5c69a7c774c4",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "text/html; charset=utf-8",
+    "content_disposition": null,
+    "tamanho_do_corpo": 4527,
+    "procurado_no_corpo_inteiro": {
+      "Simulador de pagamento": 1,
+      "Aprovar pagamento": 1
+    },
+    "corpo_json": null,
+    "corpo_texto_recortado": "<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <meta name=\"theme-color\" content=\"#fcfbff\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:site_name\" content=\"e_seller\">\n  <meta property=\"og:title\" content=\"e_seller — sua loja de e-books\">\n  <meta property=\"og:description\" content=\"Os melhores e-books com download seguro e entrega imediata.\">\n  <link rel=\"icon\" href=\"/static/favicon.ico\" type=\"image/x-icon\">\n  <title>Pagamento simulado — e_seller</title>\n  <link rel=\"stylesheet\" href=\"/static/css/design-system.css\">\n  <link rel=\"stylesheet\" href=\"/static/css/components.css\">\n  \n</head>\n<body>\n  <header class=\"site-header\" id=\"site-header\" role=\"banner\">\n    <a href=\"/\" class=\"site-logo\" aria-label=\"e_seller — início\">\n      📚 <span>e_seller</span>\n    </a>\n    <nav class=\"site-nav\" role=\"navigation\" aria-label=\"Navegação principal\">\n      <a href=\"/\">Catálogo</a>\n      <a href=\"/#/biblioteca\">Biblioteca</a>\n      <a href=\"/#/carrinho\">Carrinho</a>\n      <a href=\"/#/conta\" id=\"nav-conta\">Minha conta</a>\n      <a href=\"/docs\" aria-label=\"Documentação da API\">API /docs</a>\n    </nav>\n    <button class=\"hamburger\" id=\"menu-toggle\" aria-label=\"Abrir menu\" aria-expanded=\"false\" aria-controls=\"site-header\">\n      <svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\">\n        <line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"/><line x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"/><line x1=\"3\" y1=\"18\" x2=\"21\" y2=\"18\"/>\n      </svg>\n    </button>\n  </header>\n\n  <main class=\"site-main\" id=\"site-main\">\n    \n\n<div class=\"content-narrow\" style=\"margin-top: var(--sp-10)\">\n  <div class=\"card\" style=\"padding: var(--sp-8)\">\n    <div style=\"text-align:center; margin-bottom: var(--sp-6)\">\n      <p style=\"font-size:3rem; margin-bottom: var(--sp-3)\">💳</p>\n      <h1 class=\"text-2xl font-bold\">Simulador de pagamento</h1>\n      <p class=\"text-muted text-sm\">Ambiente de demonstração — nenhuma transação real é processada.</p>\n      <span class=\"badge badge-warning\" style=\"margin-top: var(--sp-2)\">Modo sandbox</span>\n    </div>\n\n    <div class=\"card\" style=\"background: var(--color-bg); margin-bottom: var(--sp-6)\">\n      <p class=\"text-sm text-muted\">Referência do pedido</p>\n      <p style=\"font-family: var(--font-mono); font-size: var(--text-lg); color: var(--color-accent)\">\n        51ad5a31-2de9-40d4-a962-5c69a7c774c4\n      </p>\n    </div>\n\n    <div style=\"display:flex; gap: var(--sp-3)\">\n      <form method=\"post\" action=\"/pay/confirm/51ad5a31-2de9-40d4-a962-5c69a7c774c4\" style=\"flex:1\">\n        <input type=\"hidden\" name=\"csrf_token\" value=\"[mascarado]\">\n        <input type=\"hidden\" name=\"decision\" value=\"approved\">\n        <button class=\"btn btn-primary btn-block btn-lg\" type=\"submit\">\n          ✓ Aprovar pagamento\n        </button>\n      </form>\n      <form method=\"post\" action=\"/pay/confirm/51ad5a31-2de9-40d4-a962-5c69a7c774c4\" style=\"flex:1\">\n        <input type=\"hidden\" name=\"csrf_token\" value=\"[mascarado]\">\n        <input type=\"hidden\" name=\"decision\" value=\"rejected\">\n        <button class=\"btn btn-danger btn-block btn-lg\" type=\"submit\">\n          ✕ Recusar\n        </button>\n      </form>\n    </div>\n  </div>\n</div>\n\n\n  </main>\n\n  <footer class=\"site-footer\" role=\"contentinfo\">\n    <a href=\"/privacidade\">Privacidade</a> &nbsp;·&nbsp;\n    <a href=\"/termos\">Termos de uso</a> &nbsp;·&nbsp;\n    <a href=\"/recuperar-senha\">Esqueceu a senha?</a>\n  </footer>\n\n  <div id=\"toast-root\" role=\"region\" aria-label=\"Notificações\" aria-live=\"polite\"></div>\n\n  <script src=\"/static/js/toast.js\"></script>\n  <script src=\"/static/js/router.js\"></script>\n  <script>\n    (function () {\n      var btn = document.getElementById('menu-toggle');\n      var header = document.getElementById('site-header');\n     "
+  }
+}

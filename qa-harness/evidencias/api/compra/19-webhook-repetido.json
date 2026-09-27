@@ -1,0 +1,27 @@
+{
+  "gravado_em": "2026-09-27T09:11:10+00:00",
+  "ponto": "Ponto 13 - Webhook repetido não repete efeito",
+  "acao": "webhook-repetido",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/webhooks/mercadopago",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "provider_payment_id": "qa-webhook-7627ab83-96d8-4736-b2f7-a55188a8ed46",
+      "order_reference": "7627ab83-96d8-4736-b2f7-a55188a8ed46",
+      "provider_status": "approved"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 88,
+    "corpo_json": {
+      "outcome": "ALREADY_PROCESSED",
+      "order_reference": "7627ab83-96d8-4736-b2f7-a55188a8ed46"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:15+00:00",
+  "ponto": "Ponto 4 - E-book novo nasce como rascunho fora da vitrine",
+  "acao": "rascunho-na-vitrine",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/products/qa-e-book-27061112",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 404,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/problem+json",
+    "tamanho_do_corpo": 163,
+    "corpo_json": {
+      "type": "https://e-seller.app/errors/404",
+      "title": "Não encontrado",
+      "status": 404,
+      "detail": "Produto não encontrado",
+      "instance": "/api/v1/products/qa-e-book-27061112"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

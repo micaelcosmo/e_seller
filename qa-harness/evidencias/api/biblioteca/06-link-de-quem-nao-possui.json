@@ -1,0 +1,22 @@
+{
+  "gravado_em": "2026-09-27T09:11:11+00:00",
+  "ponto": "Ponto 6 - Quem não possui o e-book não gera link",
+  "acao": "link-de-quem-nao-possui",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/library/python-na-pratica/download-link",
+    "perfil": "sem_compras",
+    "identidade_do_perfil": "qa-sem-compras@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 403,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 40,
+    "corpo_json": {
+      "detail": "Você não possui este e-book"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

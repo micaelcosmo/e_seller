@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:07+00:00",
+  "ponto": "Ponto 3 - Aprovar no simulador deixa o pedido pago com download",
+  "acao": "carrinho-aprovar",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/pay/confirm/51ad5a31-2de9-40d4-a962-5c69a7c774c4",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "formulario": {
+        "decision": "approved",
+        "csrf_token": "[mascarado: 64 caracteres]"
+      }
+    }
+  },
+  "resposta": {
+    "status": 303,
+    "cabecalho_location": "/pedido/51ad5a31-2de9-40d4-a962-5c69a7c774c4",
+    "tipo_de_conteudo": null,
+    "content_disposition": null,
+    "tamanho_do_corpo": 0,
+    "corpo_json": null,
+    "corpo_texto_recortado": ""
+  }
+}

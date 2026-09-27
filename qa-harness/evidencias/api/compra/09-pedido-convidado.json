@@ -1,0 +1,28 @@
+{
+  "gravado_em": "2026-09-27T09:11:08+00:00",
+  "ponto": "Ponto 6 - Convidado cria pedido pendente com link de pagamento",
+  "acao": "pedido-convidado",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/orders",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "product_slug": "python-na-pratica",
+      "buyer_email": "qa-convidado-a-27061106@eseller-qa.test"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 178,
+    "corpo_json": {
+      "reference": "7627ab83-96d8-4736-b2f7-a55188a8ed46",
+      "status": "pending",
+      "amount": "39.90",
+      "checkout_url": "http://127.0.0.1:48273/pay/simulate/7627ab83-96d8-4736-b2f7-a55188a8ed46"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

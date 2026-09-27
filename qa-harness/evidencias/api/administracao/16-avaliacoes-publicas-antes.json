@@ -1,0 +1,23 @@
+{
+  "gravado_em": "2026-09-27T09:11:16+00:00",
+  "ponto": "Ponto 11 - Aprovar publica a avaliação na página do e-book",
+  "acao": "avaliacoes-publicas-antes",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/products/arquitetura-limpa-web/reviews",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 2,
+    "procurado_no_corpo_inteiro": {
+      "qa-avaliacao-pendente": 0
+    },
+    "corpo_json": [],
+    "corpo_texto_recortado": ""
+  }
+}

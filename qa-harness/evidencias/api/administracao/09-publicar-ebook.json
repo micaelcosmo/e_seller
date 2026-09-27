@@ -1,0 +1,40 @@
+{
+  "gravado_em": "2026-09-27T09:11:16+00:00",
+  "ponto": "Ponto 6 - Publicar põe o e-book na vitrine",
+  "acao": "publicar-ebook",
+  "requisicao": {
+    "metodo": "PATCH",
+    "url": "http://127.0.0.1:48273/api/v1/admin/products/qa-e-book-27061112/status",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": {
+      "status": "published"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 337,
+    "corpo_json": {
+      "slug": "qa-e-book-27061112",
+      "title": "QA E-book 27061112",
+      "author": "Equipe QA",
+      "price": "19.90",
+      "cover_url": null,
+      "review_count": 0,
+      "avg_rating": 0.0,
+      "featured": false,
+      "created_at": "2026-09-27T09:11:15.842440Z",
+      "description": "E-book criado pelo QA.",
+      "view_count": 0,
+      "authors": [],
+      "tags": [],
+      "publisher": null,
+      "series": null,
+      "images": [],
+      "files": []
+    },
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "gravado_em": "2026-09-27T09:11:11+00:00",
+  "ponto": "Ponto 5 - Link que atingiu o limite é negado",
+  "acao": "download-esgotado",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/download/[mascarado]",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 429,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/problem+json",
+    "content_disposition": null,
+    "tamanho_do_corpo": 195,
+    "corpo_json": {
+      "type": "https://e-seller.app/errors/429",
+      "title": "Limite atingido",
+      "status": 429,
+      "detail": "Limite de downloads atingido",
+      "instance": "/api/v1/download/[mascarado]"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

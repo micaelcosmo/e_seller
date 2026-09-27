@@ -1,0 +1,23 @@
+{
+  "gravado_em": "2026-09-27T09:11:12+00:00",
+  "ponto": "Ponto 10 - Avaliação pendente não aparece para o público",
+  "acao": "avaliacoes-publicas",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/products/python-na-pratica/reviews",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 2,
+    "procurado_no_corpo_inteiro": {
+      "qa-avaliacao-api-27061110": 0
+    },
+    "corpo_json": [],
+    "corpo_texto_recortado": ""
+  }
+}

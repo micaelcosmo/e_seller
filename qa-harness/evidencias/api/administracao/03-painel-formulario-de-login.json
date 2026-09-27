@@ -1,0 +1,26 @@
+{
+  "gravado_em": "2026-09-27T09:11:13+00:00",
+  "ponto": "Ponto 3 - Formulário de login do painel abre o painel",
+  "acao": "painel-formulario-de-login",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/admin/login",
+    "perfil": "sessao-avulsa",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "text/html; charset=utf-8",
+    "content_disposition": null,
+    "tamanho_do_corpo": 3739,
+    "procurado_no_corpo_inteiro": {
+      "username": 2,
+      "password": "[mascarado: 1 caracteres]",
+      "csrf_token": "[mascarado: 1 caracteres]"
+    },
+    "corpo_json": null,
+    "corpo_texto_recortado": "\n<!DOCTYPE html>\n<html lang=\"en\">\n\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\" />\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/tabler.min.css\">\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/tabler-icons.min.css\">\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/fontawesome.min.css\">\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/select2.min.css\">\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/flatpickr.min.css\">\n  <link rel=\"stylesheet\" href=\"http://127.0.0.1:48273/admin/statics/css/main.css\">\n  \n  \n  \n  <title>e_seller — Admin</title>\n</head>\n\n<body>\n  \n<div class=\"d-flex align-items-center justify-content-center vh-100\">\n  <form class=\"Fcol-lg-6 col-md-6 card card-md\" action=\"http://127.0.0.1:48273/admin/login\" method=\"POST\" autocomplete=\"off\">\n    <div class=\"card-body\">\n      <h2 class=\"card-title text-center mb-4\">Login to e_seller — Admin</h2>\n      <div class=\"mb-3\">\n        <label class=\"form-label\">Username</label>\n        \n        <input name=\"username\" type=\"text\" class=\"form-control\" placeholder=\"Enter username\" autocomplete=\"off\">\n        \n      </div>\n      <div class=\"mb-2\">\n        <label class=\"form-label\">\n          Password\n        </label>\n        <div class=\"input-group input-group-flat\">\n          \n          <input name=\"password\" type=\"password\" class=\"form-control\" placeholder=\"Password\" autocomplete=\"off\">\n          \n        </div>\n      </div>\n      <div class=\"form-footer\">\n        <button type=\"submit\" class=\"btn btn-primary w-100\">Login</button>\n      </div>\n    </div>\n  </form>\n</div>\n\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/jquery.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/tabler.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/popper.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/bootstrap.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/select2.full.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/flatpickr.min.js\"></script>\n  <script type=\"text/javascript\" src=\"http://127.0.0.1:48273/admin/statics/js/main.js\"></script>\n  <script type=\"text/javascript\">\n    /* CSRF double-submit do e_seller: todo POST do painel leva o token do cookie csrftoken\n       (campo csrf_token nos formulários e cabeçalho X-CSRF-Token nas chamadas do jQuery). */\n    (function () {\n      function csrfToken() {\n        var achado = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/);\n        return achado ? decodeURIComponent(achado[1]) : \"\";\n      }\n      function marcarFormulario(formulario) {\n        if (!formulario || String(formulario.method).toLowerCase() !== \"post\") { return; }\n        var campo = formulario.querySelector('input[name=\"csrf_token\"]');\n        if (!campo) {\n          campo = document.createElement(\"input\");\n          campo.type = \"hidden\";\n          campo.name = \"csrf_token\";\n          formulario.appendChild(campo);\n        }\n        campo.value = csrfToken();\n      }\n      for (const formulario of document.querySelectorAll(\"form\")) { marcarFormulario(formulario); }\n      document.addEventListener(\"submit\", function (evento) { marcarFormulario(evento.target); }, true);\n      if (window.jQuery) {\n        window.jQuery.ajaxSetup({ beforeSend: function (xhr) { xhr.setRequestHeader(\"X-CSRF-Token\", csrfToken()); } });\n      }\n    })();\n  </script>\n  \n  \n</body>\n\n</html>"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "gravado_em": "2026-09-27T09:11:16+00:00",
+  "ponto": "Ponto 10 - Avaliação pendente está na fila de moderação",
+  "acao": "fila-de-moderacao",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/admin/reviews?status=pending",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 370,
+    "corpo_json": [
+      {
+        "id": 34,
+        "product_id": 1,
+        "user_id": 2,
+        "rating": 5,
+        "comment": "qa-avaliacao-api-27061110",
+        "status": "pending",
+        "created_at": "2026-09-27 09:11:12.338585+00:00"
+      },
+      {
+        "id": 33,
+        "product_id": 3,
+        "user_id": 2,
+        "rating": 5,
+        "comment": "qa-avaliacao-pendente: texto conferido na moderação",
+        "status": "pending",
+        "created_at": "2026-09-27 09:11:00.070036+00:00"
+      }
+    ],
+    "corpo_texto_recortado": ""
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "gravado_em": "2026-09-27T09:11:16+00:00",
+  "ponto": "Ponto 8 - Detalhe do pedido traz itens e status",
+  "acao": "detalhe-do-pedido",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/orders/admin/c8be4345-9fc5-49dc-a855-c6c127ab827f",
+    "perfil": "admin",
+    "identidade_do_perfil": "qa-admin@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 283,
+    "corpo_json": {
+      "reference": "c8be4345-9fc5-49dc-a855-c6c127ab827f",
+      "buyer_email": "qa-cliente@eseller-qa.test",
+      "status": "paid",
+      "amount": "99.80",
+      "created_at": "2026-09-27T09:11:00.070036Z",
+      "items": [
+        {
+          "product_id": 1,
+          "unit_price": "39.90",
+          "quantity": 1
+        },
+        {
+          "product_id": 3,
+          "unit_price": "59.90",
+          "quantity": 1
+        }
+      ]
+    },
+    "corpo_texto_recortado": ""
+  }
+}

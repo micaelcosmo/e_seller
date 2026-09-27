@@ -1,0 +1,24 @@
+{
+  "gravado_em": "2026-09-27T09:11:03+00:00",
+  "ponto": "Ponto 8 - Endereço da política de privacidade entrega a política",
+  "acao": "privacidade",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/privacidade",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "text/html; charset=utf-8",
+    "tamanho_do_corpo": 8326,
+    "procurado_no_corpo_inteiro": {
+      "Política de Privacidade": 2,
+      "sua loja de e-books": 1
+    },
+    "corpo_json": null,
+    "corpo_texto_recortado": "<!doctype html>\n<html lang=\"pt-BR\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <meta name=\"theme-color\" content=\"#fcfbff\">\n  <meta property=\"og:type\" content=\"website\">\n  <meta property=\"og:site_name\" content=\"e_seller\">\n  <meta property=\"og:title\" content=\"e_seller — sua loja de e-books\">\n  <meta property=\"og:description\" content=\"Os melhores e-books com download seguro e entrega imediata.\">\n  <link rel=\"icon\" href=\"/static/favicon.ico\" type=\"image/x-icon\">\n  <title>Política de Privacidade — e_seller</title>\n  <link rel=\"stylesheet\" href=\"/static/css/design-system.css\">\n  <link rel=\"stylesheet\" href=\"/static/css/components.css\">\n  \n</head>\n<body>\n  <header class=\"site-header\" id=\"site-header\" role=\"banner\">\n    <a href=\"/\" class=\"site-logo\" aria-label=\"e_seller — início\">\n      📚 <span>e_seller</span>\n    </a>\n    <nav class=\"site-nav\" role=\"navigation\" aria-label=\"Navegação principal\">\n      <a href=\"/\">Catálogo</a>\n      <a href=\"/#/biblioteca\">Biblioteca</a>\n      <a href=\"/#/carrinho\">Carrinho</a>\n      <a href=\"/#/conta\" id=\"nav-conta\">Minha conta</a>\n      <a href=\"/docs\" aria-label=\"Documentação da API\">API /docs</a>\n    </nav>\n    <button class=\"hamburger\" id=\"menu-toggle\" aria-label=\"Abrir menu\" aria-expanded=\"false\" aria-controls=\"site-header\">\n      <svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\">\n        <line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"/><line x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"/><line x1=\"3\" y1=\"18\" x2=\"21\" y2=\"18\"/>\n      </svg>\n    </button>\n  </header>\n\n  <main class=\"site-main\" id=\"site-main\">\n    \n\n<div style=\"display:flex; gap: var(--sp-8); align-items:flex-start\">\n  <nav style=\"flex:0 0 200px; position:sticky; top:80px; display:none\" class=\"toc\" aria-label=\"Índice\">\n    <p class=\"text-sm font-bold\" style=\"margin-bottom: var(--sp-3); color: var(--color-ink-2)\">NESTE DOCUMENTO</p>\n    <ul style=\"display:flex; flex-direction:column; gap: var(--sp-2)\">\n      <li><a href=\"#p1\" class=\"text-sm text-muted\">1. Quem somos</a></li>\n      <li><a href=\"#p2\" class=\"text-sm text-muted\">2. Dados coletados</a></li>\n      <li><a href=\"#p3\" class=\"text-sm text-muted\">3. Finalidade</a></li>\n      <li><a href=\"#p4\" class=\"text-sm text-muted\">4. Base legal</a></li>\n      <li><a href=\"#p5\" class=\"text-sm text-muted\">5. Compartilhamento</a></li>\n      <li><a href=\"#p6\" class=\"text-sm text-muted\">6. Retenção</a></li>\n      <li><a href=\"#p7\" class=\"text-sm text-muted\">7. Seus direitos</a></li>\n      <li><a href=\"#p8\" class=\"text-sm text-muted\">8. Segurança</a></li>\n    </ul>\n  </nav>\n\n  <article style=\"flex:1; max-width:65ch; line-height: var(--lh-loose)\">\n    <h1 class=\"text-3xl font-bold\" style=\"margin-bottom: var(--sp-2)\">Política de Privacidade</h1>\n    <p class=\"text-muted text-sm\" style=\"margin-bottom: var(--sp-8)\">Última atualização: 2026-06-10 · Vigência: 2026-06-10</p>\n\n    <h2 id=\"p1\" class=\"text-xl font-bold\" style=\"margin-bottom: var(--sp-3)\">1. Quem somos</h2>\n    <p style=\"margin-bottom: var(--sp-6)\">O <strong>e_seller</strong> é um portal de venda de e-books operado como serviço digital.\n    Para dúvidas sobre privacidade, entre em contato pelo e-mail informado na plataforma.</p>\n\n    <h2 id=\"p2\" class=\"text-xl font-bold\" style=\"margin-bottom: var(--sp-3)\">2. Dados que coletamos</h2>\n    <ul style=\"margin-bottom: var(--sp-6); display:flex; flex-direction:column; gap: var(--sp-2); padding-left: var(--sp-4)\">\n      <li style=\"list-style:disc\"><strong>Cadastro:</strong> nome completo, e-mail e senha (armazenada como hash Argon2).</li>\n      <li style=\"list-style:disc\"><strong>Compra:</strong> dados de perfil fiscal (CPF/CNPJ, endereço) e dados de pagamento processados pelo Mercado Pago.</li>\n      <li style=\"list-style:disc\"><strong>Acesso:</strong> endereço IP (hasheado nos logs), data/hora e correlation-id.</li>\n      <li style=\"list-style:disc\"><strong>Atividade:</str"
+  }
+}

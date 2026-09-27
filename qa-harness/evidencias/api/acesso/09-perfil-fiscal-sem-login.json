@@ -1,0 +1,25 @@
+{
+  "gravado_em": "2026-09-27T09:11:06+00:00",
+  "ponto": "Ponto 7 - Perfil fiscal sem login é recusado",
+  "acao": "perfil-fiscal-sem-login",
+  "requisicao": {
+    "metodo": "PUT",
+    "url": "http://127.0.0.1:48273/api/v1/billing/profile",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "legal_name": "x",
+      "document": "x"
+    }
+  },
+  "resposta": {
+    "status": 401,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 28,
+    "corpo_json": {
+      "detail": "Não autenticado"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

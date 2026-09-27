@@ -1,0 +1,33 @@
+{
+  "gravado_em": "2026-09-27T09:11:10+00:00",
+  "ponto": "Ponto 11 - Pedido pendente em Meus pedidos traz como pagar",
+  "acao": "meus-pedidos",
+  "requisicao": {
+    "metodo": "GET",
+    "url": "http://127.0.0.1:48273/api/v1/orders/my",
+    "perfil": "sem_compras",
+    "identidade_do_perfil": "qa-sem-compras@eseller-qa.test",
+    "corpo_enviado": null
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 359,
+    "corpo_json": [
+      {
+        "reference": "a9cdc2e9-a352-46c6-b963-4f17de1a2aa3",
+        "status": "pending",
+        "amount": "39.90",
+        "checkout_url": "http://127.0.0.1:48273/pay/simulate/a9cdc2e9-a352-46c6-b963-4f17de1a2aa3"
+      },
+      {
+        "reference": "511c751f-5718-4c26-b116-67beada903bc",
+        "status": "pending",
+        "amount": "59.90",
+        "checkout_url": "http://127.0.0.1:48273/pay/simulate/511c751f-5718-4c26-b116-67beada903bc"
+      }
+    ],
+    "corpo_texto_recortado": ""
+  }
+}

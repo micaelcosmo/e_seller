@@ -1,0 +1,29 @@
+{
+  "gravado_em": "2026-09-27T09:11:12+00:00",
+  "ponto": "Ponto 8 - Comprador verificado envia avaliação",
+  "acao": "avaliacao-do-dono",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/products/python-na-pratica/reviews",
+    "perfil": "cliente",
+    "identidade_do_perfil": "qa-cliente@eseller-qa.test",
+    "corpo_enviado": {
+      "rating": 5,
+      "comment": "qa-avaliacao-api-27061110"
+    }
+  },
+  "resposta": {
+    "status": 201,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 128,
+    "corpo_json": {
+      "id": 34,
+      "rating": 5,
+      "comment": "qa-avaliacao-api-27061110",
+      "author": "qa-cliente",
+      "created_at": "2026-09-27T09:11:12.338585+00:00"
+    },
+    "corpo_texto_recortado": ""
+  }
+}

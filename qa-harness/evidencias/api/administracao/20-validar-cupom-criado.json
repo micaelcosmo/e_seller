@@ -1,0 +1,27 @@
+{
+  "gravado_em": "2026-09-27T09:11:17+00:00",
+  "ponto": "Ponto 12 - Cupom criado passa a valer",
+  "acao": "validar-cupom-criado",
+  "requisicao": {
+    "metodo": "POST",
+    "url": "http://127.0.0.1:48273/api/v1/coupons/validate",
+    "perfil": "visitante",
+    "identidade_do_perfil": "",
+    "corpo_enviado": {
+      "code": "QA-27061112",
+      "amount": "39.90"
+    }
+  },
+  "resposta": {
+    "status": 200,
+    "cabecalho_location": null,
+    "tipo_de_conteudo": "application/json",
+    "tamanho_do_corpo": 48,
+    "corpo_json": {
+      "valid": true,
+      "total": "31.92",
+      "discount": "7.98"
+    },
+    "corpo_texto_recortado": ""
+  }
+}
