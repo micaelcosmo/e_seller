@@ -1,0 +1,116 @@
+dominio: biblioteca
+fontes:
+  - .spec/planning/05-user-stories.md
+  - .spec/planning/03-requisitos-funcionais.md
+  - .spec/frontend/storefront.md
+  - .spec/frontend/roadmap-uxr.md
+  - .spec/unit/backend/wishlist/router_wishlist.md
+  - .spec/unit/backend/reviews/router_reviews.md
+  - .spec/unit/tests/security_testing.md
+historias: .spec/test/historias/biblioteca.md
+pontos:
+  - nome: "Ponto 1 - Biblioteca do comprador traz os e-books pagos"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: ["massa — `cliente` com pedido pago de `python-na-pratica` e `arquitetura-limpa-web`"]
+    fluxo:
+      - passo: "cliente: GET /api/v1/library"
+        evidencia: json
+    validade: a lista contém `python-na-pratica` e `arquitetura-limpa-web`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 2 - Biblioteca de quem não comprou está vazia"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: ["massa — `sem_compras` sem pedido pago"]
+    fluxo:
+      - passo: "sem_compras: GET /api/v1/library"
+        evidencia: json
+    validade: lista vazia (contraste do Ponto 1)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 3 - Link válido entrega o arquivo sem expor o caminho"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: ["massa — link válido de `python-na-pratica`"]
+    fluxo:
+      - passo: "GET /api/v1/download/<token válido>"
+        evidencia: json
+    validade: >
+      200 com `content-disposition` de anexo, corpo com o texto do e-book de demonstração
+      ("Python na Prática") e nenhum caminho do servidor (`/app/storage`) na resposta
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 4 - Link expirado é negado"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: [massa — link vencido ontem]
+    fluxo:
+      - passo: "GET /api/v1/download/<token expirado>"
+        evidencia: json
+    validade: 410 com mensagem de link expirado
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 5 - Link que atingiu o limite é negado"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: [massa — link com 5 de 5 downloads]
+    fluxo:
+      - passo: "GET /api/v1/download/<token esgotado>"
+        evidencia: json
+    validade: resposta de recusa (4xx) com mensagem de limite atingido — nenhum arquivo
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 6 - Quem não possui o e-book não gera link"
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    suite: integracao
+    pre_condicoes: [massa]
+    fluxo:
+      - passo: "sem_compras: POST /api/v1/library/python-na-pratica/download-link"
+        evidencia: json
+      - passo: "cliente: POST /api/v1/library/python-na-pratica/download-link (contraste)"
+        evidencia: json
+    validade: o `sem_compras` é recusado (4xx) e o `cliente`, dono, recebe um link (`url` para `/api/v1/download/`)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 7 - Favorito entra na lista de favoritos"
+    historia: "História 2 - Comprador guarda e-books nos favoritos"
+    suite: integracao
+    pre_condicoes: ["favoritos do `cliente` vazios (massa)"]
+    fluxo:
+      - passo: "cliente: POST /api/v1/wishlist/fastapi-do-zero"
+        evidencia: json
+      - passo: "cliente: GET /api/v1/wishlist"
+        evidencia: json
+    validade: a lista de favoritos contém `fastapi-do-zero`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 8 - Comprador verificado envia avaliação"
+    historia: "História 3 - Comprador avalia um e-book que comprou"
+    suite: integracao
+    pre_condicoes: ["`cliente` dono de `python-na-pratica`, sem avaliação dele (massa)"]
+    fluxo:
+      - passo: "cliente: POST /api/v1/products/python-na-pratica/reviews nota 5 e comentário da execução"
+        evidencia: json
+    validade: 201 com o `id` da avaliação e o comentário enviado (que ela nasce pendente é o Ponto 10)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 9 - Quem não comprou não avalia"
+    historia: "História 3 - Comprador avalia um e-book que comprou"
+    suite: integracao
+    pre_condicoes: ["`sem_compras` sem posse"]
+    fluxo:
+      - passo: "sem_compras: POST /api/v1/products/python-na-pratica/reviews"
+        evidencia: json
+    validade: 403 com "Só quem comprou pode avaliar"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 10 - Avaliação pendente não aparece para o público"
+    historia: "História 3 - Comprador avalia um e-book que comprou"
+    suite: integracao
+    pre_condicoes: [avaliação do Ponto 8 pendente]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products/python-na-pratica/reviews"
+        evidencia: json
+    validade: o comentário do Ponto 8 não está na lista pública
+    limitacoes_ambiente: []

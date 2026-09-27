@@ -1,0 +1,18 @@
+# Catálogo da base visual — retrato do sistema, tela a tela, independente de história.
+# Consumido pelo motor (python qa-harness/executar.py visual | responsividade).
+# Determinístico: o motor NÃO descobre telas sozinho — captura o que está aqui.
+# Tela nova no produto = entrada nova aqui (e o diff prova).
+#
+# Cada perfil é uma chave de `perfis` do qa-harness/config.yaml.
+# Tela por rota: { nome, rota }. Tela por aba (painel sem URL própria):
+# { nome, aba } — clica no botão/aba com esse texto depois de abrir `rota_home`.
+# Tela curta por design: `texto_minimo: <n>` troca o mínimo de texto só para ela.
+perfis:
+  visitante:
+    telas:
+      - { nome: 01-home, rota: "/" }
+  cliente:
+    rota_home: "/painel"
+    telas:
+      - { nome: 01-painel, rota: "/painel" }
+      - { nome: 02-perfil, aba: "Perfil" }

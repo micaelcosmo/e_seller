@@ -1,0 +1,81 @@
+dominio: acesso
+fontes:
+  - .spec/planning/03-requisitos-funcionais.md
+  - .spec/frontend/storefront.md
+  - .spec/enrichment/roadmap-aaa.md
+  - .spec/unit/backend/billing/router_billing.md
+historias: .spec/test/historias/acesso.md
+pontos:
+  - nome: "Ponto 1 - Cadastro cria conta de comprador"
+    historia: "História 1 - Visitante cria uma conta de comprador"
+    suite: integracao
+    pre_condicoes: [nenhuma conta com o e-mail qa-novo-api-<execução>]
+    fluxo:
+      - passo: "visitante: POST /api/v1/auth/register com e-mail, senha descartável e nome"
+        evidencia: json
+    validade: 201 com `email` igual ao enviado (minúsculo) e `role` de comprador (`customer`)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 2 - E-mail já cadastrado é recusado"
+    historia: "História 1 - Visitante cria uma conta de comprador"
+    suite: integracao
+    pre_condicoes: [conta do Ponto 1 criada]
+    fluxo:
+      - passo: "visitante: POST /api/v1/auth/register com o mesmo e-mail"
+        evidencia: json
+    validade: 409 com `detail` "E-mail já cadastrado"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 3 - Login com senha correta devolve os tokens"
+    historia: "História 2 - Comprador entra e sai da conta"
+    suite: integracao
+    pre_condicoes: [conta do Ponto 1]
+    fluxo:
+      - passo: "visitante: POST /api/v1/auth/token (formulário OAuth2 username/password)"
+        evidencia: json
+    validade: 200 com `access_token` e `refresh_token` presentes (mascarados na evidência) e `token_type` bearer
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 4 - Senha errada é recusada"
+    historia: "História 2 - Comprador entra e sai da conta"
+    suite: integracao
+    pre_condicoes: [conta do Ponto 1]
+    fluxo:
+      - passo: "visitante: POST /api/v1/auth/token com senha errada"
+        evidencia: json
+    validade: 401 com `detail` "Credenciais inválidas"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 5 - Token do logout deixa de valer"
+    historia: "História 2 - Comprador entra e sai da conta"
+    suite: integracao
+    pre_condicoes: [token do Ponto 3]
+    fluxo:
+      - passo: "conta nova: GET /api/v1/auth/me (antes do logout)"
+        evidencia: json
+      - passo: "conta nova: POST /api/v1/auth/logout"
+        evidencia: json
+      - passo: "conta nova: GET /api/v1/auth/me com o mesmo token"
+        evidencia: json
+    validade: o `/me` responde 200 com o e-mail antes do logout e 401 depois (contraste do mesmo token)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 6 - Perfil fiscal enviado como a tela envia é salvo"
+    historia: "História 3 - Comprador mantém o perfil fiscal"
+    suite: integracao
+    pre_condicoes: ["conta `cliente` sem perfil fiscal"]
+    fluxo:
+      - passo: "cliente: PUT /api/v1/billing/profile com o corpo que `renderAccount` monta (person_type individual = Pessoa Física, nome, CPF, endereço)"
+        evidencia: json
+    validade: 200 com o perfil devolvido (`legal_name` igual ao enviado)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 7 - Perfil fiscal sem login é recusado"
+    historia: "História 3 - Comprador mantém o perfil fiscal"
+    suite: integracao
+    pre_condicoes: []
+    fluxo:
+      - passo: "visitante: PUT /api/v1/billing/profile"
+        evidencia: json
+    validade: 401 — sem sessão não há perfil fiscal
+    limitacoes_ambiente: []

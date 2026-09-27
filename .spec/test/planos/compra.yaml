@@ -1,0 +1,164 @@
+dominio: compra
+fontes:
+  - .spec/planning/05-user-stories.md
+  - .spec/planning/03-requisitos-funcionais.md
+  - .spec/frontend/storefront.md
+  - .spec/unit/backend/coupons/router_coupons.md
+  - .spec/quality-bar.md
+historias: .spec/test/historias/compra.md
+pontos:
+  - nome: "Ponto 1 - Carrinho recebe o e-book e mostra o preço"
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    suite: integracao
+    pre_condicoes: ["carrinho do `cliente` vazio (massa)"]
+    fluxo:
+      - passo: "cliente: POST /api/v1/cart/fastapi-do-zero"
+        evidencia: json
+      - passo: "cliente: GET /api/v1/cart"
+        evidencia: json
+    validade: o carrinho lista `fastapi-do-zero` com `price` "49.90"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 2 - Finalizar o carrinho cria pedido pendente com link de pagamento"
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    suite: integracao
+    pre_condicoes: [carrinho do Ponto 1]
+    fluxo:
+      - passo: "cliente: POST /api/v1/cart/checkout"
+        evidencia: json
+    validade: resposta com `reference`, `status` pending e `amount` 49.90
+    limitacoes_ambiente: [Mercado Pago real desligado — o link é do simulador fake]
+
+  - nome: "Ponto 3 - Aprovar no simulador deixa o pedido pago com download"
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    suite: integracao
+    pre_condicoes: [pedido pendente do Ponto 2]
+    fluxo:
+      - passo: "GET /pay/simulate/<referência> (lê o csrf_token do formulário)"
+        evidencia: json
+      - passo: "POST /pay/confirm/<referência> decision=approved"
+        evidencia: json
+      - passo: "GET /pedido/<referência>"
+        evidencia: json
+    validade: o confirm redireciona para `/pedido/<referência>` e a página do pedido mostra "✓ Pago" e o botão "Baixar"
+    limitacoes_ambiente: [pagamento pelo simulador fake]
+
+  - nome: "Ponto 4 - Páginas de pagamento recebem o visual da loja"
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    suite: integracao
+    pre_condicoes: [stack com o nginx do frontend na frente]
+    fluxo:
+      - passo: "GET /static/css/design-system.css pelo endereço da loja (a folha de estilo que o simulador e o pedido carregam)"
+        evidencia: json
+    validade: a resposta é CSS (`text/css`), não a página HTML da loja
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 5 - E-book pago entra na biblioteca do comprador"
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    suite: integracao
+    pre_condicoes: [pedido do Ponto 3 pago]
+    fluxo:
+      - passo: "cliente: GET /api/v1/library"
+        evidencia: json
+    validade: a biblioteca contém `fastapi-do-zero`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 6 - Convidado cria pedido pendente com link de pagamento"
+    historia: "História 2 - Visitante compra um e-book sem ter conta"
+    suite: integracao
+    pre_condicoes: []
+    fluxo:
+      - passo: "visitante: POST /api/v1/orders com `product_slug` e `buyer_email` qa-convidado-<execução>"
+        evidencia: json
+    validade: 201 com `status` pending e `checkout_url` apontando para `/pay/simulate/<referência>`
+    limitacoes_ambiente: [Mercado Pago real desligado — o link é do simulador fake]
+
+  - nome: "Ponto 7 - Cupom válido calcula o total com desconto"
+    historia: "História 3 - Comprador usa um cupom de desconto"
+    suite: integracao
+    pre_condicoes: [cupom BEMVINDO10 do seed]
+    fluxo:
+      - passo: "visitante: POST /api/v1/coupons/validate code=BEMVINDO10 amount=39.90"
+        evidencia: json
+    validade: "`valid` true e `total` 35.91"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 8 - Cupom inexistente é recusado"
+    historia: "História 3 - Comprador usa um cupom de desconto"
+    suite: integracao
+    pre_condicoes: []
+    fluxo:
+      - passo: "visitante: POST /api/v1/coupons/validate code=QA-NAO-EXISTE"
+        evidencia: json
+    validade: resposta de erro (4xx) dizendo que o cupom é inválido
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 9 - Pedido com cupom é gravado com o desconto"
+    historia: "História 3 - Comprador usa um cupom de desconto"
+    suite: integracao
+    pre_condicoes: [cupom BEMVINDO10 ativo]
+    fluxo:
+      - passo: "visitante: POST /api/v1/orders python-na-pratica com coupon_code BEMVINDO10"
+        evidencia: json
+    validade: "`amount` 35.91"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 10 - Cupom digitado em minúsculas vale no pedido como vale na prévia"
+    historia: "História 3 - Comprador usa um cupom de desconto"
+    suite: integracao
+    pre_condicoes: [cupom BEMVINDO10 ativo]
+    fluxo:
+      - passo: "visitante: POST /api/v1/coupons/validate code=BEMVINDO10 (a prévia da tela põe o código em maiúsculas)"
+        evidencia: json
+      - passo: "visitante: POST /api/v1/orders com coupon_code bemvindo10 (o pedido envia o que foi digitado)"
+        evidencia: json
+    validade: a prévia diz válido e o pedido é gravado com `amount` 35.91 — a tela não promete desconto que o pedido não dá
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 11 - Pedido pendente em Meus pedidos traz como pagar"
+    historia: "História 4 - Comprador acompanha os pedidos e retoma um pagamento pendente"
+    suite: integracao
+    pre_condicoes: ["conta `sem_compras` sem pedidos"]
+    fluxo:
+      - passo: "sem_compras: POST /api/v1/orders python-na-pratica"
+        evidencia: json
+      - passo: "sem_compras: GET /api/v1/orders/my"
+        evidencia: json
+    validade: o pedido aparece com `status` pending, `amount` e um `checkout_url` para retomar o pagamento
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 12 - Webhook aprovado paga o pedido"
+    historia: "História 5 - Sistema confirma o pagamento pelo webhook"
+    suite: integracao
+    pre_condicoes: [pedido pendente do Ponto 6]
+    fluxo:
+      - passo: "POST /api/v1/webhooks/mercadopago provider_status=approved"
+        evidencia: json
+      - passo: "GET /pedido/<referência>"
+        evidencia: json
+    validade: "`outcome` APPLIED e a página do pedido mostra \"✓ Pago\" com \"Baixar\""
+    limitacoes_ambiente: [provedor fake — sem assinatura do Mercado Pago]
+
+  - nome: "Ponto 13 - Webhook repetido não repete efeito"
+    historia: "História 5 - Sistema confirma o pagamento pelo webhook"
+    suite: integracao
+    pre_condicoes: [pedido pago pelo Ponto 12]
+    fluxo:
+      - passo: "POST /api/v1/webhooks/mercadopago com o mesmo provider_payment_id"
+        evidencia: json
+      - passo: "GET /pedido/<referência>"
+        evidencia: json
+    validade: "`outcome` ALREADY_PROCESSED e a página do pedido tem o mesmo número de links \"Baixar\" de antes"
+    limitacoes_ambiente: [provedor fake]
+
+  - nome: "Ponto 14 - Pedido pendente não libera download"
+    historia: "História 5 - Sistema confirma o pagamento pelo webhook"
+    suite: integracao
+    pre_condicoes: []
+    fluxo:
+      - passo: "visitante: POST /api/v1/orders (novo convidado)"
+        evidencia: json
+      - passo: "GET /pedido/<referência>"
+        evidencia: json
+    validade: a página mostra "Aguardando" e nenhum link `/api/v1/download/`
+    limitacoes_ambiente: []

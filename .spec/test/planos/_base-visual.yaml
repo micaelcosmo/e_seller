@@ -1,0 +1,43 @@
+# Catálogo da base visual — retrato do e_seller, tela a tela, independente de história.
+# Consumido pelo motor (python qa-harness/executar.py visual | responsividade).
+# Determinístico: o motor NÃO descobre telas sozinho — captura o que está aqui.
+# Tela nova no produto = entrada nova aqui (e o diff prova).
+#
+# Cada perfil é uma chave de `perfis` do qa-harness/config.yaml. As telas do SPA são
+# rotas de hash (`/#/...`); `/admin/...` é o painel SQLAdmin; os painéis HTML de
+# `/api/v1/admin/*/panel` entram como o navegador os abre (sem cabeçalho Authorization).
+perfis:
+  visitante:
+    telas:
+      - { nome: 01-home, rota: "/" }
+      - { nome: 02-detalhe-do-ebook, rota: "/#/produto/python-na-pratica" }
+      - { nome: 03-carrinho-sem-conta, rota: "/#/carrinho", texto_minimo: 60 }
+      - { nome: 04-pagina-inexistente, rota: "/#/qa-rota-inexistente", texto_minimo: 60 }
+      - { nome: 05-privacidade, rota: "/privacidade" }
+      - { nome: 06-termos, rota: "/termos" }
+      - { nome: 07-login-do-painel, rota: "/admin/login", texto_minimo: 20 }
+  cliente:
+    rota_home: "/#/"
+    telas:
+      - { nome: 01-home-com-conta, rota: "/#/" }
+      - { nome: 02-biblioteca, rota: "/#/biblioteca", texto_minimo: 80 }
+      - { nome: 03-favoritos, rota: "/#/favoritos", texto_minimo: 80 }
+      - { nome: 04-carrinho, rota: "/#/carrinho", texto_minimo: 80 }
+      - { nome: 05-pedidos, rota: "/#/pedidos", texto_minimo: 80 }
+      - { nome: 06-conta, rota: "/#/conta", texto_minimo: 80 }
+      - { nome: 07-detalhe-de-ebook-comprado, rota: "/#/produto/python-na-pratica" }
+  sem_compras:
+    rota_home: "/#/"
+    telas:
+      - { nome: 01-biblioteca-vazia, rota: "/#/biblioteca", texto_minimo: 60 }
+      - { nome: 02-pedidos, rota: "/#/pedidos", texto_minimo: 60 }
+  admin:
+    rota_home: "/admin/"
+    telas:
+      - { nome: 01-painel, rota: "/admin/", texto_minimo: 40 }
+      - { nome: 02-produtos, rota: "/admin/product/list", texto_minimo: 60 }
+      - { nome: 03-pedidos, rota: "/admin/order/list", texto_minimo: 60 }
+      - { nome: 04-avaliacoes, rota: "/admin/review/list", texto_minimo: 40 }
+      - { nome: 05-cupons, rota: "/admin/coupon/list", texto_minimo: 40 }
+      - { nome: 06-painel-html-de-pedidos, rota: "/api/v1/admin/orders/panel", texto_minimo: 40 }
+      - { nome: 07-painel-html-novo-ebook, rota: "/api/v1/admin/products/new", texto_minimo: 40 }

@@ -1,0 +1,103 @@
+dominio: vitrine
+fontes:
+  - .spec/planning/05-user-stories.md
+  - .spec/planning/03-requisitos-funcionais.md
+  - .spec/planning/19-seguranca-e-lgpd.md
+  - .spec/frontend/storefront.md
+  - .spec/frontend/roadmap-uxr.md
+  - .spec/unit/backend/newsletter/router_newsletter.md
+historias: .spec/test/historias/vitrine.md
+pontos:
+  - nome: "Ponto 1 - Catálogo público lista os três publicados sem o rascunho"
+    historia: "História 1 - Visitante conhece a loja e o catálogo"
+    suite: integracao
+    pre_condicoes: [seed do backend com 3 e-books publicados e 1 rascunho]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products"
+        evidencia: json
+    validade: >
+      o corpo lista exatamente `python-na-pratica`, `fastapi-do-zero` e `arquitetura-limpa-web`,
+      cada um com `title`, `author` e `price`, e não contém `rascunho-oculto`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 2 - Rascunho não abre pelo endereço direto"
+    historia: "História 1 - Visitante conhece a loja e o catálogo"
+    suite: integracao
+    pre_condicoes: ["seed com `rascunho-oculto` em status draft"]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products/rascunho-oculto"
+        evidencia: json
+    validade: a resposta é 404 — o rascunho não existe para a vitrine
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 3 - Busca por FastAPI traz só o e-book certo"
+    historia: "História 2 - Visitante busca um e-book por título ou autor"
+    suite: integracao
+    pre_condicoes: [seed do backend]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products?q=FastAPI (a rota que o SPA usa na busca)"
+        evidencia: json
+    validade: o corpo contém `fastapi-do-zero` e não contém `python-na-pratica`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 4 - Filtro a partir de 50 reais traz só o e-book mais caro"
+    historia: "História 3 - Visitante filtra e ordena o catálogo por preço"
+    suite: integracao
+    pre_condicoes: [seed do backend]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products?price_min=50"
+        evidencia: json
+    validade: o corpo contém só `arquitetura-limpa-web` (R$ 59,90)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 5 - Ordenação por menor preço começa pelo mais barato"
+    historia: "História 3 - Visitante filtra e ordena o catálogo por preço"
+    suite: integracao
+    pre_condicoes: [seed do backend]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products?sort=price_asc"
+        evidencia: json
+    validade: o primeiro item é `python-na-pratica` e os preços vêm em ordem crescente
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 6 - Detalhe traz título, autor, descrição e preço"
+    historia: "História 4 - Visitante vê o detalhe de um e-book"
+    suite: integracao
+    pre_condicoes: [seed do backend]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products/python-na-pratica"
+        evidencia: json
+    validade: o corpo traz `title` "Python na Prática", `author`, `description` não vazia e `price` "39.90"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 7 - Newsletter aceita a inscrição e a repetição sem duplicar"
+    historia: "História 5 - Visitante assina a newsletter"
+    suite: integracao
+    pre_condicoes: [nenhum inscrito com o e-mail da execução]
+    fluxo:
+      - passo: "visitante: POST /api/v1/newsletter/subscribe com e-mail qa-news-<execução>"
+        evidencia: json
+      - passo: "visitante: POST /api/v1/newsletter/subscribe com o mesmo e-mail"
+        evidencia: json
+    validade: as duas respostas são de sucesso (2xx) com `status` "subscribed" — a segunda não dá erro
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 8 - Endereço da política de privacidade entrega a política"
+    historia: "História 6 - Visitante lê a política de privacidade e os termos"
+    suite: integracao
+    pre_condicoes: [stack com o nginx do frontend na frente]
+    fluxo:
+      - passo: "visitante: GET /privacidade pelo endereço da loja (o link do rodapé)"
+        evidencia: json
+    validade: o HTML devolvido contém o título "Política de Privacidade" (não a página da loja)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 9 - Endereço dos termos de uso entrega os termos"
+    historia: "História 6 - Visitante lê a política de privacidade e os termos"
+    suite: integracao
+    pre_condicoes: [stack com o nginx do frontend na frente]
+    fluxo:
+      - passo: "visitante: GET /termos pelo endereço da loja (o link do rodapé)"
+        evidencia: json
+    validade: o HTML devolvido contém o título "Termos de Uso" (não a página da loja)
+    limitacoes_ambiente: []

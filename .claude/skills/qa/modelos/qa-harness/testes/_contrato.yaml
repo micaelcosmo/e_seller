@@ -1,0 +1,23 @@
+# Contrato da pasta (legível por máquina — consumido pela skill /qa)
+pasta: qa-harness/testes
+proposito: os testes do projeto que o motor executa (a prova visual é declarativa, em spec/test/jornadas/)
+formato:
+  subpastas:
+    api: suítes de integração black-box, uma por domínio (teste_<dominio>.py), herdando motor.suite.SuiteDeIntegracao
+  registro: as suítes entram na execução por Adaptador.suites_de_integracao()
+  estilo: classes com docstring; nomes de ponto e de história copiados do plano
+regras:
+  - todo teste implementa pontos de um plano em spec/test/planos/<dominio>.yaml
+  - toda chamada HTTP passa por SuiteDeIntegracao._chamar — é lá que a evidência é gravada
+  - evidência é .png ou .json; dump de stdout (.txt) é proibido
+  - vereditos possíveis: VALIDO | FALHA DE PRODUTO | EVIDENCIA INVALIDA | INCONCLUSIVO
+  - 200 sozinho não é prova — o ponto só é VALIDO se a evidência mostrar o dado esperado
+  - healing corrige o teste, nunca o produto; máximo 3 ciclos
+criacao_pelo_qa:
+  permitida: quando um plano tem ponto sem teste, ou um achado confirmado precisa de regressão
+  derivacao: plano → teste; o que foi criado entra em criados_nesta_execucao e na proposta de commit
+  proibido: teste sem ponto de plano; tocar o produto; reescrever teste fora de healing
+consumidores: [motor/executar.py, skill /qa]
+validacao_lint:
+  - ponto de integração do plano sem teste executado = lacuna
+  - ponto executado sem ponto no plano = lacuna

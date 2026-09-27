@@ -1,0 +1,80 @@
+dominio: vitrine
+historias: .spec/test/historias/vitrine.md
+jornadas:
+  - id: visitante-conhece-a-loja
+    nome: Visitante conhece a loja e vê o catálogo
+    historia: "História 1 - Visitante conhece a loja e o catálogo"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/", titulo: "Abre a página inicial da loja" }
+      - { acao: conferir_texto, texto: "E-books, na hora.", titulo: "Vê a proposta da loja" }
+      - { acao: conferir_texto, texto: "e-books disponíveis", dentro_de: "#hero-proof", titulo: "Vê a prova social com o número de e-books" }
+      - { acao: clicar, seletor: "#hero-cta", titulo: "Clica em Ver catálogo" }
+      - { acao: conferir_texto, texto: "Arquitetura Limpa na Web", dentro_de: "#product-grid", titulo: "Vê os e-books publicados no catálogo" }
+      - { acao: conferir_ausencia, texto: "Rascunho", dentro_de: "#view", titulo: "Não vê o e-book em rascunho" }
+
+  - id: visitante-busca-por-titulo
+    nome: Visitante busca um e-book pelo título
+    historia: "História 2 - Visitante busca um e-book por título ou autor"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre o catálogo" }
+      - { acao: preencher, seletor: "#search-input", valor: "FastAPI", titulo: "Digita FastAPI na busca" }
+      - { acao: teclar, tecla: "Enter", seletor: "#search-input", titulo: "Tecla Enter para buscar" }
+      - { acao: conferir_texto, texto: "FastAPI do Zero", dentro_de: "#product-grid", titulo: "Vê o e-book procurado no resultado" }
+      - { acao: conferir_ausencia, texto: "Python na Prática", dentro_de: "#product-grid", titulo: "Não vê e-book que não bate com a busca" }
+
+  - id: visitante-filtra-por-preco
+    nome: Visitante ordena e filtra o catálogo por preço
+    historia: "História 3 - Visitante filtra e ordena o catálogo por preço"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre o catálogo" }
+      - { acao: selecionar, seletor: "#sort-select", opcao: "Menor preço", titulo: "Ordena por menor preço" }
+      - { acao: conferir_texto, texto: "Python na Prática", dentro_de: "#product-grid", titulo: "Vê o catálogo ordenado" }
+      - { acao: clicar, texto: "R$ 50+", titulo: "Escolhe a faixa de preço R$ 50+" }
+      - { acao: conferir_texto, texto: "Arquitetura Limpa na Web", dentro_de: "#product-grid", titulo: "Vê o e-book da faixa escolhida" }
+      - { acao: conferir_ausencia, texto: "Python na Prática", dentro_de: "#product-grid", titulo: "Não vê e-book fora da faixa" }
+
+  - id: visitante-ve-o-detalhe
+    nome: Visitante abre a página de um e-book
+    historia: "História 4 - Visitante vê o detalhe de um e-book"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre o catálogo" }
+      - { acao: clicar, seletor: "#product-grid a.card[href='#/produto/python-na-pratica']", titulo: "Clica no cartão de Python na Prática" }
+      - { acao: conferir_texto, texto: "Python na Prática", dentro_de: ".detail", titulo: "Vê o título do e-book" }
+      - { acao: conferir_texto, texto: "Um guia direto ao ponto", dentro_de: ".detail", titulo: "Vê a descrição" }
+      - { acao: conferir_texto, texto: "39,90", dentro_de: ".detail", titulo: "Vê o preço" }
+      - { acao: conferir_texto, texto: "Início", dentro_de: ".breadcrumb", titulo: "Vê o caminho de volta ao início" }
+      - { acao: conferir_texto, texto: "Comprar agora", dentro_de: ".buy-box", titulo: "Vê a caixa de compra" }
+      - { acao: abrir, rota: "/#/produto/qa-nao-existe", titulo: "Abre o endereço de um e-book que não existe" }
+      - { acao: conferir_texto, texto: "Produto não encontrado", titulo: "Vê o aviso de e-book não encontrado" }
+
+  - id: visitante-assina-a-newsletter
+    nome: Visitante assina a newsletter pelo rodapé
+    historia: "História 5 - Visitante assina a newsletter"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/", titulo: "Abre a loja" }
+      - { acao: preencher, seletor: "#news-email", valor: "qa-news-jornada-{{execucao}}@eseller-qa.test", titulo: "Digita o e-mail no rodapé" }
+      - { acao: clicar, seletor: "#news-form button[type=submit]", titulo: "Clica em Assinar" }
+      - { acao: conferir_texto, texto: "Inscrição feita", titulo: "Vê a confirmação da inscrição" }
+
+  - id: visitante-le-privacidade-e-termos
+    nome: Visitante abre a política de privacidade e os termos pelo rodapé
+    historia: "História 6 - Visitante lê a política de privacidade e os termos"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/", titulo: "Abre a loja" }
+      - { acao: clicar, seletor: "footer a[href='/privacidade']", titulo: "Clica em Privacidade no rodapé" }
+      - { acao: conferir_texto, texto: "Política de Privacidade", titulo: "Vê a política de privacidade" }
+      - { acao: abrir, rota: "/", titulo: "Volta para a loja" }
+      - { acao: clicar, seletor: "footer a[href='/termos']", titulo: "Clica em Termos de uso no rodapé" }
+      - { acao: conferir_texto, texto: "Termos de Uso", titulo: "Vê os termos de uso" }

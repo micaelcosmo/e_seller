@@ -1,0 +1,65 @@
+# Configuração do harness de QA deste projeto — lida pelo motor agnóstico da
+# skill /qa (qa-harness/motor/configuracao.py). Chave ausente cai no padrão.
+
+projeto:
+  nome: meu-projeto
+  # Texto que só esta aplicação tem na home: o bootstrap confere que a porta
+  # responde com ESTA aplicação, e não com outro projeto da máquina.
+  assinatura_da_aplicacao: "Nome que aparece na home"
+  # Pastas do produto: o QA lê, nunca edita.
+  produto_somente_leitura: [src/]
+  # Arquivo de status com seção de QA a atualizar no encerramento (opcional).
+  arquivo_de_status: ""
+
+urls:
+  app: http://localhost:3000          # onde o navegador abre as telas
+  api: http://localhost:3000          # base das chamadas de integração (monolito: igual ao app)
+  healthcheck: /
+
+# `visitante` é sempre o perfil sem sessão. Os demais têm `conta`, que o
+# adaptador usa para autenticar (e-mail, usuário...).
+perfis:
+  visitante: { conta: null, descricao: "sem sessão" }
+  cliente: { conta: cliente@qa.local, descricao: "conta comum" }
+  admin: { conta: admin@qa.local, descricao: "administração" }
+
+viewports:
+  monitor: { largura: 1920, altura: 1080 }
+  notebook: { largura: 1366, altura: 768 }
+  celular: { largura: 390, altura: 844, device: true, densidade: 2 }
+responsividade: [notebook, celular]
+
+execucao:
+  healing_maximo: 3
+  headless: true
+  timeout_ms: 30000
+  timeout_de_navegacao_ms: 90000   # primeira visita a uma rota em servidor de desenvolvimento compila a rota
+  texto_minimo_renderizado: 200
+  altura_maxima_da_captura_px: 4320   # teto da página inteira na base visual (o PNG vai em base64 ao git)
+  tentativas_de_assentamento: 20
+  intervalo_de_assentamento_ms: 1500
+
+caminhos:
+  historias: spec/test/historias
+  planos: spec/test/planos
+  jornadas: spec/test/jornadas
+  base_visual: spec/test/planos/_base-visual.yaml
+  evidencias: qa-harness/evidencias
+  relatorios: qa-harness/relatorios
+  convencao_de_comentarios: spec/code/convencao-de-comentarios.md
+
+# Onde o coletor de comentários procura (etapa de IA, sempre warning).
+comentarios:
+  alvos: [src, qa-harness]
+  extensoes: [.py, .js, .jsx, .ts, .tsx, .mjs, .css]
+
+# Módulos Python que o adaptador importa além dos do motor (o bootstrap confere).
+dependencias_extras: []
+
+# Linhas que só este projeto tem (unitários in-tree, fluxogramas...). O comando
+# grava um JSON com pontos no formato do manifesto; o motor consolida.
+linhas_do_projeto: {}
+#  unitarios:
+#    comando: [python, qa-harness/testes/unitarios/coletor.py]
+#    resultado: qa-harness/evidencias/unitarios/resultado.json
+#    no_completo: true

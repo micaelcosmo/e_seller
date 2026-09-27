@@ -1,0 +1,11 @@
+# QA harness — Python
+__pycache__/
+*.pyc
+
+# QA harness — imagens e PDFs são artefatos de execução, fora do git.
+# A tela de agora vai versionada no evidencias.json de cada pasta (PNG em base64);
+# a linha do tempo, no CHANGELOG-EVIDENCIAS.yaml. PDFs regeneram do manifesto.
+qa-harness/**/*.png
+qa-harness/**/*.jpg
+qa-harness/**/*.jpeg
+qa-harness/**/*.pdf

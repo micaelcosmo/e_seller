@@ -1,0 +1,23 @@
+# Contrato da pasta (legível por máquina — consumido pela skill /qa)
+pasta: spec/test/historias
+proposito: histórias de usuário derivadas das fontes — âncora de rastreabilidade de todo teste e jornada
+formato:
+  arquivo: "<dominio>.md"
+  instrucao_de_derivacao: spec/test/historias/_instrucao.md
+  cabecalho: "**Derivado de:** <fontes> e, se o domínio tem tela, **Jornadas:** <arquivo>"
+regras:
+  - história = uma funcionalidade com começo e fim; nomeação "História <n> - <assunto>", sem abreviações
+  - papel é papel real do sistema
+  - critério de aceite sempre cita a fonte; sem fonte não existe critério
+  - recusa/permissão é critério de aceite dentro da jornada, não história própria
+  - história de domínio com tela precisa de jornada (ou "**Prova visual:** não se aplica — <motivo>")
+  - histórias não se editam à mão — regenera-se o domínio pela instrução e versiona-se o diff
+criacao_pelo_qa:
+  permitida: quando uma fonte vigente ou uma tela real não tem história
+  derivacao: exclusivamente via _instrucao.md
+  proibido: história sem fonte; história de funcionalidade inexistente
+consumidores: [spec/test/planos, spec/test/jornadas, motor (relatório e PDF), skill /qa]
+validacao_lint:
+  - arquivo sem carimbo **Derivado de:** = erro
+  - história citada por plano ou jornada e inexistente aqui = erro
+  - história de domínio com tela sem jornada = erro

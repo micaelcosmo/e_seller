@@ -1,0 +1,175 @@
+dominio: administracao
+fontes:
+  - .spec/planning/05-user-stories.md
+  - .spec/planning/03-requisitos-funcionais.md
+  - .spec/unit/backend/admin/admin_auth_backend.md
+  - .spec/unit/backend/admin/admin_views_product.md
+  - .spec/unit/backend/admin/admin_views_order.md
+  - .spec/unit/backend/reviews/router_reviews.md
+  - .spec/unit/backend/coupons/router_coupons.md
+  - .spec/unit/tests/security_testing.md
+historias: .spec/test/historias/administracao.md
+pontos:
+  - nome: "Ponto 1 - Comprador não acessa a administração"
+    historia: "História 1 - Administrador entra no painel administrativo"
+    suite: integracao
+    pre_condicoes: ["conta `cliente` com papel de comprador"]
+    fluxo:
+      - passo: "cliente: GET /api/v1/admin/products"
+        evidencia: json
+    validade: 403 — papel de comprador não entra na administração
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 2 - Sem login a administração recusa"
+    historia: "História 1 - Administrador entra no painel administrativo"
+    suite: integracao
+    pre_condicoes: []
+    fluxo:
+      - passo: "visitante: GET /api/v1/admin/products"
+        evidencia: json
+    validade: 401 — sem sessão não há administração
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 3 - Formulário de login do painel abre o painel"
+    historia: "História 1 - Administrador entra no painel administrativo"
+    suite: integracao
+    pre_condicoes: [conta de admin semeada pelo backend]
+    fluxo:
+      - passo: "GET /admin/login (como o navegador, guardando os cookies)"
+        evidencia: json
+      - passo: "POST /admin/login sem o csrf_token (contraste: a proteção CSRF continua ativa)"
+        evidencia: json
+      - passo: "POST /admin/login com o que o formulário envia no navegador (username, password e o csrf_token que o script da página copia do cookie)"
+        evidencia: json
+    validade: >
+      sem token o POST é recusado (403); com o token que a página põe no formulário ele
+      redireciona para o painel (`/admin/`), não para o login nem para um erro
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 4 - E-book novo nasce como rascunho fora da vitrine"
+    historia: "História 2 - Administrador cadastra e publica um e-book"
+    suite: integracao
+    pre_condicoes: ["nenhum produto `qa-` (massa)"]
+    fluxo:
+      - passo: "admin: POST /api/v1/admin/products título QA E-book <execução>, preço 19.90"
+        evidencia: json
+      - passo: "visitante: GET /api/v1/products/<slug>"
+        evidencia: json
+    validade: o cadastro responde 201 com o `slug`, e o e-book não abre na vitrine (404) enquanto rascunho
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 5 - Arquivo exe é recusado como e-book"
+    historia: "História 2 - Administrador cadastra e publica um e-book"
+    suite: integracao
+    pre_condicoes: [e-book do Ponto 4]
+    fluxo:
+      - passo: "admin: POST /api/v1/admin/products/<slug>/upload-file com virus.exe"
+        evidencia: json
+    validade: 4xx com mensagem de formato não suportado
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 6 - Publicar põe o e-book na vitrine"
+    historia: "História 2 - Administrador cadastra e publica um e-book"
+    suite: integracao
+    pre_condicoes: [e-book do Ponto 4]
+    fluxo:
+      - passo: "admin: PATCH /api/v1/admin/products/<slug>/status published"
+        evidencia: json
+      - passo: "visitante: GET /api/v1/products (catálogo)"
+        evidencia: json
+    validade: o catálogo público passa a listar o `slug` do e-book publicado
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 7 - Lista de pedidos traz status, valor e data"
+    historia: "História 3 - Administrador acompanha as vendas"
+    suite: integracao
+    pre_condicoes: [pedido pago da massa]
+    fluxo:
+      - passo: "admin: GET /api/v1/orders"
+        evidencia: json
+    validade: cada pedido traz `status`, `amount` e a data (`created_at`) — US-07 pede os três
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 8 - Detalhe do pedido traz itens e status"
+    historia: "História 3 - Administrador acompanha as vendas"
+    suite: integracao
+    pre_condicoes: [pedido pago da massa]
+    fluxo:
+      - passo: "admin: GET /api/v1/orders/admin/<referência da massa>"
+        evidencia: json
+    validade: "`status` paid, `amount` 99.80 e os 2 itens"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 9 - Relatório de vendas do período soma os pedidos pagos"
+    historia: "História 3 - Administrador acompanha as vendas"
+    suite: integracao
+    pre_condicoes: [pedido pago da massa, criado hoje]
+    fluxo:
+      - passo: "admin: GET /api/v1/admin/reports/sales de ontem a amanhã"
+        evidencia: json
+    validade: "`orders_paid` ≥ 1 e `revenue_brl` ≥ 99.80 (o pedido da massa entra na soma)"
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 10 - Avaliação pendente está na fila de moderação"
+    historia: "História 4 - Administrador modera as avaliações"
+    suite: integracao
+    pre_condicoes: ["avaliação pendente da massa em `arquitetura-limpa-web`"]
+    fluxo:
+      - passo: "admin: GET /api/v1/admin/reviews?status=pending"
+        evidencia: json
+    validade: a fila contém o comentário `qa-avaliacao-pendente`
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 11 - Aprovar publica a avaliação na página do e-book"
+    historia: "História 4 - Administrador modera as avaliações"
+    suite: integracao
+    pre_condicoes: [avaliação do Ponto 10]
+    fluxo:
+      - passo: "visitante: GET /api/v1/products/arquitetura-limpa-web/reviews (antes)"
+        evidencia: json
+      - passo: "admin: PATCH /api/v1/admin/reviews/<id>/moderate approved"
+        evidencia: json
+      - passo: "visitante: GET /api/v1/products/arquitetura-limpa-web/reviews (depois)"
+        evidencia: json
+    validade: o comentário não está na lista pública antes e está depois da aprovação
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 12 - Cupom criado passa a valer"
+    historia: "História 5 - Administrador gerencia cupons de desconto"
+    suite: integracao
+    pre_condicoes: ["nenhum cupom `QA-` (massa)"]
+    fluxo:
+      - passo: "admin: POST /api/v1/admin/coupons QA-<execução>, 20%"
+        evidencia: json
+      - passo: "visitante: POST /api/v1/coupons/validate QA-<execução> sobre 39.90"
+        evidencia: json
+    validade: o cupom é criado e a validação diz `valid` true com `total` 31.92
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 13 - Cupom desativado deixa de valer"
+    historia: "História 5 - Administrador gerencia cupons de desconto"
+    suite: integracao
+    pre_condicoes: [cupom do Ponto 12]
+    fluxo:
+      - passo: "admin: PATCH /api/v1/admin/coupons/QA-<execução>/toggle"
+        evidencia: json
+      - passo: "visitante: POST /api/v1/coupons/validate QA-<execução>"
+        evidencia: json
+    validade: depois de desativado, a validação recusa o cupom (4xx)
+    limitacoes_ambiente: []
+
+  - nome: "Ponto 14 - E-book cadastrado com arquivo é entregue a quem compra"
+    historia: "História 2 - Administrador cadastra e publica um e-book"
+    suite: integracao
+    pre_condicoes: [e-book do Ponto 4 publicado no Ponto 6]
+    fluxo:
+      - passo: "admin: POST /api/v1/admin/products/<slug>/upload-file com um .txt"
+        evidencia: json
+      - passo: "visitante: POST /api/v1/orders do e-book + webhook aprovado"
+        evidencia: json
+      - passo: "GET /pedido/<referência> (link de download) e GET /api/v1/download/<token>"
+        evidencia: json
+    validade: >
+      o upload é aceito e, depois de pago, o download entrega como anexo o conteúdo do arquivo
+      enviado (texto sentinela `qa-conteudo-do-ebook`) — cadastrar e vender um e-book novo funciona
+    limitacoes_ambiente: [pagamento pelo webhook do provedor fake]

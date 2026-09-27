@@ -1,0 +1,42 @@
+# Contrato da pasta (legível por máquina — consumido pela skill /qa)
+pasta: qa-harness/evidencias
+proposito: provas de execução — o que sustenta cada veredito do relatório
+formato:
+  permitidos:
+    - ".png — captura de tela; só em disco, fora do git"
+    - "evidencias.json — UM por pasta de imagens: métricas + PNG cru em base64,
+       chaveado pelo nome do .png; é a cópia versionada da tela"
+    - ".json — request/response de API, um por chamada"
+  proibido:
+    - ".txt e qualquer dump de stdout — não é parseável, não identifica o que provou
+       e deixa vários pontos citarem o mesmo arquivo genérico"
+    - ".json ao lado de cada .png (formato antigo, um por imagem)"
+estrutura:
+  _base/<perfil>/<viewport>/<nome>.png + evidencias.json: >
+    retrato do sistema, independente de história; catálogo em spec/test/planos/_base-visual.yaml
+  jornadas/<dominio>/<jornada>/<viewport>/<NN-passo>.png + evidencias.json: >
+    jornada declarativa (spec/test/jornadas/), marcos INICIO e FIM
+  _olhar/<perfil-rota>/<viewport>/tela.png + evidencias.json: print avulso de revisão (fora do manifesto)
+  api/<dominio>/<NN-acao>.json: request + response completos
+  CHANGELOG-EVIDENCIAS.yaml: linha do tempo por tela (sha256 + miniatura quando muda)
+regras:
+  - caminhos estáveis; reexecução SUBSTITUI a pasta inteira
+  - imagens e PDFs ficam fora do git; versionado é o evidencias.json + o changelog
+  - um ponto não compartilha arquivo de evidência com outro (o motor recusa)
+  - nada de evidência editada ou recortada à mão
+  - base e jornadas em monitor; outros viewports só via /qa responsividade
+criacao_pelo_qa:
+  permitida: sempre (evidência é subproduto de execução)
+  proibido: escrever evidência sem execução real que a tenha produzido
+evidencias_json:
+  escrito_por: motor/evidencia_de_pasta.py (EvidenciaDePasta)
+  chave: nome do arquivo de imagem
+  por_imagem: [métricas da captura, bytes, sha256, base64]
+  reverter: python qa-harness/executar.py reverter [pasta] [--conferir]
+consumidores: [motor (relatório, PDF, catálogo, lint, reverter), skill /qa]
+validacao_lint:
+  - extensão fora dos permitidos = erro
+  - .png sem entrada no evidencias.json da pasta = erro (reverter --conferir)
+  - .json irmão de um .png = erro
+  - sha256 do base64 diferente do .png em disco = erro
+  - evidência de jornada que não está mais declarada = lacuna

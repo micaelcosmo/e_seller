@@ -1,0 +1,83 @@
+# Stack de QA do e_seller — isolada da stack de desenvolvimento.
+#
+# - Projeto "eseller-qa": containers e volumes próprios; não toca no banco de dev
+#   (pgdata do docker-compose.yml da raiz) nem nos túneis Cloudflare.
+# - Portas do host escolhidas LIVRES por qa-harness/ambiente/stack.py a cada subida
+#   e publicadas só em 127.0.0.1 (o Docker Desktop roda outros projetos).
+# - Nenhuma variável vem do .env: tudo o que o backend lê está declarado aqui, e a
+#   imagem do backend não copia .env (Dockerfile copia só app/ e seeds/).
+# - Integrações externas desligadas de propósito: PAYMENT_PROVIDER=fake (simulador
+#   local) e SMTP vazio (e-mail só no log).
+# - Os serviços se chamam `backend` e `frontend` como na stack de dev: o nginx.conf
+#   do frontend faz proxy para http://backend:8000.
+#
+# Uso: python qa-harness/ambiente/stack.py subir | descer | zerar | estado
+
+name: eseller-qa
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${QA_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${QA_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${QA_POSTGRES_DB}
+    ports:
+      - "127.0.0.1:${QA_PORTA_BANCO}:5432"
+    volumes:
+      - banco_qa:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: ../../backend
+    environment:
+      APP_ENV: dev
+      APP_SECRET_KEY: ${QA_APP_SECRET_KEY}
+      DATABASE_URL: postgresql+psycopg://${QA_POSTGRES_USER}:${QA_POSTGRES_PASSWORD}@db:5432/${QA_POSTGRES_DB}
+      STORAGE_DIR: /app/storage/ebooks
+      BASE_URL: http://127.0.0.1:${QA_PORTA_FRONTEND}
+      PAYMENT_PROVIDER: fake
+      MERCADOPAGO_WEBHOOK_SECRET: ""
+      DOWNLOAD_TTL_DAYS: "7"
+      DOWNLOAD_MAX: "5"
+      ADMIN_EMAIL: ${QA_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${QA_ADMIN_PASSWORD}
+      TOTP_ENCRYPTION_KEY: ${QA_TOTP_ENCRYPTION_KEY}
+      PASSWORD_HASH_ITERATIONS: "200000"
+      SMTP_HOST: ""
+      SMTP_USER: ""
+      SMTP_PASSWORD: ""
+      CORS_ORIGINS: ""
+      LOG_LEVEL: INFO
+      DB_SLOW_QUERY_MS: "500"
+    ports:
+      - "127.0.0.1:${QA_PORTA_BACKEND}:8000"
+    volumes:
+      - arquivos_qa:/app/storage
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../../frontend
+    ports:
+      - "127.0.0.1:${QA_PORTA_FRONTEND}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  banco_qa:
+  arquivos_qa:

@@ -219,3 +219,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# QA harness (skill /qa) — imagens e PDFs são artefatos de execução, fora do git.
+# A tela de agora vai versionada no evidencias.json de cada pasta (PNG em base64);
+# a linha do tempo, no CHANGELOG-EVIDENCIAS.yaml. PDFs regeneram do manifesto.
+qa-harness/**/*.png
+qa-harness/**/*.jpg
+qa-harness/**/*.jpeg
+qa-harness/**/*.pdf
+# Credenciais aleatórias da stack LOCAL de QA (geradas por qa-harness/ambiente/stack.py).
+qa-harness/ambiente/credenciais-locais.env
+*.local.env

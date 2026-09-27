@@ -1,0 +1,56 @@
+# Contrato da pasta (legível por máquina — consumido pela skill /qa)
+pasta: spec/test/jornadas
+proposito: >
+  jornadas de usuário declarativas — cada uma percorre UMA funcionalidade do
+  início ao fim, com print de cada passo. É a prova visual obrigatória das
+  histórias que tocam o frontend.
+formato:
+  arquivo: "<dominio>.yaml"
+  executor: motor/jornadas.py (python qa-harness/executar.py jornadas)
+  lint: motor/lint_historias.py (python qa-harness/executar.py lint)
+schema_do_arquivo:
+  dominio: nome do domínio (igual ao arquivo de histórias)
+  historias: spec/test/historias/<dominio>.md
+  jornadas: lista de jornadas
+schema_da_jornada:
+  id: kebab-case único no arquivo
+  nome: título curto, do ponto de vista de quem usa
+  historia: '"História <n> - <assunto>" existente em spec/test/historias/*.md'
+  ator: papel real, em linguagem humana
+  entra_como: chave de perfil do qa-harness/config.yaml (visitante = sem sessão)
+  limpeza: opcional — dicionário repassado a Adaptador.limpar() antes da jornada
+  passos:
+    - acao: abrir | clicar | preencher | selecionar | teclar | esperar | entrar_como |
+            conferir_texto | conferir_ausencia | conferir_url | conferir_elemento
+      titulo: o que a pessoa está fazendo (vira a legenda do print no PDF)
+vocabulario_de_passo:
+  abrir: "{rota}"
+  clicar: "{texto} | {aba} | {seletor}"
+  preencher: "{campo | tipo | seletor} + {valor}"
+  selecionar: "{campo | seletor} + {opcao | indice}"
+  teclar: "{tecla} [+ campo | seletor] — Enter, Escape, Tab... (formulário que só envia com Enter)"
+  esperar: "{ms}"
+  entrar_como: "{perfil} [+ rota] — troca a sessão no meio da jornada"
+  conferir_texto: "{texto} [+ dentro_de] — texto RENDERIZADO, sem diferenciar caixa"
+  conferir_ausencia: "{texto} [+ dentro_de]"
+  conferir_url: "{termina_em | contem}"
+  conferir_elemento: "{seletor} — elemento visível"
+regras:
+  - toda jornada declara uma história existente
+  - toda jornada tem ao menos UM passo de conferência — só navegar não prova nada
+  - toda jornada tem ao menos dois passos; o primeiro é INICIO e o último FIM
+  - todo passo tem titulo
+  - o que a jornada cria usa {{execucao}} no nome, senão a execução seguinte
+    passa enxergando o registro da anterior
+  - asserção casa com o texto RENDERIZADO (text-transform conta) e ignora caixa
+proibido:
+  - jornada para funcionalidade que não existe no produto
+  - jornada que tenta quebrar a página ou forçar erro sem valor de negócio
+  - história própria para recusa/permissão — isso é conferência dentro da jornada
+consumidores: [motor/jornadas.py, motor/relatorio_pdf.py, motor/lint_historias.py, skill /qa]
+validacao_lint:
+  - jornada citando história inexistente = erro
+  - história de domínio com tela sem jornada = erro
+  - jornada sem passo de conferência = erro
+  - perfil de entra_como/entrar_como inexistente = erro
+  - evidência de jornada executada por inteiro sem INICIO/FIM = erro

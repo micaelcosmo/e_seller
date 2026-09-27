@@ -1,0 +1,49 @@
+dominio: administracao
+historias: .spec/test/historias/administracao.md
+jornadas:
+  - id: administrador-entra-no-painel
+    nome: Administrador entra no painel pelo formulário de login
+    historia: "História 1 - Administrador entra no painel administrativo"
+    ator: administrador
+    entra_como: admin
+    passos:
+      - { acao: abrir, rota: "/admin/", titulo: "Abre o painel administrativo" }
+      - { acao: conferir_texto, texto: "Produtos", titulo: "Vê o cadastro de Produtos no painel" }
+      - { acao: conferir_texto, texto: "Pedidos", titulo: "Vê o cadastro de Pedidos no painel" }
+
+  - id: administrador-ve-os-produtos
+    nome: Administrador vê a lista de e-books no painel
+    historia: "História 2 - Administrador cadastra e publica um e-book"
+    ator: administrador
+    entra_como: admin
+    passos:
+      - { acao: abrir, rota: "/admin/product/list", titulo: "Abre a lista de produtos" }
+      - { acao: conferir_texto, texto: "Arquitetura Limpa na Web", titulo: "Vê um e-book do catálogo na lista" }
+
+  - id: administrador-ve-os-pedidos
+    nome: Administrador vê os pedidos com status, valor e data
+    historia: "História 3 - Administrador acompanha as vendas"
+    ator: administrador
+    entra_como: admin
+    passos:
+      - { acao: abrir, rota: "/admin/order/list", titulo: "Abre a lista de pedidos" }
+      - { acao: conferir_texto, texto: "qa-cliente@eseller-qa.test", titulo: "Vê o pedido do cliente na lista" }
+      - { acao: conferir_texto, texto: "99.80", titulo: "Vê o valor do pedido" }
+
+  - id: administrador-ve-a-fila-de-moderacao
+    nome: Administrador procura a avaliação pendente para moderar
+    historia: "História 4 - Administrador modera as avaliações"
+    ator: administrador
+    entra_como: admin
+    passos:
+      - { acao: abrir, rota: "/admin/review/list", titulo: "Abre a lista de avaliações" }
+      - { acao: conferir_texto, texto: "qa-avaliacao-pendente", titulo: "Vê o comentário da avaliação pendente" }
+
+  - id: administrador-ve-os-cupons
+    nome: Administrador vê os cupons de desconto
+    historia: "História 5 - Administrador gerencia cupons de desconto"
+    ator: administrador
+    entra_como: admin
+    passos:
+      - { acao: abrir, rota: "/admin/coupon/list", titulo: "Abre a lista de cupons" }
+      - { acao: conferir_texto, texto: "BEMVINDO10", titulo: "Vê o cupom BEMVINDO10" }

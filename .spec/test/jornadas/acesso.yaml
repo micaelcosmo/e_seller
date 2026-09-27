@@ -1,0 +1,68 @@
+dominio: acesso
+historias: .spec/test/historias/acesso.md
+jornadas:
+  - id: visitante-cria-conta
+    nome: Visitante cria uma conta e já entra
+    historia: "História 1 - Visitante cria uma conta de comprador"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/", titulo: "Abre a loja" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Clica em Entrar" }
+      - { acao: clicar, seletor: ".tab[data-tab='register']", titulo: "Escolhe Criar conta" }
+      - { acao: preencher, seletor: "#reg-name", valor: "QA Jornada", titulo: "Digita o nome" }
+      - { acao: preencher, campo: "email", valor: "qa-novo-{{execucao}}@eseller-qa.test", titulo: "Digita o e-mail" }
+      - { acao: preencher, campo: "password", valor: "qa-senha-{{execucao}}", titulo: "Digita a senha" }
+      - { acao: clicar, seletor: "#auth-submit", titulo: "Clica em Criar conta" }
+      - { acao: conferir_texto, texto: "Bem-vindo", titulo: "Vê as boas-vindas" }
+      - { acao: conferir_elemento, seletor: "#lib-btn", titulo: "Vê a Biblioteca liberada no topo" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Sai da conta" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Abre de novo o Entrar" }
+      - { acao: clicar, seletor: ".tab[data-tab='register']", titulo: "Escolhe Criar conta de novo" }
+      - { acao: preencher, campo: "email", valor: "qa-novo-{{execucao}}@eseller-qa.test", titulo: "Digita o mesmo e-mail" }
+      - { acao: preencher, campo: "password", valor: "qa-senha-{{execucao}}", titulo: "Digita a senha" }
+      - { acao: clicar, seletor: "#auth-submit", titulo: "Tenta criar a conta repetida" }
+      - { acao: conferir_texto, texto: "E-mail já cadastrado", dentro_de: "#auth-error", titulo: "Vê a recusa do e-mail repetido" }
+
+  - id: comprador-entra-e-sai
+    nome: Comprador erra a senha, entra e sai da conta
+    historia: "História 2 - Comprador entra e sai da conta"
+    ator: comprador
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/", titulo: "Abre a loja" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Clica em Entrar" }
+      - { acao: clicar, seletor: ".tab[data-tab='register']", titulo: "Cria a conta que vai entrar e sair" }
+      - { acao: preencher, campo: "email", valor: "qa-novo-login-{{execucao}}@eseller-qa.test", titulo: "Digita o e-mail da conta" }
+      - { acao: preencher, campo: "password", valor: "qa-senha-{{execucao}}", titulo: "Digita a senha da conta" }
+      - { acao: clicar, seletor: "#auth-submit", titulo: "Cria a conta" }
+      - { acao: conferir_texto, texto: "Sair", dentro_de: "#auth-btn", titulo: "Está dentro da conta" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Clica em Sair" }
+      - { acao: conferir_texto, texto: "Entrar", dentro_de: "#auth-btn", titulo: "Vê o botão Entrar de volta" }
+      - { acao: clicar, seletor: "#auth-btn", titulo: "Clica em Entrar" }
+      - { acao: clicar, seletor: ".tab[data-tab='login']", titulo: "Escolhe a aba Entrar" }
+      - { acao: preencher, campo: "email", valor: "qa-novo-login-{{execucao}}@eseller-qa.test", titulo: "Digita o e-mail" }
+      - { acao: preencher, campo: "password", valor: "senha-errada-{{execucao}}", titulo: "Digita a senha errada" }
+      - { acao: clicar, seletor: "#auth-submit", titulo: "Tenta entrar" }
+      - { acao: conferir_texto, texto: "Credenciais inválidas", dentro_de: "#auth-error", titulo: "Vê a recusa da senha errada" }
+      - { acao: preencher, campo: "password", valor: "qa-senha-{{execucao}}", titulo: "Digita a senha certa" }
+      - { acao: clicar, seletor: "#auth-submit", titulo: "Entra" }
+      - { acao: conferir_elemento, seletor: "#orders-btn", titulo: "Vê Pedidos liberado no topo" }
+      - { acao: conferir_texto, texto: "Sair", dentro_de: "#auth-btn", titulo: "Está dentro da conta de novo" }
+
+  - id: comprador-salva-perfil-fiscal
+    nome: Comprador salva o perfil fiscal
+    historia: "História 3 - Comprador mantém o perfil fiscal"
+    ator: comprador
+    entra_como: cliente
+    passos:
+      - { acao: abrir, rota: "/#/conta", titulo: "Abre Minha Conta" }
+      - { acao: conferir_texto, texto: "Minha Conta", titulo: "Vê o formulário do perfil fiscal" }
+      - { acao: preencher, campo: "legal_name", valor: "QA Cliente", titulo: "Digita o nome completo" }
+      - { acao: preencher, campo: "document", valor: "529.982.247-25", titulo: "Digita o CPF" }
+      - { acao: preencher, campo: "address_line", valor: "Rua do Teste, 100", titulo: "Digita o endereço" }
+      - { acao: preencher, campo: "city", valor: "São Paulo", titulo: "Digita a cidade" }
+      - { acao: preencher, campo: "state", valor: "SP", titulo: "Digita a UF" }
+      - { acao: preencher, campo: "postal_code", valor: "01001-000", titulo: "Digita o CEP" }
+      - { acao: clicar, seletor: "#account-form button[type=submit]", titulo: "Clica em Salvar perfil" }
+      - { acao: conferir_texto, texto: "Perfil salvo", titulo: "Vê a confirmação de perfil salvo" }

@@ -1,0 +1,64 @@
+dominio: compra
+historias: .spec/test/historias/compra.md
+jornadas:
+  - id: comprador-compra-pelo-carrinho
+    nome: Comprador compra pelo carrinho, paga e recebe o e-book
+    historia: "História 1 - Comprador compra pelo carrinho e paga"
+    ator: comprador
+    entra_como: cliente
+    limpeza: { recursos: [carrinho, compras], perfil: cliente, slug: fastapi-do-zero }
+    passos:
+      - { acao: abrir, rota: "/#/produto/fastapi-do-zero", titulo: "Abre o e-book FastAPI do Zero" }
+      - { acao: clicar, seletor: "#cart-add-btn", titulo: "Adiciona ao carrinho" }
+      - { acao: clicar, seletor: "#cart-btn", titulo: "Abre o carrinho" }
+      - { acao: conferir_texto, texto: "FastAPI do Zero", dentro_de: "#view", titulo: "Vê o e-book no carrinho" }
+      - { acao: conferir_texto, texto: "49,90", dentro_de: "#view", titulo: "Vê o total do carrinho" }
+      - { acao: clicar, seletor: "#cart-checkout", titulo: "Clica em Finalizar compra" }
+      - { acao: conferir_url, contem: "/pay/simulate/", titulo: "Chega à página de pagamento" }
+      - { acao: conferir_texto, texto: "Simulador de pagamento", titulo: "Vê o pagamento do pedido" }
+      - { acao: clicar, texto: "Aprovar pagamento", titulo: "Aprova o pagamento" }
+      - { acao: conferir_url, contem: "/pedido/", titulo: "Chega à página do pedido" }
+      - { acao: conferir_texto, texto: "Pago", titulo: "Vê o pedido pago" }
+      - { acao: conferir_texto, texto: "Baixar", titulo: "Vê o download disponível" }
+      - { acao: abrir, rota: "/#/biblioteca", titulo: "Abre a biblioteca" }
+      - { acao: conferir_texto, texto: "FastAPI do Zero", dentro_de: "#view", titulo: "Vê o e-book comprado na biblioteca" }
+
+  - id: visitante-compra-sem-conta
+    nome: Visitante compra informando só o e-mail
+    historia: "História 2 - Visitante compra um e-book sem ter conta"
+    ator: visitante
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/#/produto/python-na-pratica", titulo: "Abre o e-book Python na Prática" }
+      - { acao: clicar, seletor: "#buy-btn", titulo: "Clica em Comprar e baixar sem e-mail" }
+      - { acao: conferir_texto, texto: "Informe um e-mail válido", titulo: "Vê o pedido de e-mail válido" }
+      - { acao: preencher, seletor: "#buy-email", valor: "qa-convidado-jornada-{{execucao}}@eseller-qa.test", titulo: "Digita o e-mail" }
+      - { acao: clicar, seletor: "#buy-btn", titulo: "Clica em Comprar e baixar" }
+      - { acao: conferir_url, contem: "/pay/simulate/", titulo: "Chega à página de pagamento do pedido" }
+      - { acao: conferir_texto, texto: "Simulador de pagamento", titulo: "Vê o pagamento do pedido" }
+
+  - id: comprador-usa-cupom
+    nome: Comprador confere um cupom de desconto
+    historia: "História 3 - Comprador usa um cupom de desconto"
+    ator: comprador
+    entra_como: visitante
+    passos:
+      - { acao: abrir, rota: "/#/produto/python-na-pratica", titulo: "Abre o e-book Python na Prática" }
+      - { acao: preencher, seletor: "#buy-coupon", valor: "BEMVINDO10", titulo: "Digita o cupom BEMVINDO10" }
+      - { acao: conferir_texto, texto: "Cupom válido", dentro_de: "#coupon-feedback", titulo: "Vê o cupom aceito" }
+      - { acao: conferir_texto, texto: "35,91", dentro_de: "#coupon-feedback", titulo: "Vê o total com desconto" }
+      - { acao: preencher, seletor: "#buy-coupon", valor: "QA-NAO-EXISTE", titulo: "Digita um cupom inexistente" }
+      - { acao: conferir_texto, texto: "Cupom inválido ou expirado", dentro_de: "#coupon-feedback", titulo: "Vê o cupom recusado" }
+
+  - id: comprador-retoma-pedido-pendente
+    nome: Comprador vê os pedidos e tenta pagar o pendente
+    historia: "História 4 - Comprador acompanha os pedidos e retoma um pagamento pendente"
+    ator: comprador
+    entra_como: sem_compras
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre a loja com a conta" }
+      - { acao: clicar, seletor: "#orders-btn", titulo: "Clica em Pedidos" }
+      - { acao: conferir_texto, texto: "Meus pedidos", titulo: "Vê a lista de pedidos" }
+      - { acao: conferir_texto, texto: "Pendente", dentro_de: ".orders-list", titulo: "Vê o pedido pendente" }
+      - { acao: conferir_texto, texto: "59,90", dentro_de: ".orders-list", titulo: "Vê o valor do pedido" }
+      - { acao: conferir_texto, texto: "Pagar", dentro_de: ".orders-list", titulo: "Vê como pagar o pedido pendente" }

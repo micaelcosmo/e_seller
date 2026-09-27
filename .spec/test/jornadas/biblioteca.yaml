@@ -1,0 +1,48 @@
+dominio: biblioteca
+historias: .spec/test/historias/biblioteca.md
+jornadas:
+  - id: comprador-ve-a-biblioteca
+    nome: Comprador vê os e-books comprados e quem não comprou vê a biblioteca vazia
+    historia: "História 1 - Comprador baixa um e-book da biblioteca"
+    ator: comprador
+    entra_como: cliente
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre a loja com a conta" }
+      - { acao: clicar, seletor: "#lib-btn", titulo: "Clica em Biblioteca" }
+      - { acao: conferir_texto, texto: "Minha biblioteca", titulo: "Vê a biblioteca" }
+      - { acao: conferir_texto, texto: "Python na Prática", dentro_de: "#view", titulo: "Vê um e-book comprado" }
+      - { acao: conferir_elemento, seletor: "#view button[data-slug='python-na-pratica']", titulo: "Vê o botão Baixar do e-book" }
+      - { acao: entrar_como, perfil: sem_compras, rota: "/#/biblioteca", titulo: "Troca para a conta que não comprou nada" }
+      - { acao: conferir_texto, texto: "Sua biblioteca está vazia", titulo: "Vê a biblioteca vazia" }
+
+  - id: comprador-favorita-um-ebook
+    nome: Comprador marca um e-book com o coração e o vê nos favoritos
+    historia: "História 2 - Comprador guarda e-books nos favoritos"
+    ator: comprador
+    entra_como: cliente
+    limpeza: { recurso: favoritos, perfil: cliente }
+    passos:
+      - { acao: abrir, rota: "/#/", titulo: "Abre o catálogo com a conta" }
+      - { acao: clicar, seletor: "#product-grid a.card[href='#/produto/fastapi-do-zero'] .btn-wish", titulo: "Clica no coração de FastAPI do Zero" }
+      - { acao: conferir_elemento, seletor: "#product-grid a.card[href='#/produto/fastapi-do-zero'] .btn-wish.wished", titulo: "Vê o coração marcado" }
+      - { acao: clicar, seletor: "#wish-btn", titulo: "Clica em Favoritos" }
+      - { acao: conferir_texto, texto: "Meus favoritos", titulo: "Vê a página de favoritos" }
+      - { acao: conferir_texto, texto: "FastAPI do Zero", dentro_de: "#view", titulo: "Vê o e-book favoritado" }
+
+  - id: comprador-avalia-um-ebook
+    nome: Comprador avalia um e-book que comprou e quem não comprou é recusado
+    historia: "História 3 - Comprador avalia um e-book que comprou"
+    ator: comprador
+    entra_como: cliente
+    limpeza: { recurso: avaliacao, perfil: cliente, slug: python-na-pratica }
+    passos:
+      - { acao: abrir, rota: "/#/produto/python-na-pratica", titulo: "Abre um e-book que comprou" }
+      - { acao: selecionar, seletor: "#rev-rating", opcao: "★★★★", titulo: "Escolhe a nota 4" }
+      - { acao: preencher, seletor: "#rev-comment", valor: "qa-avaliacao-jornada-{{execucao}}", titulo: "Escreve o comentário" }
+      - { acao: clicar, seletor: "#rev-send", titulo: "Clica em Avaliar" }
+      - { acao: conferir_texto, texto: "Avaliação enviada", titulo: "Vê a avaliação enviada" }
+      - { acao: conferir_ausencia, texto: "qa-avaliacao-jornada-{{execucao}}", dentro_de: "#reviews", titulo: "A avaliação ainda não aparece (aguarda moderação)" }
+      - { acao: entrar_como, perfil: sem_compras, rota: "/#/produto/python-na-pratica", titulo: "Troca para quem não comprou" }
+      - { acao: preencher, seletor: "#rev-comment", valor: "qa-avaliacao-sem-posse-{{execucao}}", titulo: "Escreve um comentário" }
+      - { acao: clicar, seletor: "#rev-send", titulo: "Tenta avaliar" }
+      - { acao: conferir_texto, texto: "Só quem comprou pode avaliar", titulo: "Vê a recusa" }

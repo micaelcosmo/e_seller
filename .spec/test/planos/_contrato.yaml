@@ -1,0 +1,31 @@
+# Contrato da pasta (legível por máquina — consumido pela skill /qa)
+pasta: spec/test/planos
+proposito: planos de execução, um YAML por domínio, consumidos pelas suítes do projeto
+formato:
+  arquivo: "<dominio>.yaml"
+  campos_obrigatorios: [dominio, fontes, historias, pontos]
+  ponto:
+    nome: "Ponto <número> - <título>, sem abreviações"
+    historia: referência exata a uma história de spec/test/historias/
+    suite: integracao | <linha do projeto>
+    pre_condicoes: estado de massa exigido
+    fluxo: passos, cada um com a evidência esperada (json ou png)
+    validade: o que a evidência precisa MOSTRAR para o ponto ser válido
+    limitacoes_ambiente: mocks e integrações desligadas que geram falso-negativo
+  especial:
+    _base-visual.yaml: >
+      catálogo da base visual (perfil → telas por rota ou aba). Sem pontos nem
+      histórias: é o retrato do sistema capturado pelo motor.
+regras:
+  - todo ponto referencia uma história existente
+  - validade descreve o que a evidência mostra, nunca só o código HTTP
+  - a prova visual de história é a jornada (spec/test/jornadas/), não ponto de plano
+criacao_pelo_qa:
+  permitida: quando há lacuna objetiva (história ou fonte vigente sem plano)
+  derivacao: fonte → história → plano
+  proibido: ponto sem história; ponto sem fonte; mudar o produto para o teste passar
+consumidores: [qa-harness/testes, motor (relatório e PDF), skill /qa]
+validacao_lint:
+  - ponto sem história correspondente = erro
+  - ponto sem validade = erro
+  - nome fora da convenção "Ponto <n> - <título>" = erro

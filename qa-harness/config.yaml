@@ -1,0 +1,93 @@
+# Configuração do harness de QA do e_seller — lida pelo motor agnóstico da skill
+# /qa (qa-harness/motor/configuracao.py) e pelo adaptador do projeto.
+#
+# O QA roda contra uma stack PRÓPRIA (qa-harness/ambiente/): projeto compose
+# "eseller-qa", banco e arquivos próprios, portas conferidas livres a cada subida.
+#     python qa-harness/ambiente/stack.py subir
+# As senhas das contas de QA NÃO ficam aqui: são aleatórias, geradas pela stack em
+# qa-harness/ambiente/credenciais-locais.env (fora do git), e só o adaptador as lê.
+
+projeto:
+  nome: e_seller
+  # Marca do header da vitrine (SPA): só o e_seller tem isso na home.
+  assinatura_da_aplicacao: "e_seller"
+  # Produto: o QA lê, nunca edita. Correção de produto é ajuste do desenvolvimento.
+  produto_somente_leitura:
+    - backend/
+    - frontend/
+    - report/
+    - docker-compose.yml
+  arquivo_de_status: STATUS.md
+
+# Portas reescritas por qa-harness/ambiente/stack.py quando estiverem ocupadas.
+# 127.0.0.1, não "localhost": no Windows "localhost" tenta ::1 primeiro e a stack
+# publica só em IPv4. O app é o nginx do frontend, que faz proxy de /api/ para o
+# backend (mesma origem que o navegador usa).
+urls:
+  app: http://127.0.0.1:48273
+  api: http://127.0.0.1:48273
+  healthcheck: /
+
+# Chaves só do adaptador e da stack (o motor ignora).
+ambiente:
+  backend: http://127.0.0.1:48280
+  banco_porta: 48532
+
+# `visitante` é sempre o perfil sem sessão. As contas são criadas/semeadas na
+# stack de QA: admin pelo seed do próprio backend (APP_ENV=dev); clientes pela
+# massa de dados do adaptador.
+perfis:
+  visitante: { conta: null, descricao: "sem sessão — vitrine pública, busca, detalhe, login e cadastro" }
+  cliente:
+    conta: qa-cliente@eseller-qa.test
+    descricao: "comprador com pedido pago e e-book na biblioteca"
+  sem_compras:
+    conta: qa-sem-compras@eseller-qa.test
+    descricao: "comprador sem nenhum pedido (contraste da biblioteca e do download)"
+  admin:
+    conta: qa-admin@eseller-qa.test
+    descricao: "administração (papel admin)"
+
+viewports:
+  monitor: { largura: 1920, altura: 1080 }
+  notebook: { largura: 1366, altura: 768 }
+  celular: { largura: 390, altura: 844, device: true, densidade: 2 }
+responsividade: [notebook, celular]
+
+execucao:
+  healing_maximo: 3
+  headless: true
+  timeout_ms: 20000
+  timeout_de_navegacao_ms: 60000
+  texto_minimo_renderizado: 200
+  altura_maxima_da_captura_px: 4320
+  # A SPA monta a tela por fetch depois do HTML; toasts somem em poucos segundos,
+  # então o intervalo é curto. 30 × 0,4 s = 12 s no pior caso.
+  tentativas_de_assentamento: 30
+  intervalo_de_assentamento_ms: 400
+
+caminhos:
+  historias: .spec/test/historias
+  planos: .spec/test/planos
+  jornadas: .spec/test/jornadas
+  base_visual: .spec/test/planos/_base-visual.yaml
+  evidencias: qa-harness/evidencias
+  relatorios: qa-harness/relatorios
+  convencao_de_comentarios: .spec/code/convencao-de-comentarios.md
+
+comentarios:
+  alvos: [backend/app, frontend/public, qa-harness]
+  extensoes: [.py, .js, .css, .html]
+  ignorar:
+    - node_modules
+    - __pycache__
+    - .venv
+    - evidencias
+    - relatorios
+    - motor
+    - .pytest_cache
+    - .ruff_cache
+
+dependencias_extras: [psycopg]
+
+linhas_do_projeto: {}
