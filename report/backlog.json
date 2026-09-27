@@ -1,7 +1,7 @@
 {
   "project": "e_seller",
   "goal": "Site de venda de e-books — funcional, leve, com boas práticas (backend POO, DB determinístico/observável, frontend UX correta). NÃO sair do contexto. SEM dados em hardcode.",
-  "updated": "13/06/2026 13:05 (Brasilia) — 🟢 UXR follow-ups resolvidos (UXR-27/28/29/30/32): rating no detalhe, skeleton dedicado do detalhe, favicon + og:image, filtro de preço custom (inputs min/max) e página de favoritos com estado vazio. Restam UXR-26 (redes sociais: sem URLs reais) e UXR-31 (Lighthouse: sem browser headless).",
+  "updated": "27/09/2026 (Brasília) — /qa adotado (stack eseller-qa), épico QAF (17 achados corrigidos, 5 bloqueados por decisão do dono) e tapa visual Material 3 (VIS).",
   "bounds": {
     "min": 110,
     "max": 250
@@ -2020,144 +2020,1223 @@
       "state": "done",
       "note": "DownloadGrantAdminLister em router_admin_downloads.py; filtros product_id e expired (bool); X-Total-Count. Registrado em main.py. 3 testes verdes."
     },
-    { "id": "DOC-01", "area": "Documentação (Enrichment)", "title": "Atualizar STATUS.md para fase Enrichment", "desc": "Refletir branch enrichment, novos épicos, 437 testes, estado atual.", "state": "done", "note": "STATUS.md reescrito para fase Enrichment 2026-06-13." },
-    { "id": "DOC-02", "area": "Documentação (Enrichment)", "title": "Atualizar CHANGELOG.md (enrichment entry)", "desc": "Entrada 2026-06-13: branch criada, análise, roadmap, planning.", "state": "done", "note": "Entrada adicionada em 2026-06-13." },
-    { "id": "DOC-03", "area": "Documentação (Enrichment)", "title": "Reescrever .spec/roadmap.md", "desc": "Roadmap vivo: MVP concluído, enrichment AAA+FEV+DBE+BEE, Tier 2 futuro.", "state": "done", "note": ".spec/roadmap.md completamente reescrito." },
-    { "id": "DOC-04", "area": "Documentação (Enrichment)", "title": "Criar .spec/enrichment/ com 4 planning docs", "desc": "roadmap-aaa.md, roadmap-frontend.md, roadmap-db.md, roadmap-backend.md.", "state": "done", "note": "4 docs criados em .spec/enrichment/." },
-    { "id": "DOC-05", "area": "Documentação (Enrichment)", "title": "Criar test specs YAML adversariais", "desc": "aaa-token-blacklist.yaml, aaa-totp.yaml, aaa-api-keys.yaml, aaa-activity-log.yaml, dbe-fts.yaml, fev-design-system.yaml, bee-email.yaml.", "state": "done", "note": "7 specs YAML criadas em .spec/tests/." },
-    { "id": "DOC-06", "area": "Documentação (Enrichment)", "title": "Adicionar tasks enrichment ao backlog.json", "desc": "~125 tasks DOC+AAA+FEV+DBE+BEE no report/backlog.json.", "state": "done", "note": "125 tasks adicionadas; review_summary atualizado." },
-    { "id": "DOC-07", "area": "Documentação (Enrichment)", "title": "Commit semântico: doc(enrichment)", "desc": "Commit de toda a documentação de enrichment (STATUS, CHANGELOG, specs, backlog).", "state": "done" },
-    { "id": "AAA-01", "area": "AAA (Enrichment)", "title": "Modelo RevokedToken + migration", "desc": "Model com jti (UNIQUE INDEX), expires_at, revoked_at. Migration Alembic. Documentar no UML.", "state": "done" },
-    { "id": "AAA-02", "area": "AAA (Enrichment)", "title": "JwtService: adicionar claim jti (UUID4) ao issue()", "desc": "import uuid; payload['jti'] = str(uuid.uuid4()). verify() retorna jti nos claims.", "state": "done" },
-    { "id": "AAA-03", "area": "AAA (Enrichment)", "title": "TokenBlacklistService class", "desc": "revoke(jti, expires_at), is_revoked(jti) → bool. Classe com DI session no __init__.", "state": "done" },
-    { "id": "AAA-04", "area": "AAA (Enrichment)", "title": "get_current_user: checar blacklist após verify()", "desc": "Após jwt.verify(), extrair jti e chamar blacklist.is_revoked(jti). Se revogado → 401.", "state": "done" },
-    { "id": "AAA-05", "area": "AAA (Enrichment)", "title": "POST /api/v1/auth/logout endpoint", "desc": "Require autenticação; extrai jti do token; chama TokenBlacklistService.revoke(); retorna 204.", "state": "done" },
-    { "id": "AAA-06", "area": "AAA (Enrichment)", "title": "Testes token blacklist (3+)", "desc": "BL-001: token revogado → 401. BL-002: logout sem token → 401. BL-003: outro usuário não afetado. BL-004: jti presente no token. BL-005: expirado não polui blacklist.", "state": "done" },
-    { "id": "AAA-07", "area": "AAA (Enrichment)", "title": "Modelo UserActivityLog + migration", "desc": "user_id FK nullable, event_type str INDEX, metadata JSON, created_at INDEX. Migration Alembic.", "state": "done" },
-    { "id": "AAA-08", "area": "AAA (Enrichment)", "title": "UserActivityLogService class", "desc": "log(user_id, event_type, **meta) → async. Classe com DI session. Silencia erros (não quebra fluxo principal).", "state": "done" },
-    { "id": "AAA-09", "area": "AAA (Enrichment)", "title": "Activity log no login bem-sucedido", "desc": "Em Authenticator.login(): após emitir tokens, chamar activity_log.log(user.id, 'login', ip=...). DI do service.", "state": "done" },
-    { "id": "AAA-10", "area": "AAA (Enrichment)", "title": "Activity log na compra (order criada)", "desc": "Em OrderService.create_order(): após commit, log(user_id, 'purchase', order_ref=ref).", "state": "done" },
-    { "id": "AAA-11", "area": "AAA (Enrichment)", "title": "Activity log no download", "desc": "Em GrantService.consume_download(): log(user_id, 'download', product_id=...).", "state": "done" },
-    { "id": "AAA-12", "area": "AAA (Enrichment)", "title": "GET /api/v1/me/activity endpoint", "desc": "Lista UserActivityLog do usuário autenticado. Paginação ?limit=20&skip=0. Protegido por get_current_user.", "state": "done" },
-    { "id": "AAA-13", "area": "AAA (Enrichment)", "title": "Testes UserActivityLog (3+)", "desc": "ACT-001: login gera log. ACT-003: compra gera log. ACT-005: /me/activity retorna só do usuário. ACT-006: paginação respeitada.", "state": "done" },
-    { "id": "AAA-14", "area": "AAA (Enrichment)", "title": "Modelo ApiKey + migration", "desc": "user_id FK, name str, key_hash UNIQUE INDEX, prefix str(8), is_active bool, last_used_at nullable, expires_at nullable, created_at.", "state": "done" },
-    { "id": "AAA-15", "area": "AAA (Enrichment)", "title": "ApiKeyService class", "desc": "generate(user_id, name, expires_at) → (raw_key, ApiKey). authenticate(raw_key) → User|None. revoke(key_id, user_id). list_keys(user_id).", "state": "done" },
-    { "id": "AAA-16", "area": "AAA (Enrichment)", "title": "Endpoints GET/POST/DELETE /api/v1/me/api-keys", "desc": "List (sem revelar hash), Create (retorna chave crua 1x), Delete (ownership check). Schemas ApiKeyOut, ApiKeyCreate.", "state": "done" },
-    { "id": "AAA-17", "area": "AAA (Enrichment)", "title": "Dependency authenticate_api_key", "desc": "Extrai X-API-Key header, chama ApiKeyService.authenticate(), retorna User. Compor com get_current_user (tenta JWT primeiro, depois API Key).", "state": "done" },
-    { "id": "AAA-18", "area": "AAA (Enrichment)", "title": "Testes API Keys (3+)", "desc": "APIKEY-001: create retorna chave crua. APIKEY-002: auth via X-API-Key. APIKEY-003: chave inválida → 401. APIKEY-004: revogada → 401. APIKEY-005: ownership check.", "state": "done" },
-    { "id": "AAA-19", "area": "AAA (Enrichment)", "title": "Settings: totp_encryption_key + two_fa_required_roles", "desc": "Adicionar campos em core/config.py. totp_encryption_key: str (32-byte AES key, base64). two_fa_required_roles: list[str].", "state": "done" },
-    { "id": "AAA-20", "area": "AAA (Enrichment)", "title": "User: totp_secret_enc + totp_enabled migration", "desc": "Adicionar colunas nullable. Migration Alembic. UML atualizado.", "state": "done" },
-    { "id": "AAA-21", "area": "AAA (Enrichment)", "title": "TOTPService class", "desc": "generate_secret(), generate_provisioning_uri(secret, email), verify(secret, code, window=1), encrypt_secret(s)/decrypt_secret(enc). Usa pyotp + cryptography (AES-GCM).", "state": "done" },
-    { "id": "AAA-22", "area": "AAA (Enrichment)", "title": "POST /auth/2fa/enroll endpoint", "desc": "Gera secret; retorna provisioning_uri + qr_base64. Não persiste ainda. Requires autenticação.", "state": "done" },
-    { "id": "AAA-23", "area": "AAA (Enrichment)", "title": "POST /auth/2fa/confirm endpoint", "desc": "Recebe secret + code; valida via TOTPService.verify(); persiste totp_secret_enc + totp_enabled=True.", "state": "done" },
-    { "id": "AAA-24", "area": "AAA (Enrichment)", "title": "POST /auth/2fa/disable endpoint", "desc": "Recebe senha + code; valida ambos; persiste totp_enabled=False, totp_secret_enc=None.", "state": "done" },
-    { "id": "AAA-25", "area": "AAA (Enrichment)", "title": "Modificar POST /auth/token: partial_token quando 2FA ativo", "desc": "Se user.totp_enabled e role em two_fa_required_roles: retornar partial_token (JWT type=partial_2fa, TTL 5min) ao invés de access_token.", "state": "done" },
-    { "id": "AAA-26", "area": "AAA (Enrichment)", "title": "POST /auth/2fa/login endpoint (passo 2)", "desc": "Recebe partial_token + code; valida ambos; emite access_token + refresh_token completos.", "state": "done" },
-    { "id": "AAA-27", "area": "AAA (Enrichment)", "title": "Testes TOTP flow (3+)", "desc": "TOTP-001: enroll gera URI válida. TOTP-002: confirm com código válido ativa 2FA. TOTP-003: código inválido rejeitado. TOTP-004: login retorna partial_token. TOTP-005: passo 2 com código válido emite tokens.", "state": "done" },
-    { "id": "AAA-28", "area": "AAA (Enrichment)", "title": "Instalar pyotp + cryptography no projeto", "desc": "uv add pyotp cryptography qrcode pillow. Atualizar pyproject.toml + uv.lock.", "state": "done" },
-    { "id": "AAA-29", "area": "AAA (Enrichment)", "title": "Spec YAML AAA: validar adversarial", "desc": "Revisar .spec/tests/aaa-*.yaml; garantir que todos os casos BL/ACT/APIKEY/TOTP estão cobertos pelos testes implementados.", "state": "done" },
-    { "id": "AAA-30", "area": "AAA (Enrichment)", "title": "Revisão cíclica épico AAA", "desc": "Validar: testes verdes, Ruff limpo, nenhum hardcode, UML atualizado, CHANGELOG + STATUS atualizados. Backlog incrementado se necessário.", "state": "done" },
-    { "id": "FEV-01", "area": "Frontend Visual (Enrichment)", "title": "Criar backend/app/web/static/css/design-system.css", "desc": "Tokens CSS completos: cores, tipografia, espaçamento (4px base), raios, sombras, transições. Servido como arquivo estático.", "state": "done" },
-    { "id": "FEV-02", "area": "Frontend Visual (Enrichment)", "title": "Criar backend/app/web/static/css/components.css", "desc": "Classes reutilizáveis: .btn, .btn-primary, .btn-ghost, .btn-danger, .btn-sm, .btn-lg, .card, .card-hover, .badge, .tag, .input, .skeleton.", "state": "done" },
-    { "id": "FEV-03", "area": "Frontend Visual (Enrichment)", "title": "Criar backend/app/web/static/js/toast.js", "desc": "class Toast com show(msg, type), success(), error(), info(), warn(). Remove após 4s. CSS inline de animação. Exporta window._toast.", "state": "done" },
-    { "id": "FEV-04", "area": "Frontend Visual (Enrichment)", "title": "Refatorar base.html: imports CSS + toast + nav", "desc": "Substituir CSS inline por <link> para design-system.css e components.css. Adicionar toast-root div. Nav enriquecida: logo + links + menu usuário.", "state": "done" },
-    { "id": "FEV-05", "area": "Frontend Visual (Enrichment)", "title": "base.html: mobile hamburger nav", "desc": "Botão #menu-toggle; JS que toggle class .nav-open no header. CSS com media query para mobile.", "state": "done" },
-    { "id": "FEV-06", "area": "Frontend Visual (Enrichment)", "title": "base.html: ARIA + focus-visible + meta OG + favicon", "desc": "aria-label em inputs, role=navigation, focus-visible outline accent, <meta property=og:...>, <link rel=icon>.", "state": "done" },
-    { "id": "FEV-07", "area": "Frontend Visual (Enrichment)", "title": "index.html: hero section + grid de catálogo melhorado", "desc": "Hero com headline + barra de busca grande. Grid de cards com cover, título, autor, preço, badge destaque. Empty state visual.", "state": "done" },
-    { "id": "FEV-08", "area": "Frontend Visual (Enrichment)", "title": "index.html: sidebar de filtros visual", "desc": "Filtros por categoria/tag/autor como chips com toggle. Estado ativo visualmente destacado. Mobile: chips horizontais scrolláveis.", "state": "done" },
-    { "id": "FEV-09", "area": "Frontend Visual (Enrichment)", "title": "index.html: paginação redesenhada", "desc": "Números de página + prev/next com ícones. Indicador 'Página X de Y'. Animação suave na troca.", "state": "done" },
-    { "id": "FEV-10", "area": "Frontend Visual (Enrichment)", "title": "produto_detalhe.html: layout 2 colunas + CTA", "desc": "Cover image (esq) + info + preço + botão Comprar (dir). Badge desconto se coupon. Loading state no botão. Toast no feedback.", "state": "done" },
-    { "id": "FEV-11", "area": "Frontend Visual (Enrichment)", "title": "produto_detalhe.html: seção reviews", "desc": "Rating stars visuais (SVG). Avatar com inicial do nome. Paginação de reviews. Botão 'Avaliar' para compradores.", "state": "done" },
-    { "id": "FEV-12", "area": "Frontend Visual (Enrichment)", "title": "order.html: timeline de status + cards de download", "desc": "Timeline visual (pending→paid→delivered) com ícones. Cards de download com contagem X/Y e botão. Badge de status colorido.", "state": "done" },
-    { "id": "FEV-13", "area": "Frontend Visual (Enrichment)", "title": "recuperar_senha.html: stepper + validação inline", "desc": "Stepper visual (3 passos). Barra de força da senha. Erros inline abaixo do campo. Confirmação de match.", "state": "done" },
-    { "id": "FEV-14", "area": "Frontend Visual (Enrichment)", "title": "terms.html + privacy.html: typography e layout", "desc": "Heading hierarchy (h2, h3). line-height 1.7. max-width 65ch. Índice lateral fixo. Dark mode correto.", "state": "done" },
-    { "id": "FEV-15", "area": "Frontend Visual (Enrichment)", "title": "simulate.html: cleanup visual", "desc": "Layout mais limpo; botões de ação destacados; status do webhook como badge colorido.", "state": "done" },
-    { "id": "FEV-16", "area": "Frontend Visual (Enrichment)", "title": "NOVA VIEW: conta.html (#/conta)", "desc": "Template com tabs: Dados / Faturamento / Segurança / Atividade. JS router intercepta #/conta. Formulário billing_profile. Lista de atividades recentes.", "state": "done" },
-    { "id": "FEV-17", "area": "Frontend Visual (Enrichment)", "title": "conta.html: tab Segurança (2FA + API Keys + senha)", "desc": "Seção 2FA: status, botão Ativar/Desativar. Seção API Keys: lista + criar + revogar. Troca de senha.", "state": "done" },
-    { "id": "FEV-18", "area": "Frontend Visual (Enrichment)", "title": "NOVA VIEW: biblioteca.html (#/biblioteca)", "desc": "Lista entitlements via GET /me/library. Cards com capa, título, botão Download (abre grant). Indicador de downloads restantes.", "state": "done" },
-    { "id": "FEV-19", "area": "Frontend Visual (Enrichment)", "title": "NOVA VIEW: carrinho.html (#/carrinho)", "desc": "Lista CartItems via GET /me/cart. Quantidade, subtotal, campo cupom. Botão Checkout → redirect. Atualização em tempo real.", "state": "done" },
-    { "id": "FEV-20", "area": "Frontend Visual (Enrichment)", "title": "NOVA VIEW: favoritos.html (#/favoritos)", "desc": "Lista WishlistItems via GET /me/wishlist. Grid de cards com botão Comprar + Remover.", "state": "done" },
-    { "id": "FEV-21", "area": "Frontend Visual (Enrichment)", "title": "Newsletter CTA section na home", "desc": "Section no final da index.html: 'Receba novidades'. Input email + botão Inscrever. POST /api/v1/newsletter. Toast de feedback.", "state": "done" },
-    { "id": "FEV-22", "area": "Frontend Visual (Enrichment)", "title": "Error pages 404 e 500 com design", "desc": "custom_404.html e custom_500.html com design consistente. Registrar exception_handler no FastAPI. Link Voltar ao início.", "state": "done" },
-    { "id": "FEV-23", "area": "Frontend Visual (Enrichment)", "title": "Admin: orders dashboard visual melhorado", "desc": "router_admin_html.py atualizado com design-system.css + components.css. Badges usam tokens CSS (badge-success/warning/danger/muted).", "state": "done" },
-    { "id": "FEV-24", "area": "Frontend Visual (Enrichment)", "title": "Admin: downloads dashboard visual melhorado", "desc": "router_admin_downloads.py com /panel HTML (template externo admin_downloads.html). Progress bar, filtros, design system tokens.", "state": "done" },
-    { "id": "FEV-25", "area": "Frontend Visual (Enrichment)", "title": "JS centralizado: form-validation.js", "desc": "FormValidator class: validate(form), addRule(field, fn, msg), showError(field, msg), clearErrors(form). Reutilizável em todos os formulários.", "state": "done" },
-    { "id": "FEV-26", "area": "Frontend Visual (Enrichment)", "title": "JS: SPA router melhorado (router.js)", "desc": "class Router: register(path, renderFn), navigate(path), onHashChange(). Limpa a section ativa antes de renderizar. Suporta params (#/pedido/REF).", "state": "done" },
-    { "id": "FEV-27", "area": "Frontend Visual (Enrichment)", "title": "Configurar static files no FastAPI (app/web/static/)", "desc": "app.mount('/static', StaticFiles(directory='app/web/static'), name='static'). Criar estrutura css/ e js/ dentro de static/.", "state": "done" },
-    { "id": "FEV-28", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: design-system.css servido", "desc": "GET /static/css/design-system.css → 200 OK. GET /static/js/toast.js → 200 OK. test_fev_static_files.py.", "state": "done" },
-    { "id": "FEV-29", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: elementos críticos no HTML", "desc": "test_fev_dom_elements.py: 14 testes FEV-001..012 (design-system, toast-root, nav, 404, hamburger, password-strength, aria-label). 14/14 verdes.", "state": "done" },
-    { "id": "FEV-30", "area": "Frontend Visual (Enrichment)", "title": "Testes Frontend: novas views presentes no DOM", "desc": "GET /conta+/biblioteca+/carrinho+/favoritos → 200 (incluído em test_fev_dom_elements.py). 4 testes verdes.", "state": "done" },
-    { "id": "FEV-31", "area": "Frontend Visual (Enrichment)", "title": "Spec YAML FEV: validar adversarial", "desc": "FEV-001..012 cobertos em test_fev_dom_elements.py. fev-design-system.yaml confirmado consistente.", "state": "done" },
-    { "id": "FEV-32", "area": "Frontend Visual (Enrichment)", "title": "Revisão cíclica épico FEV", "desc": "Verificar: testes HTML verdes, static files OK, novas views funcionando, ARIA presente, Ruff limpo, CHANGELOG atualizado.", "state": "done" },
-    { "id": "DBE-01", "area": "DB Enrichment", "title": "Settings: db_pool_size, max_overflow, timeout, pre_ping", "desc": "Adicionar 4 campos em core/config.py. Valores padrão: pool_size=10, max_overflow=20, timeout=30, pre_ping=True.", "state": "done" },
-    { "id": "DBE-02", "area": "DB Enrichment", "title": "Aplicar pool tuning em core/db.py", "desc": "create_async_engine usa settings.db_pool_size etc. Verificar que aiosqlite (testes) é excluído do pool tuning.", "state": "done" },
-    { "id": "DBE-03", "area": "DB Enrichment", "title": "Índice GIN funcional FTS (PostgreSQL only)", "desc": "Migration e5f6g7h8i9j0: GIN via to_tsvector(portuguese, title||author||description). Sem tsvector column — índice funcional.", "state": "done" },
-    { "id": "DBE-04", "area": "DB Enrichment", "title": "SearchService FTS/ILIKE + endpoint /api/v1/search", "desc": "SearchService detecta dialeto: plainto_tsquery no PostgreSQL, func.lower().like() no SQLite. Endpoint com min_length=2.", "state": "done" },
-    { "id": "DBE-05", "area": "DB Enrichment", "title": "Índices compostos: product, order, download_grant", "desc": "ix_product_status_featured, ix_order_user_status, ix_order_reference_status, ix_download_grant_order_expires.", "state": "done" },
-    { "id": "DBE-06", "area": "DB Enrichment", "title": "Migration Alembic: e5f6g7h8i9j0_dbe_indices", "desc": "Migration com índices compostos + GIN FTS. Down-revision: d4e5f6g7h8i9 (AAA).", "state": "done" },
-    { "id": "DBE-07", "area": "DB Enrichment", "title": "Testes DBE: 7 testes SearchService e endpoint", "desc": "test_dbe_search.py: título, autor, descrição, draft excluído, paginação, endpoint 200, validação min_length.", "state": "done" },
-    { "id": "DBE-08", "area": "DB Enrichment", "title": "Atualizar UML (.spec/unit/db/uml-class-diagram.md)", "desc": "Adicionar RevokedToken, ApiKey, UserActivityLog. Novas FKs.", "state": "done" },
-    { "id": "DBE-09", "area": "DB Enrichment", "title": "Revisão cíclica épico DBE", "desc": "Verificar: migration up+down, FTS em PG + ILIKE fallback, índices compostos OK, UML atualizado.", "state": "done" },
-    { "id": "BEE-01", "area": "Backend Enrichment", "title": "EmailService class (pluggável SMTP)", "desc": "EmailService(settings): send(to, subject, body). Se smtp_host vazio: log-only. smtplib.SMTP. DI no __init__.", "state": "done" },
-    { "id": "BEE-02", "area": "Backend Enrichment", "title": "Templates de email (text-based)", "desc": "EmailService com send_purchase_confirmation, send_password_reset, send_newsletter_welcome, send_download_expiring.", "state": "done" },
-    { "id": "BEE-03", "area": "Backend Enrichment", "title": "EmailService.send_purchase_confirmation()", "desc": "Confirmação de compra com product_title e order_reference.", "state": "done" },
-    { "id": "BEE-04", "area": "Backend Enrichment", "title": "EmailService.send_password_reset()", "desc": "Link de redefinição de senha enviado por email.", "state": "done" },
-    { "id": "BEE-05", "area": "Backend Enrichment", "title": "EmailService.send_download_expiring()", "desc": "Aviso de expiração com product_title e expires_at.", "state": "done" },
-    { "id": "BEE-06", "area": "Backend Enrichment", "title": "Testes EmailService (5 testes)", "desc": "test_bee_email.py: sem SMTP não levanta (4 métodos) + EmailFailCounter incrementa.", "state": "done" },
-    { "id": "BEE-07", "area": "Backend Enrichment", "title": "router_me.py: GET /api/v1/me/orders", "desc": "Lista pedidos do usuário autenticado via UserOrderLister.list_for_user(). Paginação page/page_size.", "state": "done" },
-    { "id": "BEE-08", "area": "Backend Enrichment", "title": "router_me.py: GET /api/v1/me/library + wishlist + cart", "desc": "Delega para EntitlementService.library(), WishlistService.items(), CartService.items(). Protegido por JWT.", "state": "done" },
-    { "id": "BEE-09", "area": "Backend Enrichment", "title": "Registrar router_me.py em main.py", "desc": "app.include_router(me_router) com prefixo /api/v1/me. Todos os endpoints protegidos por get_current_user.", "state": "done" },
-    { "id": "BEE-10", "area": "Backend Enrichment", "title": "Health check enrichment: db_latency_ms + disk_free_mb", "desc": "HealthChecker.db_latency_ms() mede SELECT 1; disk_free_mb() via shutil.disk_usage. /healthz/detail e /health/detail enriquecidos.", "state": "done" },
-    { "id": "BEE-11", "area": "Backend Enrichment", "title": "Problem+JSON (RFC 9457) em exception_handlers", "desc": "_json_error retorna type/title/status/detail/instance; Content-Type: application/problem+json.", "state": "done" },
-    { "id": "BEE-12", "area": "Backend Enrichment", "title": "Testes /me endpoints (6 testes)", "desc": "test_bee_me_endpoints.py: orders/library/wishlist/cart vazios + 401 sem auth.", "state": "done" },
-    { "id": "BEE-13", "area": "Backend Enrichment", "title": "Testes health enrichment + Problem+JSON (4 testes)", "desc": "test_bee_health.py: latency_ms, disk.free_mb, /health/detail, content-type problem+json.", "state": "done" },
-    { "id": "BEE-14", "area": "Backend Enrichment", "title": "Revisão cíclica épico BEE", "desc": "Verificar: 15 testes verdes, Ruff limpo, DI consistente, Problem+JSON RFC 9457 correto, CHANGELOG atualizado.", "state": "done" },
-    { "id": "SFX-01", "area": "Storefront Fix", "title": "Footer duplicado: remover segundo footer", "desc": "index.html tinha 2 elementos footer. Mesclado links de privacidade/termos no footer.footer existente. Segundo removido.", "state": "done" },
-    { "id": "SFX-02", "area": "Storefront Fix", "title": "Newsletter form: CSS .news + .news-error em style.css", "desc": "Adicionado .news (flex, gap, wrap), .news-error (inline error), .footer-links, .footer-copy em style.css.", "state": "done" },
-    { "id": "SFX-03", "area": "Storefront Fix", "title": "Admin link: ocultar para não-admins via JS", "desc": "decodeJwtRole() decodifica base64 payload do JWT; #admin-link exibido só se role=admin ou staff. UI-only (auth enforced server-side).", "state": "done" },
-    { "id": "SFX-04", "area": "Storefront Fix", "title": "Newsletter erro inline (não toast)", "desc": "Validação regex + erro inline em #news-error. Toast removido do fluxo de newsletter.", "state": "done" },
-    { "id": "SFX-05", "area": "Storefront Fix", "title": "Cover placeholder profissional", "desc": "Sem cover_url: iniciais do título (2 letras) com background hsl(hash,42%,32%). Sem emoji. _titleHue() usa hash djb2-like.", "state": "done" },
-    { "id": "SFX-06", "area": "Storefront Fix", "title": "Admin login page: CSS customizado (SQLAdmin)", "desc": "sqladmin==0.21.0 não suporta custom_css nem custom_templates_dir de forma estável. Bloqueado até sqladmin>=0.22.", "state": "blocked" },
-    { "id": "SFX-07", "area": "Storefront Fix", "title": "Revisão cíclica épico SFX (Storefront Fix)", "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).", "state": "done" },
-
-    { "id": "UXR-01", "area": "UX Redesign", "title": "Tokens de cor expandidos (superfícies + accent quente)", "desc": "Adicionar a :root tons intermediários de superfície (--surface-1/2/3), accent quente --buy (CTA compra), --accent-soft. Manter --accent roxo #6d5cff como marca. Ref: market-research consenso.", "state": "done" },
-    { "id": "UXR-02", "area": "UX Redesign", "title": "Escala de sombras e radius padronizada", "desc": "Definir --shadow-1/2/3 (elevation 1-2dp como consenso de mercado) e --radius-sm/md/lg. Cards passam a usar radius 8px (hoje 14px) alinhado ao consenso 4-12px.", "state": "done" },
-    { "id": "UXR-03", "area": "UX Redesign", "title": "Fonte de display no hero e headings", "desc": "Adicionar fonte sans bold de display (self-hosted ou stack) para h1/h2; body mantém 16px system-ui. font-display:swap. Sem custom fonts externas que quebrem custo-zero/offline.", "state": "done" },
-    { "id": "UXR-04", "area": "UX Redesign", "title": "Sistema de ícones SVG inline coeso", "desc": "Substituir emojis (📚🛒🧾) por ícones SVG inline consistentes (carrinho, biblioteca, pedidos, busca, coração). Sprite ou símbolos reutilizáveis. Ref: 10/10 sites usam SVG coeso.", "state": "done" },
-    { "id": "UXR-05", "area": "UX Redesign", "title": "Gradiente sutil no hero", "desc": "Hero ganha gradiente sutil de fundo (roxo->quente translúcido, ref. Hotmart) sem comprometer contraste do texto. Variável --hero-gradient.", "state": "done" },
-    { "id": "UXR-06", "area": "UX Redesign", "title": "Variáveis de espaçamento (escala 4px)", "desc": "Consolidar escala de espaço --space-1..8 (múltiplos de 4px) e aplicar nos componentes principais. Whitespace generoso (consenso 9/10).", "state": "done" },
-
-    { "id": "UXR-07", "area": "UX Redesign", "title": "Badge de contador no carrinho", "desc": "Ícone de carrinho no header com badge numérico de itens (ref. Payhip). Atualiza ao add/remove. Oculto quando vazio.", "state": "done" },
-    { "id": "UXR-08", "area": "UX Redesign", "title": "Header com ícones SVG e total do carrinho", "desc": "Botões do header (carrinho/biblioteca/pedidos/conta) com ícone SVG + label. Carrinho mostra total R$ em tempo real (ref. Payhip).", "state": "done" },
-    { "id": "UXR-09", "area": "UX Redesign", "title": "Menu hamburguer no mobile", "desc": "Em <768px, ações do header colapsam em menu hamburguer. Busca full-width abaixo. Acessível (aria-expanded).", "state": "done" },
-    { "id": "UXR-10", "area": "UX Redesign", "title": "Indicador de conta/avatar logado", "desc": "Usuário logado: botão Conta vira avatar com iniciais (reusa _titleHue do SFX-05). Dropdown com Biblioteca/Pedidos/Sair.", "state": "done" },
-
-    { "id": "UXR-11", "area": "UX Redesign", "title": "Card de produto redesenhado", "desc": "Card: capa + título + autor + rating stars + preço + botão comprar visível. Ordem consenso: capa->título->preço->CTA. Radius 8px, sombra sutil.", "state": "done" },
-    { "id": "UXR-12", "area": "UX Redesign", "title": "Rating stars nos cards e detalhe", "desc": "Exibir média de estrelas (amarelo, ref. Hotmart) + contagem de reviews nos cards e no detalhe. Fallback 'sem avaliações'.", "state": "done" },
-    { "id": "UXR-13", "area": "UX Redesign", "title": "Badges de destaque/novo nos cards", "desc": "Badge 'Destaque' (product.featured) e 'Novo' (created_at < 30d) nos cards. Estilo pill, canto superior. Sem hardcode de datas.", "state": "done" },
-    { "id": "UXR-14", "area": "UX Redesign", "title": "Seção 'Destaques' em carrossel horizontal", "desc": "Home: carrossel horizontal de e-books featured (ref. Leanpub shelf). Scroll-snap CSS, sem libs. Setas prev/next acessíveis.", "state": "done" },
-    { "id": "UXR-15", "area": "UX Redesign", "title": "Estado de erro do catálogo com retry", "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.", "state": "done" },
-    { "id": "UXR-16", "area": "UX Redesign", "title": "Filtro por faixa de preço", "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.", "state": "done" },
-
-    { "id": "UXR-17", "area": "UX Redesign", "title": "Hero com CTA e prova social", "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.", "state": "done" },
-    { "id": "UXR-18", "area": "UX Redesign", "title": "Hero responsivo com gradiente aplicado", "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.", "state": "done" },
-    { "id": "UXR-19", "area": "UX Redesign", "title": "Faixa de confiança (pagamento + download)", "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.", "state": "done" },
-
-    { "id": "UXR-20", "area": "UX Redesign", "title": "Breadcrumb na página de detalhe", "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.", "state": "done" },
-    { "id": "UXR-21", "area": "UX Redesign", "title": "Selos de garantia no buy-box", "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).", "state": "done" },
-    { "id": "UXR-22", "area": "UX Redesign", "title": "Footer com colunas e selo de segurança", "desc": "Footer multi-coluna (Marca / Navegar / Institucional / Newsletter) + selo de conexão segura. Redes sociais NÃO incluídas: sem URLs reais (evitar links soltos). Entram via config — ver UXR-26.", "state": "done" },
-    { "id": "UXR-23", "area": "UX Redesign", "title": "Estados vazios desenhados", "desc": "Biblioteca/carrinho/favoritos vazios: ilustração SVG + mensagem + CTA ('Explorar catálogo'). Hoje é texto seco ou nada.", "state": "done" },
-    { "id": "UXR-24", "area": "UX Redesign", "title": "Loading global e skeleton em listas", "desc": "Skeleton (hoje só no catálogo) estendido a detalhe, biblioteca, pedidos. Indicador de loading global em navegação de rota.", "state": "done" },
-
-    { "id": "UXR-25", "area": "UX Redesign", "title": "Revisão cíclica épico UXR", "desc": "Parecer: 24/24 tasks de implementação concluídas (UXR-01..24). Auto-repair: Ruff verde (corrigidos 4 erros, sendo 3 preexistentes em testes AAA). Suíte de testes verde. Backend enriquecido com TDD (8 testes novos). Incremento: UXR-26..32 criados.", "state": "done" },
-
-    { "id": "UXR-26", "area": "UX Redesign", "title": "Redes sociais no footer (via config)", "desc": "Adicionar ícones SVG de redes sociais (Instagram/YouTube/X) ao footer quando houver URLs reais em Settings. Hoje omitido para evitar links soltos.", "state": "backlog" },
-    { "id": "UXR-27", "area": "UX Redesign", "title": "Rating stars na página de detalhe", "desc": "Exibir avg_rating + review_count com estrelas no topo do detalhe do produto (hoje só nos cards). Reusar starsHtml().", "state": "done" },
-    { "id": "UXR-28", "area": "UX Redesign", "title": "Skeleton dedicado no detalhe do produto", "desc": "renderProduct usa skeleton de grid; criar skeleton específico (cover + linhas de texto + buy-box) para o layout de detalhe.", "state": "done" },
-    { "id": "UXR-29", "area": "UX Redesign", "title": "Favicon e og:image reais", "desc": "Adicionar favicon.svg da marca e meta og:image para compartilhamento. Hoje ausentes (ver ux-audit seção 6).", "state": "done" },
-    { "id": "UXR-30", "area": "UX Redesign", "title": "Filtro de preço: faixa customizada", "desc": "Além dos presets (UXR-16), permitir min/max custom via inputs numéricos. Sincroniza com price_min/price_max já suportados no backend.", "state": "done" },
-    { "id": "UXR-31", "area": "UX Redesign", "title": "Auditoria Lighthouse mobile", "desc": "Rodar Lighthouse mobile e atingir >=90 em Performance e Accessibility (critério de aceite do roadmap-uxr). Requer ferramenta de browser headless.", "state": "backlog" },
-    { "id": "UXR-32", "area": "UX Redesign", "title": "Estado vazio de favoritos (wishlist)", "desc": "Aplicar emptyState() à página de favoritos quando vazia, com CTA para o catálogo (igual carrinho/biblioteca).", "state": "done" }
+    {
+      "id": "DOC-01",
+      "area": "Documentação (Enrichment)",
+      "title": "Atualizar STATUS.md para fase Enrichment",
+      "desc": "Refletir branch enrichment, novos épicos, 437 testes, estado atual.",
+      "state": "done",
+      "note": "STATUS.md reescrito para fase Enrichment 2026-06-13."
+    },
+    {
+      "id": "DOC-02",
+      "area": "Documentação (Enrichment)",
+      "title": "Atualizar CHANGELOG.md (enrichment entry)",
+      "desc": "Entrada 2026-06-13: branch criada, análise, roadmap, planning.",
+      "state": "done",
+      "note": "Entrada adicionada em 2026-06-13."
+    },
+    {
+      "id": "DOC-03",
+      "area": "Documentação (Enrichment)",
+      "title": "Reescrever .spec/roadmap.md",
+      "desc": "Roadmap vivo: MVP concluído, enrichment AAA+FEV+DBE+BEE, Tier 2 futuro.",
+      "state": "done",
+      "note": ".spec/roadmap.md completamente reescrito."
+    },
+    {
+      "id": "DOC-04",
+      "area": "Documentação (Enrichment)",
+      "title": "Criar .spec/enrichment/ com 4 planning docs",
+      "desc": "roadmap-aaa.md, roadmap-frontend.md, roadmap-db.md, roadmap-backend.md.",
+      "state": "done",
+      "note": "4 docs criados em .spec/enrichment/."
+    },
+    {
+      "id": "DOC-05",
+      "area": "Documentação (Enrichment)",
+      "title": "Criar test specs YAML adversariais",
+      "desc": "aaa-token-blacklist.yaml, aaa-totp.yaml, aaa-api-keys.yaml, aaa-activity-log.yaml, dbe-fts.yaml, fev-design-system.yaml, bee-email.yaml.",
+      "state": "done",
+      "note": "7 specs YAML criadas em .spec/tests/."
+    },
+    {
+      "id": "DOC-06",
+      "area": "Documentação (Enrichment)",
+      "title": "Adicionar tasks enrichment ao backlog.json",
+      "desc": "~125 tasks DOC+AAA+FEV+DBE+BEE no report/backlog.json.",
+      "state": "done",
+      "note": "125 tasks adicionadas; review_summary atualizado."
+    },
+    {
+      "id": "DOC-07",
+      "area": "Documentação (Enrichment)",
+      "title": "Commit semântico: doc(enrichment)",
+      "desc": "Commit de toda a documentação de enrichment (STATUS, CHANGELOG, specs, backlog).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-01",
+      "area": "AAA (Enrichment)",
+      "title": "Modelo RevokedToken + migration",
+      "desc": "Model com jti (UNIQUE INDEX), expires_at, revoked_at. Migration Alembic. Documentar no UML.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-02",
+      "area": "AAA (Enrichment)",
+      "title": "JwtService: adicionar claim jti (UUID4) ao issue()",
+      "desc": "import uuid; payload['jti'] = str(uuid.uuid4()). verify() retorna jti nos claims.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-03",
+      "area": "AAA (Enrichment)",
+      "title": "TokenBlacklistService class",
+      "desc": "revoke(jti, expires_at), is_revoked(jti) → bool. Classe com DI session no __init__.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-04",
+      "area": "AAA (Enrichment)",
+      "title": "get_current_user: checar blacklist após verify()",
+      "desc": "Após jwt.verify(), extrair jti e chamar blacklist.is_revoked(jti). Se revogado → 401.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-05",
+      "area": "AAA (Enrichment)",
+      "title": "POST /api/v1/auth/logout endpoint",
+      "desc": "Require autenticação; extrai jti do token; chama TokenBlacklistService.revoke(); retorna 204.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-06",
+      "area": "AAA (Enrichment)",
+      "title": "Testes token blacklist (3+)",
+      "desc": "BL-001: token revogado → 401. BL-002: logout sem token → 401. BL-003: outro usuário não afetado. BL-004: jti presente no token. BL-005: expirado não polui blacklist.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-07",
+      "area": "AAA (Enrichment)",
+      "title": "Modelo UserActivityLog + migration",
+      "desc": "user_id FK nullable, event_type str INDEX, metadata JSON, created_at INDEX. Migration Alembic.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-08",
+      "area": "AAA (Enrichment)",
+      "title": "UserActivityLogService class",
+      "desc": "log(user_id, event_type, **meta) → async. Classe com DI session. Silencia erros (não quebra fluxo principal).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-09",
+      "area": "AAA (Enrichment)",
+      "title": "Activity log no login bem-sucedido",
+      "desc": "Em Authenticator.login(): após emitir tokens, chamar activity_log.log(user.id, 'login', ip=...). DI do service.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-10",
+      "area": "AAA (Enrichment)",
+      "title": "Activity log na compra (order criada)",
+      "desc": "Em OrderService.create_order(): após commit, log(user_id, 'purchase', order_ref=ref).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-11",
+      "area": "AAA (Enrichment)",
+      "title": "Activity log no download",
+      "desc": "Em GrantService.consume_download(): log(user_id, 'download', product_id=...).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-12",
+      "area": "AAA (Enrichment)",
+      "title": "GET /api/v1/me/activity endpoint",
+      "desc": "Lista UserActivityLog do usuário autenticado. Paginação ?limit=20&skip=0. Protegido por get_current_user.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-13",
+      "area": "AAA (Enrichment)",
+      "title": "Testes UserActivityLog (3+)",
+      "desc": "ACT-001: login gera log. ACT-003: compra gera log. ACT-005: /me/activity retorna só do usuário. ACT-006: paginação respeitada.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-14",
+      "area": "AAA (Enrichment)",
+      "title": "Modelo ApiKey + migration",
+      "desc": "user_id FK, name str, key_hash UNIQUE INDEX, prefix str(8), is_active bool, last_used_at nullable, expires_at nullable, created_at.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-15",
+      "area": "AAA (Enrichment)",
+      "title": "ApiKeyService class",
+      "desc": "generate(user_id, name, expires_at) → (raw_key, ApiKey). authenticate(raw_key) → User|None. revoke(key_id, user_id). list_keys(user_id).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-16",
+      "area": "AAA (Enrichment)",
+      "title": "Endpoints GET/POST/DELETE /api/v1/me/api-keys",
+      "desc": "List (sem revelar hash), Create (retorna chave crua 1x), Delete (ownership check). Schemas ApiKeyOut, ApiKeyCreate.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-17",
+      "area": "AAA (Enrichment)",
+      "title": "Dependency authenticate_api_key",
+      "desc": "Extrai X-API-Key header, chama ApiKeyService.authenticate(), retorna User. Compor com get_current_user (tenta JWT primeiro, depois API Key).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-18",
+      "area": "AAA (Enrichment)",
+      "title": "Testes API Keys (3+)",
+      "desc": "APIKEY-001: create retorna chave crua. APIKEY-002: auth via X-API-Key. APIKEY-003: chave inválida → 401. APIKEY-004: revogada → 401. APIKEY-005: ownership check.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-19",
+      "area": "AAA (Enrichment)",
+      "title": "Settings: totp_encryption_key + two_fa_required_roles",
+      "desc": "Adicionar campos em core/config.py. totp_encryption_key: str (32-byte AES key, base64). two_fa_required_roles: list[str].",
+      "state": "done"
+    },
+    {
+      "id": "AAA-20",
+      "area": "AAA (Enrichment)",
+      "title": "User: totp_secret_enc + totp_enabled migration",
+      "desc": "Adicionar colunas nullable. Migration Alembic. UML atualizado.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-21",
+      "area": "AAA (Enrichment)",
+      "title": "TOTPService class",
+      "desc": "generate_secret(), generate_provisioning_uri(secret, email), verify(secret, code, window=1), encrypt_secret(s)/decrypt_secret(enc). Usa pyotp + cryptography (AES-GCM).",
+      "state": "done"
+    },
+    {
+      "id": "AAA-22",
+      "area": "AAA (Enrichment)",
+      "title": "POST /auth/2fa/enroll endpoint",
+      "desc": "Gera secret; retorna provisioning_uri + qr_base64. Não persiste ainda. Requires autenticação.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-23",
+      "area": "AAA (Enrichment)",
+      "title": "POST /auth/2fa/confirm endpoint",
+      "desc": "Recebe secret + code; valida via TOTPService.verify(); persiste totp_secret_enc + totp_enabled=True.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-24",
+      "area": "AAA (Enrichment)",
+      "title": "POST /auth/2fa/disable endpoint",
+      "desc": "Recebe senha + code; valida ambos; persiste totp_enabled=False, totp_secret_enc=None.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-25",
+      "area": "AAA (Enrichment)",
+      "title": "Modificar POST /auth/token: partial_token quando 2FA ativo",
+      "desc": "Se user.totp_enabled e role em two_fa_required_roles: retornar partial_token (JWT type=partial_2fa, TTL 5min) ao invés de access_token.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-26",
+      "area": "AAA (Enrichment)",
+      "title": "POST /auth/2fa/login endpoint (passo 2)",
+      "desc": "Recebe partial_token + code; valida ambos; emite access_token + refresh_token completos.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-27",
+      "area": "AAA (Enrichment)",
+      "title": "Testes TOTP flow (3+)",
+      "desc": "TOTP-001: enroll gera URI válida. TOTP-002: confirm com código válido ativa 2FA. TOTP-003: código inválido rejeitado. TOTP-004: login retorna partial_token. TOTP-005: passo 2 com código válido emite tokens.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-28",
+      "area": "AAA (Enrichment)",
+      "title": "Instalar pyotp + cryptography no projeto",
+      "desc": "uv add pyotp cryptography qrcode pillow. Atualizar pyproject.toml + uv.lock.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-29",
+      "area": "AAA (Enrichment)",
+      "title": "Spec YAML AAA: validar adversarial",
+      "desc": "Revisar .spec/tests/aaa-*.yaml; garantir que todos os casos BL/ACT/APIKEY/TOTP estão cobertos pelos testes implementados.",
+      "state": "done"
+    },
+    {
+      "id": "AAA-30",
+      "area": "AAA (Enrichment)",
+      "title": "Revisão cíclica épico AAA",
+      "desc": "Validar: testes verdes, Ruff limpo, nenhum hardcode, UML atualizado, CHANGELOG + STATUS atualizados. Backlog incrementado se necessário.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-01",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Criar backend/app/web/static/css/design-system.css",
+      "desc": "Tokens CSS completos: cores, tipografia, espaçamento (4px base), raios, sombras, transições. Servido como arquivo estático.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-02",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Criar backend/app/web/static/css/components.css",
+      "desc": "Classes reutilizáveis: .btn, .btn-primary, .btn-ghost, .btn-danger, .btn-sm, .btn-lg, .card, .card-hover, .badge, .tag, .input, .skeleton.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-03",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Criar backend/app/web/static/js/toast.js",
+      "desc": "class Toast com show(msg, type), success(), error(), info(), warn(). Remove após 4s. CSS inline de animação. Exporta window._toast.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-04",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Refatorar base.html: imports CSS + toast + nav",
+      "desc": "Substituir CSS inline por <link> para design-system.css e components.css. Adicionar toast-root div. Nav enriquecida: logo + links + menu usuário.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-05",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "base.html: mobile hamburger nav",
+      "desc": "Botão #menu-toggle; JS que toggle class .nav-open no header. CSS com media query para mobile.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-06",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "base.html: ARIA + focus-visible + meta OG + favicon",
+      "desc": "aria-label em inputs, role=navigation, focus-visible outline accent, <meta property=og:...>, <link rel=icon>.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-07",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "index.html: hero section + grid de catálogo melhorado",
+      "desc": "Hero com headline + barra de busca grande. Grid de cards com cover, título, autor, preço, badge destaque. Empty state visual.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-08",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "index.html: sidebar de filtros visual",
+      "desc": "Filtros por categoria/tag/autor como chips com toggle. Estado ativo visualmente destacado. Mobile: chips horizontais scrolláveis.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-09",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "index.html: paginação redesenhada",
+      "desc": "Números de página + prev/next com ícones. Indicador 'Página X de Y'. Animação suave na troca.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-10",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "produto_detalhe.html: layout 2 colunas + CTA",
+      "desc": "Cover image (esq) + info + preço + botão Comprar (dir). Badge desconto se coupon. Loading state no botão. Toast no feedback.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-11",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "produto_detalhe.html: seção reviews",
+      "desc": "Rating stars visuais (SVG). Avatar com inicial do nome. Paginação de reviews. Botão 'Avaliar' para compradores.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-12",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "order.html: timeline de status + cards de download",
+      "desc": "Timeline visual (pending→paid→delivered) com ícones. Cards de download com contagem X/Y e botão. Badge de status colorido.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-13",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "recuperar_senha.html: stepper + validação inline",
+      "desc": "Stepper visual (3 passos). Barra de força da senha. Erros inline abaixo do campo. Confirmação de match.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-14",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "terms.html + privacy.html: typography e layout",
+      "desc": "Heading hierarchy (h2, h3). line-height 1.7. max-width 65ch. Índice lateral fixo. Dark mode correto.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-15",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "simulate.html: cleanup visual",
+      "desc": "Layout mais limpo; botões de ação destacados; status do webhook como badge colorido.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-16",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "NOVA VIEW: conta.html (#/conta)",
+      "desc": "Template com tabs: Dados / Faturamento / Segurança / Atividade. JS router intercepta #/conta. Formulário billing_profile. Lista de atividades recentes.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-17",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "conta.html: tab Segurança (2FA + API Keys + senha)",
+      "desc": "Seção 2FA: status, botão Ativar/Desativar. Seção API Keys: lista + criar + revogar. Troca de senha.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-18",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "NOVA VIEW: biblioteca.html (#/biblioteca)",
+      "desc": "Lista entitlements via GET /me/library. Cards com capa, título, botão Download (abre grant). Indicador de downloads restantes.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-19",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "NOVA VIEW: carrinho.html (#/carrinho)",
+      "desc": "Lista CartItems via GET /me/cart. Quantidade, subtotal, campo cupom. Botão Checkout → redirect. Atualização em tempo real.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-20",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "NOVA VIEW: favoritos.html (#/favoritos)",
+      "desc": "Lista WishlistItems via GET /me/wishlist. Grid de cards com botão Comprar + Remover.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-21",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Newsletter CTA section na home",
+      "desc": "Section no final da index.html: 'Receba novidades'. Input email + botão Inscrever. POST /api/v1/newsletter. Toast de feedback.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-22",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Error pages 404 e 500 com design",
+      "desc": "custom_404.html e custom_500.html com design consistente. Registrar exception_handler no FastAPI. Link Voltar ao início.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-23",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Admin: orders dashboard visual melhorado",
+      "desc": "router_admin_html.py atualizado com design-system.css + components.css. Badges usam tokens CSS (badge-success/warning/danger/muted).",
+      "state": "done"
+    },
+    {
+      "id": "FEV-24",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Admin: downloads dashboard visual melhorado",
+      "desc": "router_admin_downloads.py com /panel HTML (template externo admin_downloads.html). Progress bar, filtros, design system tokens.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-25",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "JS centralizado: form-validation.js",
+      "desc": "FormValidator class: validate(form), addRule(field, fn, msg), showError(field, msg), clearErrors(form). Reutilizável em todos os formulários.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-26",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "JS: SPA router melhorado (router.js)",
+      "desc": "class Router: register(path, renderFn), navigate(path), onHashChange(). Limpa a section ativa antes de renderizar. Suporta params (#/pedido/REF).",
+      "state": "done"
+    },
+    {
+      "id": "FEV-27",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Configurar static files no FastAPI (app/web/static/)",
+      "desc": "app.mount('/static', StaticFiles(directory='app/web/static'), name='static'). Criar estrutura css/ e js/ dentro de static/.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-28",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Testes Frontend: design-system.css servido",
+      "desc": "GET /static/css/design-system.css → 200 OK. GET /static/js/toast.js → 200 OK. test_fev_static_files.py.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-29",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Testes Frontend: elementos críticos no HTML",
+      "desc": "test_fev_dom_elements.py: 14 testes FEV-001..012 (design-system, toast-root, nav, 404, hamburger, password-strength, aria-label). 14/14 verdes.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-30",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Testes Frontend: novas views presentes no DOM",
+      "desc": "GET /conta+/biblioteca+/carrinho+/favoritos → 200 (incluído em test_fev_dom_elements.py). 4 testes verdes.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-31",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Spec YAML FEV: validar adversarial",
+      "desc": "FEV-001..012 cobertos em test_fev_dom_elements.py. fev-design-system.yaml confirmado consistente.",
+      "state": "done"
+    },
+    {
+      "id": "FEV-32",
+      "area": "Frontend Visual (Enrichment)",
+      "title": "Revisão cíclica épico FEV",
+      "desc": "Verificar: testes HTML verdes, static files OK, novas views funcionando, ARIA presente, Ruff limpo, CHANGELOG atualizado.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-01",
+      "area": "DB Enrichment",
+      "title": "Settings: db_pool_size, max_overflow, timeout, pre_ping",
+      "desc": "Adicionar 4 campos em core/config.py. Valores padrão: pool_size=10, max_overflow=20, timeout=30, pre_ping=True.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-02",
+      "area": "DB Enrichment",
+      "title": "Aplicar pool tuning em core/db.py",
+      "desc": "create_async_engine usa settings.db_pool_size etc. Verificar que aiosqlite (testes) é excluído do pool tuning.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-03",
+      "area": "DB Enrichment",
+      "title": "Índice GIN funcional FTS (PostgreSQL only)",
+      "desc": "Migration e5f6g7h8i9j0: GIN via to_tsvector(portuguese, title||author||description). Sem tsvector column — índice funcional.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-04",
+      "area": "DB Enrichment",
+      "title": "SearchService FTS/ILIKE + endpoint /api/v1/search",
+      "desc": "SearchService detecta dialeto: plainto_tsquery no PostgreSQL, func.lower().like() no SQLite. Endpoint com min_length=2.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-05",
+      "area": "DB Enrichment",
+      "title": "Índices compostos: product, order, download_grant",
+      "desc": "ix_product_status_featured, ix_order_user_status, ix_order_reference_status, ix_download_grant_order_expires.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-06",
+      "area": "DB Enrichment",
+      "title": "Migration Alembic: e5f6g7h8i9j0_dbe_indices",
+      "desc": "Migration com índices compostos + GIN FTS. Down-revision: d4e5f6g7h8i9 (AAA).",
+      "state": "done"
+    },
+    {
+      "id": "DBE-07",
+      "area": "DB Enrichment",
+      "title": "Testes DBE: 7 testes SearchService e endpoint",
+      "desc": "test_dbe_search.py: título, autor, descrição, draft excluído, paginação, endpoint 200, validação min_length.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-08",
+      "area": "DB Enrichment",
+      "title": "Atualizar UML (.spec/unit/db/uml-class-diagram.md)",
+      "desc": "Adicionar RevokedToken, ApiKey, UserActivityLog. Novas FKs.",
+      "state": "done"
+    },
+    {
+      "id": "DBE-09",
+      "area": "DB Enrichment",
+      "title": "Revisão cíclica épico DBE",
+      "desc": "Verificar: migration up+down, FTS em PG + ILIKE fallback, índices compostos OK, UML atualizado.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-01",
+      "area": "Backend Enrichment",
+      "title": "EmailService class (pluggável SMTP)",
+      "desc": "EmailService(settings): send(to, subject, body). Se smtp_host vazio: log-only. smtplib.SMTP. DI no __init__.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-02",
+      "area": "Backend Enrichment",
+      "title": "Templates de email (text-based)",
+      "desc": "EmailService com send_purchase_confirmation, send_password_reset, send_newsletter_welcome, send_download_expiring.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-03",
+      "area": "Backend Enrichment",
+      "title": "EmailService.send_purchase_confirmation()",
+      "desc": "Confirmação de compra com product_title e order_reference.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-04",
+      "area": "Backend Enrichment",
+      "title": "EmailService.send_password_reset()",
+      "desc": "Link de redefinição de senha enviado por email.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-05",
+      "area": "Backend Enrichment",
+      "title": "EmailService.send_download_expiring()",
+      "desc": "Aviso de expiração com product_title e expires_at.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-06",
+      "area": "Backend Enrichment",
+      "title": "Testes EmailService (5 testes)",
+      "desc": "test_bee_email.py: sem SMTP não levanta (4 métodos) + EmailFailCounter incrementa.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-07",
+      "area": "Backend Enrichment",
+      "title": "router_me.py: GET /api/v1/me/orders",
+      "desc": "Lista pedidos do usuário autenticado via UserOrderLister.list_for_user(). Paginação page/page_size.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-08",
+      "area": "Backend Enrichment",
+      "title": "router_me.py: GET /api/v1/me/library + wishlist + cart",
+      "desc": "Delega para EntitlementService.library(), WishlistService.items(), CartService.items(). Protegido por JWT.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-09",
+      "area": "Backend Enrichment",
+      "title": "Registrar router_me.py em main.py",
+      "desc": "app.include_router(me_router) com prefixo /api/v1/me. Todos os endpoints protegidos por get_current_user.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-10",
+      "area": "Backend Enrichment",
+      "title": "Health check enrichment: db_latency_ms + disk_free_mb",
+      "desc": "HealthChecker.db_latency_ms() mede SELECT 1; disk_free_mb() via shutil.disk_usage. /healthz/detail e /health/detail enriquecidos.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-11",
+      "area": "Backend Enrichment",
+      "title": "Problem+JSON (RFC 9457) em exception_handlers",
+      "desc": "_json_error retorna type/title/status/detail/instance; Content-Type: application/problem+json.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-12",
+      "area": "Backend Enrichment",
+      "title": "Testes /me endpoints (6 testes)",
+      "desc": "test_bee_me_endpoints.py: orders/library/wishlist/cart vazios + 401 sem auth.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-13",
+      "area": "Backend Enrichment",
+      "title": "Testes health enrichment + Problem+JSON (4 testes)",
+      "desc": "test_bee_health.py: latency_ms, disk.free_mb, /health/detail, content-type problem+json.",
+      "state": "done"
+    },
+    {
+      "id": "BEE-14",
+      "area": "Backend Enrichment",
+      "title": "Revisão cíclica épico BEE",
+      "desc": "Verificar: 15 testes verdes, Ruff limpo, DI consistente, Problem+JSON RFC 9457 correto, CHANGELOG atualizado.",
+      "state": "done"
+    },
+    {
+      "id": "SFX-01",
+      "area": "Storefront Fix",
+      "title": "Footer duplicado: remover segundo footer",
+      "desc": "index.html tinha 2 elementos footer. Mesclado links de privacidade/termos no footer.footer existente. Segundo removido.",
+      "state": "done"
+    },
+    {
+      "id": "SFX-02",
+      "area": "Storefront Fix",
+      "title": "Newsletter form: CSS .news + .news-error em style.css",
+      "desc": "Adicionado .news (flex, gap, wrap), .news-error (inline error), .footer-links, .footer-copy em style.css.",
+      "state": "done"
+    },
+    {
+      "id": "SFX-03",
+      "area": "Storefront Fix",
+      "title": "Admin link: ocultar para não-admins via JS",
+      "desc": "decodeJwtRole() decodifica base64 payload do JWT; #admin-link exibido só se role=admin ou staff. UI-only (auth enforced server-side).",
+      "state": "done"
+    },
+    {
+      "id": "SFX-04",
+      "area": "Storefront Fix",
+      "title": "Newsletter erro inline (não toast)",
+      "desc": "Validação regex + erro inline em #news-error. Toast removido do fluxo de newsletter.",
+      "state": "done"
+    },
+    {
+      "id": "SFX-05",
+      "area": "Storefront Fix",
+      "title": "Cover placeholder profissional",
+      "desc": "Sem cover_url: iniciais do título (2 letras) com background hsl(hash,42%,32%). Sem emoji. _titleHue() usa hash djb2-like.",
+      "state": "done"
+    },
+    {
+      "id": "SFX-06",
+      "area": "Storefront Fix",
+      "title": "Admin login page: CSS customizado (SQLAdmin)",
+      "desc": "sqladmin==0.21.0 não suporta custom_css nem custom_templates_dir de forma estável. Bloqueado até sqladmin>=0.22.",
+      "state": "blocked"
+    },
+    {
+      "id": "SFX-07",
+      "area": "Storefront Fix",
+      "title": "Revisão cíclica épico SFX (Storefront Fix)",
+      "desc": "5/6 tasks concluídas. SFX-06 bloqueado por limitação de lib externa. Competência: UX corrigida (footer, newsletter, admin link, cover). Auto-repair: schema_sync + requirements.txt corrigidos (backend estava em crash loop).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-01",
+      "area": "UX Redesign",
+      "title": "Tokens de cor expandidos (superfícies + accent quente)",
+      "desc": "Adicionar a :root tons intermediários de superfície (--surface-1/2/3), accent quente --buy (CTA compra), --accent-soft. Manter --accent roxo #6d5cff como marca. Ref: market-research consenso.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-02",
+      "area": "UX Redesign",
+      "title": "Escala de sombras e radius padronizada",
+      "desc": "Definir --shadow-1/2/3 (elevation 1-2dp como consenso de mercado) e --radius-sm/md/lg. Cards passam a usar radius 8px (hoje 14px) alinhado ao consenso 4-12px.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-03",
+      "area": "UX Redesign",
+      "title": "Fonte de display no hero e headings",
+      "desc": "Adicionar fonte sans bold de display (self-hosted ou stack) para h1/h2; body mantém 16px system-ui. font-display:swap. Sem custom fonts externas que quebrem custo-zero/offline.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-04",
+      "area": "UX Redesign",
+      "title": "Sistema de ícones SVG inline coeso",
+      "desc": "Substituir emojis (📚🛒🧾) por ícones SVG inline consistentes (carrinho, biblioteca, pedidos, busca, coração). Sprite ou símbolos reutilizáveis. Ref: 10/10 sites usam SVG coeso.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-05",
+      "area": "UX Redesign",
+      "title": "Gradiente sutil no hero",
+      "desc": "Hero ganha gradiente sutil de fundo (roxo->quente translúcido, ref. Hotmart) sem comprometer contraste do texto. Variável --hero-gradient.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-06",
+      "area": "UX Redesign",
+      "title": "Variáveis de espaçamento (escala 4px)",
+      "desc": "Consolidar escala de espaço --space-1..8 (múltiplos de 4px) e aplicar nos componentes principais. Whitespace generoso (consenso 9/10).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-07",
+      "area": "UX Redesign",
+      "title": "Badge de contador no carrinho",
+      "desc": "Ícone de carrinho no header com badge numérico de itens (ref. Payhip). Atualiza ao add/remove. Oculto quando vazio.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-08",
+      "area": "UX Redesign",
+      "title": "Header com ícones SVG e total do carrinho",
+      "desc": "Botões do header (carrinho/biblioteca/pedidos/conta) com ícone SVG + label. Carrinho mostra total R$ em tempo real (ref. Payhip).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-09",
+      "area": "UX Redesign",
+      "title": "Menu hamburguer no mobile",
+      "desc": "Em <768px, ações do header colapsam em menu hamburguer. Busca full-width abaixo. Acessível (aria-expanded).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-10",
+      "area": "UX Redesign",
+      "title": "Indicador de conta/avatar logado",
+      "desc": "Usuário logado: botão Conta vira avatar com iniciais (reusa _titleHue do SFX-05). Dropdown com Biblioteca/Pedidos/Sair.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-11",
+      "area": "UX Redesign",
+      "title": "Card de produto redesenhado",
+      "desc": "Card: capa + título + autor + rating stars + preço + botão comprar visível. Ordem consenso: capa->título->preço->CTA. Radius 8px, sombra sutil.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-12",
+      "area": "UX Redesign",
+      "title": "Rating stars nos cards e detalhe",
+      "desc": "Exibir média de estrelas (amarelo, ref. Hotmart) + contagem de reviews nos cards e no detalhe. Fallback 'sem avaliações'.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-13",
+      "area": "UX Redesign",
+      "title": "Badges de destaque/novo nos cards",
+      "desc": "Badge 'Destaque' (product.featured) e 'Novo' (created_at < 30d) nos cards. Estilo pill, canto superior. Sem hardcode de datas.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-14",
+      "area": "UX Redesign",
+      "title": "Seção 'Destaques' em carrossel horizontal",
+      "desc": "Home: carrossel horizontal de e-books featured (ref. Leanpub shelf). Scroll-snap CSS, sem libs. Setas prev/next acessíveis.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-15",
+      "area": "UX Redesign",
+      "title": "Estado de erro do catálogo com retry",
+      "desc": "Quando GET /products falha: ilustração SVG + mensagem clara + botão 'Tentar novamente'. Hoje é texto seco 'Não foi possível carregar'.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-16",
+      "area": "UX Redesign",
+      "title": "Filtro por faixa de preço",
+      "desc": "Barra de facetas ganha filtro de faixa de preço (slider ou presets: até R$20, R$20-50, R$50+). Sincroniza com query da API.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-17",
+      "area": "UX Redesign",
+      "title": "Hero com CTA e prova social",
+      "desc": "Hero ganha botão 'Ver catálogo' (scroll/rota) + prova social ('download na hora', contagem de títulos via API). Ref. Gumroad/Payhip. Sem números inventados.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-18",
+      "area": "UX Redesign",
+      "title": "Hero responsivo com gradiente aplicado",
+      "desc": "Aplica --hero-gradient (UXR-05), ajusta tipografia display (UXR-03) e garante contraste/responsividade em mobile/tablet/desktop.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-19",
+      "area": "UX Redesign",
+      "title": "Faixa de confiança (pagamento + download)",
+      "desc": "Abaixo do hero: faixa com selos 'Pagamento seguro Mercado Pago', 'Download imediato', 'Suporte'. Ícones SVG. Reforça conversão.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-20",
+      "area": "UX Redesign",
+      "title": "Breadcrumb na página de detalhe",
+      "desc": "Detalhe do produto: breadcrumb Home / Categoria / Título. Navegável, acessível (aria). Ref. consenso de e-commerce.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-21",
+      "area": "UX Redesign",
+      "title": "Selos de garantia no buy-box",
+      "desc": "Buy-box ganha selos: 'Garantia 7 dias', 'Pagamento seguro', formato do arquivo. Aumenta confiança (ref. consenso).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-22",
+      "area": "UX Redesign",
+      "title": "Footer com colunas e selo de segurança",
+      "desc": "Footer multi-coluna (Marca / Navegar / Institucional / Newsletter) + selo de conexão segura. Redes sociais NÃO incluídas: sem URLs reais (evitar links soltos). Entram via config — ver UXR-26.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-23",
+      "area": "UX Redesign",
+      "title": "Estados vazios desenhados",
+      "desc": "Biblioteca/carrinho/favoritos vazios: ilustração SVG + mensagem + CTA ('Explorar catálogo'). Hoje é texto seco ou nada.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-24",
+      "area": "UX Redesign",
+      "title": "Loading global e skeleton em listas",
+      "desc": "Skeleton (hoje só no catálogo) estendido a detalhe, biblioteca, pedidos. Indicador de loading global em navegação de rota.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-25",
+      "area": "UX Redesign",
+      "title": "Revisão cíclica épico UXR",
+      "desc": "Parecer: 24/24 tasks de implementação concluídas (UXR-01..24). Auto-repair: Ruff verde (corrigidos 4 erros, sendo 3 preexistentes em testes AAA). Suíte de testes verde. Backend enriquecido com TDD (8 testes novos). Incremento: UXR-26..32 criados.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-26",
+      "area": "UX Redesign",
+      "title": "Redes sociais no footer (via config)",
+      "desc": "Adicionar ícones SVG de redes sociais (Instagram/YouTube/X) ao footer quando houver URLs reais em Settings. Hoje omitido para evitar links soltos.",
+      "state": "backlog"
+    },
+    {
+      "id": "UXR-27",
+      "area": "UX Redesign",
+      "title": "Rating stars na página de detalhe",
+      "desc": "Exibir avg_rating + review_count com estrelas no topo do detalhe do produto (hoje só nos cards). Reusar starsHtml().",
+      "state": "done"
+    },
+    {
+      "id": "UXR-28",
+      "area": "UX Redesign",
+      "title": "Skeleton dedicado no detalhe do produto",
+      "desc": "renderProduct usa skeleton de grid; criar skeleton específico (cover + linhas de texto + buy-box) para o layout de detalhe.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-29",
+      "area": "UX Redesign",
+      "title": "Favicon e og:image reais",
+      "desc": "Adicionar favicon.svg da marca e meta og:image para compartilhamento. Hoje ausentes (ver ux-audit seção 6).",
+      "state": "done"
+    },
+    {
+      "id": "UXR-30",
+      "area": "UX Redesign",
+      "title": "Filtro de preço: faixa customizada",
+      "desc": "Além dos presets (UXR-16), permitir min/max custom via inputs numéricos. Sincroniza com price_min/price_max já suportados no backend.",
+      "state": "done"
+    },
+    {
+      "id": "UXR-31",
+      "area": "UX Redesign",
+      "title": "Auditoria Lighthouse mobile",
+      "desc": "Rodar Lighthouse mobile e atingir >=90 em Performance e Accessibility (critério de aceite do roadmap-uxr). Requer ferramenta de browser headless.",
+      "state": "backlog"
+    },
+    {
+      "id": "UXR-32",
+      "area": "UX Redesign",
+      "title": "Estado vazio de favoritos (wishlist)",
+      "desc": "Aplicar emptyState() à página de favoritos quando vazia, com CTA para o catálogo (igual carrinho/biblioteca).",
+      "state": "done"
+    },
+    {
+      "id": "QA-01",
+      "area": "QA (skill /qa)",
+      "title": "Proteções do agente: bloqueio de comandos de versionamento e de leitura de .env",
+      "desc": "CLAUDE.md §2.6 + .claude/settings.json + hook testado com 14 casos (D01, D02).",
+      "state": "done"
+    },
+    {
+      "id": "QA-02",
+      "area": "QA (skill /qa)",
+      "title": "Stack de QA isolada eseller-qa em portas livres",
+      "desc": "qa-harness/ambiente: compose próprio, portas conferidas a cada subida, credenciais aleatórias fora do git (D03-D05).",
+      "state": "done"
+    },
+    {
+      "id": "QA-03",
+      "area": "QA (skill /qa)",
+      "title": "Adoção do harness /qa (motor 1.3.0) com cadeia em .spec/",
+      "desc": "adaptador, massa, 5 suítes (53 pontos), 22 histórias, 20 jornadas, base visual de 4 perfis.",
+      "state": "done"
+    },
+    {
+      "id": "QA-04",
+      "area": "QA (skill /qa)",
+      "title": "Rodadas do /qa completo com revisão e healing",
+      "desc": "Rodada 1 (0433) + healing (0457), rodada 2 (0521) e seguintes; relatórios em qa-harness/relatorios.",
+      "state": "done"
+    },
+    {
+      "id": "QA-05",
+      "area": "QA (skill /qa)",
+      "title": "Ação 'teclar' no motor global da skill",
+      "desc": "Busca do SPA só envia com Enter (D12).",
+      "state": "done"
+    },
+    {
+      "id": "QAF-01",
+      "area": "QA Fixes",
+      "title": "Backend sobe em Postgres novo (enum reviewstatus)",
+      "desc": "server_default = nome do membro; teste do DDL de colunas enum.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-02",
+      "area": "QA Fixes",
+      "title": "Busca ?q= sem 500 no Postgres",
+      "desc": "Filtros por IN em vez de join+DISTINCT; SQL compilado para Postgres no teste.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-03",
+      "area": "QA Fixes",
+      "title": "Download sem 500 no Postgres (fuso)",
+      "desc": "Clock.as_naive_utc; testes com expires_at com fuso.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-04",
+      "area": "QA Fixes",
+      "title": "Lista de pedidos do admin com data e e-mail (US-07)",
+      "desc": "OrderAdminListItemOut.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-05",
+      "area": "QA Fixes",
+      "title": "Pedido pendente com link de pagamento (RF-25)",
+      "desc": "PendingCheckoutLinker em /orders/my e /orders/{ref}.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-06",
+      "area": "QA Fixes",
+      "title": "Cupom sem diferenciar caixa",
+      "desc": "Código normalizado na busca do serviço.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-07",
+      "area": "QA Fixes",
+      "title": "Comprar e baixar leva ao pagamento (US-04)",
+      "desc": "SPA usa o checkout_url do pedido.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-08",
+      "area": "QA Fixes",
+      "title": "Perfil fiscal salva (individual/company)",
+      "desc": "SPA no contrato da API.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-09",
+      "area": "QA Fixes",
+      "title": "nginx repassa /static, /privacidade, /termos, /recuperar-senha, /sitemap.xml, /health",
+      "desc": "Páginas de pagamento com estilo; rodapé abre as páginas certas.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-10",
+      "area": "QA Fixes",
+      "title": "Login do /admin com CSRF mantido",
+      "desc": "Script no template do SQLAdmin + middleware guardando o corpo (D13).",
+      "state": "done"
+    },
+    {
+      "id": "QAF-11",
+      "area": "QA Fixes",
+      "title": "Moderação de avaliações pelo painel",
+      "desc": "Comentário, status, data, filtro e edição só do status (D14).",
+      "state": "done"
+    },
+    {
+      "id": "QAF-12",
+      "area": "QA Fixes",
+      "title": "Link Admin pelo papel do /auth/me",
+      "desc": "O JWT não carrega role.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-13",
+      "area": "QA Fixes",
+      "title": "nginx repassa Host com a porta",
+      "desc": "Redirecionamentos e estáticos do SQLAdmin na porta certa.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-14",
+      "area": "QA Fixes",
+      "title": "POST /comprar da vitrine do backend",
+      "desc": "OrderCreator com CouponService (bug revelado pela correção do CSRF).",
+      "state": "done"
+    },
+    {
+      "id": "QAF-15",
+      "area": "QA Fixes",
+      "title": "Título da aba volta ao padrão fora do e-book",
+      "desc": "DEFAULT_TITLE no SPA.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-16",
+      "area": "QA Fixes",
+      "title": "Favoritar idempotente na corrida",
+      "desc": "Savepoint + IntegrityError; SPA liga o coração uma vez.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-17",
+      "area": "QA Fixes",
+      "title": ".env.example com driver async do SQLite",
+      "desc": "sqlite+aiosqlite.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-18",
+      "area": "QA Fixes",
+      "title": "Painéis HTML de admin acessíveis no navegador",
+      "desc": "Bloqueado — decisão do dono (D18).",
+      "state": "blocked"
+    },
+    {
+      "id": "QAF-19",
+      "area": "QA Fixes",
+      "title": "Limite de login e HTTPS atrás do nginx/túnel",
+      "desc": "Bloqueado — decisão de segurança (D19).",
+      "state": "blocked"
+    },
+    {
+      "id": "QAF-20",
+      "area": "QA Fixes",
+      "title": "Banco padrão do compose de dev",
+      "desc": "Bloqueado — decisão do dono (D20).",
+      "state": "blocked"
+    },
+    {
+      "id": "QAF-21",
+      "area": "QA Fixes",
+      "title": "Texto da política de privacidade (Argon2 x PBKDF2)",
+      "desc": "Bloqueado — texto jurídico (D21).",
+      "state": "blocked"
+    },
+    {
+      "id": "QAF-22",
+      "area": "QA Fixes",
+      "title": "Gateway Mercado Pago real",
+      "desc": "Bloqueado — credenciais (D22).",
+      "state": "blocked"
+    },
+    {
+      "id": "VIS-01",
+      "area": "Visual (Material 3)",
+      "title": "Tokens Material 3 sobre a paleta da marca",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-02",
+      "area": "Visual (Material 3)",
+      "title": "Top app bar em vidro fosco + botão de buscar",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-03",
+      "area": "Visual (Material 3)",
+      "title": "Hero com destaque em gradiente e brilho animado",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-04",
+      "area": "Visual (Material 3)",
+      "title": "Capa gerada com cara de livro",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-05",
+      "area": "Visual (Material 3)",
+      "title": "Cards elevados M3",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-06",
+      "area": "Visual (Material 3)",
+      "title": "Filter chips e select outlined",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-07",
+      "area": "Visual (Material 3)",
+      "title": "Detalhe com capa grande e buy box tonal",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-08",
+      "area": "Visual (Material 3)",
+      "title": "Diálogo de login M3",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-09",
+      "area": "Visual (Material 3)",
+      "title": "Snackbars",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-10",
+      "area": "Visual (Material 3)",
+      "title": "Estados vazio/erro/404 e skeleton",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-11",
+      "area": "Visual (Material 3)",
+      "title": "Carrinho, biblioteca, pedidos, conta e favoritos na mesma linguagem",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-12",
+      "area": "Visual (Material 3)",
+      "title": "Ripple e movimento com prefers-reduced-motion",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-13",
+      "area": "Visual (Material 3)",
+      "title": "Responsivo celular/notebook/monitor",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "VIS-14",
+      "area": "Visual (Material 3)",
+      "title": "Páginas do backend no tema claro da loja",
+      "desc": "Spec: .spec/frontend/roadmap-vis.md.",
+      "state": "done"
+    },
+    {
+      "id": "QAF-23",
+      "area": "QA Fixes",
+      "title": "E-book novo do admin entregue a quem compra",
+      "desc": "FileStreamer usa o ProductFile primário (o que o upload grava).",
+      "state": "done"
+    }
   ],
   "links": {
     "app": "https://outside-equally-drawings-michelle.trycloudflare.com",

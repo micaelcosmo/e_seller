@@ -8,6 +8,24 @@
 
 ## [Não lançado]
 
+### 2026-09-27 — `/qa` adotado, épico QAF (ajustes do QA) e épico VIS (tapa visual Material 3)
+
+- **CLAUDE.md**: §2.6 "Regras do agente" (🔒 nunca ler `.env`/segredo; 🔒 o Claude não executa
+  comandos de versionamento — só propõe; portas livres; decisões em `.spec/decisoes-pendentes.*`;
+  `/qa`); §3 com `.spec/test/`, `.spec/qa/`, decisões e `qa-harness/`; §4 atualizado para a fase
+  real (Enrichment + QA), com nota histórica.
+- **`.claude/settings.json` + hook** `proteger-git-e-segredos.sh`: deny + PreToolUse (testado com 14 casos).
+- **QA**: harness da skill `/qa` (motor 1.3.0) em `qa-harness/`, stack isolada `eseller-qa`
+  (48273/48280/48532, trocadas se ocupadas), cadeia em `.spec/test/` (22 histórias, 53 pontos,
+  20 jornadas, base visual de 4 perfis), rodadas com revisão/healing em `qa-harness/relatorios/`.
+- **Épico QAF** (`.spec/enrichment/roadmap-qaf.md`): 18 achados corrigidos com teste (backend não
+  subia em Postgres novo; busca e download com 500 no Postgres; e-book novo do admin não era entregue; compra sem ir ao pagamento; perfil
+  fiscal que nunca salvava; painel `/admin` inacessível; páginas de pagamento sem estilo; cupom em
+  minúsculas; "Pagar" ausente; favoritar com 500...). 5 itens bloqueados por decisão do dono.
+- **Épico VIS** (`.spec/frontend/roadmap-vis.md`): storefront em Material 3 mantendo roxo/laranja,
+  sem dependência externa; páginas do backend no tema claro da loja.
+- **Decisões**: `.spec/decisoes-pendentes.yaml` + `.md` (25 decisões, 5 bloqueantes).
+
 ### 2026-06-13 — Épico BEE concluído
 
 - **EmailService**: adicionado `send_download_expiring(email, product_title, expires_at)`.

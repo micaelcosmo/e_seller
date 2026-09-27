@@ -7,7 +7,9 @@
 
 ## Fase atual
 
-**🚀 Enrichment (branch `enrichment`)** — todos os 4 épicos concluídos.
+**🧪 Enrichment + QA (branch `enrichment`)** — `/qa` adotado, épico **QAF** (ajustes que o QA
+provou) e épico **VIS** (tapa visual Material 3) concluídos em 2026-09-27. **5 decisões bloqueantes**
+aguardando o dono em [`.spec/decisoes-pendentes.md`](.spec/decisoes-pendentes.md).
 
 AAA (blacklist + TOTP + API Keys + activity log), FEV (design system + 10 views),
 DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + health + Problem+JSON).
@@ -21,7 +23,7 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Planning | 🟢 Concluído (aprovado, congelado) |
 | Unit specs | 🟢 ~100 units (MVP + visão completa) |
 | Trilhas vivas (api/ops/observability/security) | 🟢 criadas |
-| Testes | 🟢 **502 passando** (437 MVP + 14 FEV + 7 DBE + 15 BEE + 8 UXR + outros) + Ruff verde |
+| Testes | 🟢 **525 passando** (pytest, SQLite) + Ruff verde · `/qa` no Postgres real: 54/54 pontos de integração e 20/20 jornadas válidos (2026-09-27) |
 | Código de produção (MVP) | 🟢 **Backend completo NO AR em Docker** |
 | Épico **DOC** (enrich) | 🟢 Concluído — roadmap, planning, backlog (125 tasks) |
 | Épico **AAA** (enrichment) | 🟢 Concluído — blacklist, TOTP 2FA, API Keys, activity log |
@@ -30,6 +32,9 @@ DBE (pool tuning + FTS SearchService + índices compostos), BEE (email + /me + h
 | Épico **BEE** (Backend Enrichment) | 🟢 Concluído — email, /me endpoints, health, Problem+JSON |
 | Épico **SFX** (Storefront Fix) | 🟢 Concluído — footer, newsletter CSS, admin link auth-guard, cover placeholder, schema fixes |
 | Épico **UXR** (UX Redesign) | 🟢 Concluído — design system, header, cards (rating/badges), hero, footer, estados vazios; backend enriquecido (avg_rating/featured/filtro preço) |
+| **QA (skill `/qa`)** | 🟢 Adotado — stack isolada `eseller-qa` (48273/48280/48532), 22 histórias, 54 pontos de integração, 20 jornadas, base visual de 4 perfis; relatórios em [`qa-harness/relatorios/`](qa-harness/relatorios/) |
+| Épico **QAF** (ajustes do QA) | 🟢 18 achados corrigidos com teste ([`roadmap-qaf.md`](.spec/enrichment/roadmap-qaf.md)) · 🔴 5 bloqueados por decisão do dono |
+| Épico **VIS** (Material 3) | 🟢 Storefront e páginas do backend na mesma linguagem, paleta preservada, responsivo ([`roadmap-vis.md`](.spec/frontend/roadmap-vis.md)) |
 
 **Domínios entregues (main):** catálogo + busca, cadastro dinâmico, contas+JWT+RBAC,
 admin SQLAdmin, compra multi-item, pagamento simulado, webhook idempotente,
@@ -90,7 +95,11 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ## Pendências / Decisões abertas
 
-- [ ] Conta Mercado Pago real (credenciais — bloqueado externamente).
+- [ ] ⚠️ **Decisões bloqueantes do QA** ([`.spec/decisoes-pendentes.md`](.spec/decisoes-pendentes.md)):
+  D18 painéis HTML de admin inacessíveis no navegador · D19 limite de login/HTTPS atrás do nginx ·
+  D20 banco padrão do compose de dev (`e_seller2` × `e_seller`) · D21 política de privacidade diz
+  Argon2 (sistema usa PBKDF2) · D22 gateway Mercado Pago real inexistente.
+- [ ] Conta Mercado Pago real (credenciais — bloqueado externamente; ver D22).
 - [ ] Frontend Next.js (Tier 2 — adiado; MVP usa Jinja2).
 - [ ] CI/CD GitHub Actions (PAT sem escopo `workflow` — pendente).
 - [ ] Hospedagem definitiva (além do PC) — futuro.
@@ -107,4 +116,17 @@ Legenda: ⚪ Não iniciado · 🟡 Em andamento · 🟢 Concluído · 🔴 Bloqu
 
 ---
 
-_Última atualização: 2026-06-13 13:05 — 🟢 UXR follow-ups resolvidos (UXR-27/28/29/30/32): rating no detalhe, skeleton dedicado do detalhe, favicon + og:image, filtro de preço custom (inputs min/max), página de favoritos (nova rota #/favoritos + botão no header) com estado vazio. Pendentes só UXR-26 (redes sociais: sem URLs reais) e UXR-31 (Lighthouse: sem browser headless no ambiente)._
+## 🌙 Execução autônoma (QA + QAF + VIS, 2026-09-27 03:40–06:49)
+
+- **Proteções:** Claude não roda comandos de versionamento nem lê `.env` (deny + hook, CLAUDE.md §2.6).
+- **`/qa` estabilizado** na stack isolada `eseller-qa` (portas livres 48273/48280/48532; credenciais
+  aleatórias fora do git; evidência de API com segredos mascarados — varredura: 0 vazamentos).
+- **Rodadas:** 1 → 53 válidos/16 falhas/9 inválidas · 2 → 75/3/0 · 3 → 78/1/0 · 4 → 78/1/0.
+  A falha restante é a base visual do admin: painéis HTML da decisão bloqueante **D18**.
+- **Responsividade:** loja sem rolagem horizontal em notebook (1366px) e celular (390px), todos os perfis.
+- **Relatórios:** [`qa-harness/relatorios/`](qa-harness/relatorios/) (rodada final `2026-09-27-0610`).
+- **Nada commitado** — proposta de commits em blocos entregue ao dono.
+
+---
+
+_Última atualização: 2026-09-27 06:49 — 🧪 `/qa` adotado e estável; QAF (18 achados corrigidos com teste, 5 bloqueados por decisão do dono) e VIS (Material 3) concluídos; 525 testes + Ruff verdes; rodada final do `/qa` com 78 válidos e 1 falha (D18)._

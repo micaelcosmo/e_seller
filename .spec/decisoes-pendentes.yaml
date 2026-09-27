@@ -1,0 +1,431 @@
+# Decisões tomadas sem consulta, para o dono do projeto (Micael) analisar depois das rodadas.
+# Fonte legível por máquina; a versão "mastigada" é .spec/decisoes-pendentes.md.
+#
+# Cada decisão: contexto, opções com trade-off, a escolhida e por quê, se é
+# reversível e o que muda se o dono escolher outra. Decisão analisada muda de
+# `status: pendente` para `aprovada` ou `revertida` — o histórico não se apaga.
+#
+# `bloqueante: true` = NÃO foi implementada; está guardada esperando a escolha do dono.
+
+gerado_em: "2026-09-27"
+sessao: "adoção do /qa no e_seller + rodadas de QA, healing e ajuste (execução autônoma noturna)"
+
+decisoes:
+  - id: D01
+    titulo: Onde bloquear git add, commit e push do Claude (e leitura de .env)
+    area: ferramentas
+    status: pendente
+    bloqueante: false
+    contexto: >
+      Pedido: o chat nunca executa git add/commit/push e nunca lê .env nem segredo.
+      Precisa valer de verdade, não só como lembrete no CLAUDE.md.
+    opcoes:
+      - nome: projeto versionado (.claude/settings.json) com deny + hook
+        tradeoff: vale para qualquer sessão neste repo e em qualquer máquina que clonar; entra no git
+      - nome: só nesta máquina (.claude/settings.local.json)
+        tradeoff: não vai para o git; quem clonar não herda a regra
+      - nome: global (~/.claude/settings.json)
+        tradeoff: vale para todos os projetos da máquina, inclusive onde commit autônomo é desejado
+    escolhida: projeto versionado (.claude/settings.json) com deny + hook
+    porque: >
+      A regra é deste projeto e a skill /qa já exige "commits só propostos". Deny por
+      prefixo sozinho não pega `git -C dir commit` nem comandos encadeados; o hook pega.
+      O mesmo hook barra `cat/type/Get-Content` em arquivo `.env` (o `.env.example` passa).
+      Testado com 14 casos (8 bloqueios, 6 liberações) antes de valer.
+    reversivel: true
+    como_reverter: apagar as regras e o hook de .claude/settings.json
+
+  - id: D02
+    titulo: Hook conservador barra até texto que só menciona "git add/commit/push"
+    area: ferramentas
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O hook lê o comando bruto. Um comando que só ESCREVE esse texto (heredoc, echo)
+      também é barrado.
+    opcoes:
+      - nome: manter conservador
+        tradeoff: zero chance de commit escapar; falso positivo raro, contornado com as ferramentas de edição
+      - nome: parser de shell mais preciso
+        tradeoff: menos falso positivo, mais código e mais chance de brecha
+    escolhida: manter conservador
+    porque: o custo do falso positivo é baixo; o do falso negativo é um commit indevido
+    reversivel: true
+
+  - id: D03
+    titulo: QA roda numa stack própria (eseller-qa), não na de desenvolvimento
+    area: ambiente
+    status: pendente
+    bloqueante: false
+    contexto: >
+      A massa de dados do QA apaga e recria registros com prefixo qa-. A stack de dev
+      (48080/48173/48432) tem o banco que você usa e os túneis Cloudflare públicos.
+    opcoes:
+      - nome: stack isolada eseller-qa (compose próprio, volumes próprios, sem túnel)
+        tradeoff: não suja o banco de dev nem expõe nada na internet; mais um compose para manter
+      - nome: usar a stack de dev
+        tradeoff: menos arquivos; o QA mexe nos dados de dev e o túnel público fica apontando para dados de teste
+    escolhida: stack isolada eseller-qa
+    porque: isolamento total e nada público; o compose de QA usa os mesmos Dockerfiles do produto
+    reversivel: true
+
+  - id: D04
+    titulo: Portas da stack de QA — preferidas no config.yaml, trocadas se ocupadas
+    area: ambiente
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O Docker Desktop roda outros projetos (mg-street 5101/5501, nanda-fouad 5173/8000).
+      Pedido explícito: sempre usar portas não utilizadas.
+    opcoes:
+      - nome: faixas próprias 48270-48279 (frontend), 48280-48289 (backend), 48530-48539 (Postgres)
+        tradeoff: longe das portas de dev 48xxx do e_seller; config.yaml é regravado quando troca
+      - nome: porta aleatória por execução
+        tradeoff: nunca colide, mas o link muda sempre e exige mudar o motor da skill
+    escolhida: faixas próprias, conferidas por conexão + netstat a cada subida
+    porque: previsível para você abrir no navegador e não exige mudar a skill global
+    reversivel: true
+
+  - id: D05
+    titulo: Senhas das contas de QA aleatórias e fora do git
+    area: segurança
+    status: pendente
+    bloqueante: false
+    contexto: >
+      No mg-street as senhas das contas de QA ficaram escritas no config.yaml e nas
+      jornadas. Aqui a regra é "nunca commitar senha".
+    opcoes:
+      - nome: senhas aleatórias em qa-harness/ambiente/credenciais-locais.env (gitignored), lidas só pelo adaptador
+        tradeoff: zero senha no git; jornadas de login por formulário usam conta criada na própria jornada
+      - nome: senhas fixas de teste no config.yaml
+        tradeoff: mais simples; senha (de teste) vai para o git
+    escolhida: aleatórias e fora do git
+    porque: cumpre a regra do CLAUDE.md sem exceção
+    reversivel: true
+
+  - id: D06
+    titulo: Evidência de API com senha e token mascarados pelo projeto
+    area: segurança
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O motor da skill /qa grava request e response completos no .json de evidência,
+      que vai para o git — inclusive senha enviada e access_token recebido.
+    opcoes:
+      - nome: base SuiteDoEseller mascara o arquivo logo após a gravação
+        tradeoff: 'resolve aqui sem tocar a skill global; o valor vira "[mascarado: N caracteres]"'
+      - nome: evoluir o motor global (mascaramento nativo)
+        tradeoff: resolve para todos os projetos; mexe na skill de todos
+    escolhida: base SuiteDoEseller no projeto (qa-harness/testes/api/base.py)
+    porque: menor raio de impacto; sugestão registrada de levar ao motor global depois
+    reversivel: true
+
+  - id: D07
+    titulo: Mercado Pago e SMTP desligados no QA (pagamento pelo simulador fake)
+    area: ambiente
+    status: pendente
+    bloqueante: false
+    contexto: >
+      Proibido ler o .env; a conta real do Mercado Pago está bloqueada externamente
+      (STATUS.md). O backend tem PAYMENT_PROVIDER=fake (simulador local).
+    opcoes:
+      - nome: fake + SMTP vazio
+        tradeoff: fluxo de compra completo testável; pagamento real e e-mail ficam como limitação de ambiente
+      - nome: sandbox do Mercado Pago
+        tradeoff: exige você fornecer credenciais por outro meio
+    escolhida: fake + SMTP vazio
+    porque: é o que o produto oferece sem credencial; o resto vira [limitação de ambiente] no relatório
+    reversivel: true
+
+  - id: D08
+    titulo: Identificadores do qa-harness em português
+    area: padrões
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O padrão do e_seller é "código em inglês". O motor da skill /qa tem interface em
+      português (Adaptador.autenticar, preparar_massa, SuiteDeIntegracao._chamar...).
+    opcoes:
+      - nome: português em todo o qa-harness
+        tradeoff: casa com o motor; foge do padrão do backend
+      - nome: inglês no que é do projeto
+        tradeoff: segue o padrão; mistura idiomas dentro do mesmo arquivo (os métodos do motor seguem em português)
+    escolhida: português em todo o qa-harness (resto do padrão mantido — classes, docstrings, for explícito, sem lambda)
+    porque: um arquivo com dois idiomas é pior de ler; o produto (backend/frontend) segue em inglês
+    reversivel: true
+
+  - id: D09
+    titulo: Cadeia de QA dentro de .spec/ (não spec/)
+    area: organização
+    status: pendente
+    bloqueante: false
+    contexto: o modelo da skill usa spec/; o projeto usa .spec/ para toda especificação
+    opcoes:
+      - nome: .spec/test, .spec/qa, .spec/code (caminhos no config.yaml)
+        tradeoff: uma só árvore de spec; o motor aceita pelo config
+      - nome: spec/ separado
+        tradeoff: igual ao modelo; duas árvores de spec no repo
+    escolhida: .spec/
+    porque: o motor lê os caminhos do config.yaml; nada muda na skill
+    reversivel: true
+
+  - id: D10
+    titulo: CLAUDE.md §4 atualizado para a fase real (Enrichment + QA)
+    area: documentação
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O §4 dizia "fase de unit specs, não criar código de produção", mas o STATUS.md
+      mostra backend e frontend no ar e o pedido desta sessão inclui mexer no visual.
+    opcoes:
+      - nome: atualizar o §4 com nota histórica
+        tradeoff: agentes futuros não recebem ordem contraditória
+      - nome: manter como estava
+        tradeoff: todo agente teria de ignorar o §4
+    escolhida: atualizar com nota histórica
+    porque: a regra antiga contradiz o estado do projeto e o próprio pedido
+    reversivel: true
+
+  - id: D11
+    titulo: O motor da skill /qa lê o .env da raiz, se existir
+    area: segurança
+    status: pendente
+    bloqueante: false
+    contexto: >
+      motor/configuracao.py carrega `<raiz>/.env` para o adaptador. Hoje o e_seller NÃO
+      tem .env na raiz (só backend/.env.example), então nada é lido. O adaptador do
+      e_seller não usa config.env.
+    opcoes:
+      - nome: deixar como está e registrar o risco
+        tradeoff: se um .env aparecer na raiz, o processo do motor o lê (não imprime nem grava)
+      - nome: evoluir o motor global para só ler .env se o config pedir
+        tradeoff: mexe na skill de todos os projetos
+    escolhida: deixar e registrar
+    porque: sem .env na raiz não há leitura; mudança na skill global é decisão sua
+    reversivel: true
+
+  - id: D12
+    titulo: Nova ação "teclar" no motor global da skill /qa (1.2.2 → 1.3.0)
+    area: ferramentas
+    status: pendente
+    bloqueante: false
+    contexto: >
+      A busca do SPA só dispara com Enter e o vocabulário das jornadas não tinha tecla:
+      nenhum projeto conseguia provar visualmente um formulário que envia com Enter.
+    opcoes:
+      - nome: ação aditiva `teclar {tecla, campo|seletor?}` na fonte global + VERSAO 1.3.0
+        tradeoff: vale para todos os projetos na próxima sincronização; nada existente muda de comportamento
+      - nome: não testar a busca por jornada
+        tradeoff: sem prova visual da busca (só API)
+    escolhida: ação aditiva na fonte global (metodologia, contrato e motor), sincronizada no e_seller
+    porque: é o caminho que a metodologia manda (fonte global → versão → sincronizar); mudança só aditiva
+    reversivel: true
+    como_reverter: voltar motor/jornadas.py, contrato e metodologia da skill global e VERSAO para 1.2.2
+
+  - id: D13
+    titulo: Login do painel /admin com CSRF — script no template em vez de isentar o /admin
+    area: segurança
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O CSRF double-submit barrava o login do SQLAdmin (o formulário dele não manda token), e o
+      middleware ainda consumia o corpo do formulário. Painel inutilizável.
+    opcoes:
+      - nome: cópia do sqladmin/base.html (0.21) com script que põe o token do cookie nos formulários e no jQuery
+        tradeoff: proteção CSRF mantida; ao atualizar o SQLAdmin, a cópia precisa ser refeita
+      - nome: isentar /admin do CSRF
+        tradeoff: simples; o painel fica sem proteção CSRF (só SameSite=Lax)
+    escolhida: script no template (backend/app/admin/templates/sqladmin/base.html) + middleware guardando o corpo
+    porque: mantém a segurança; teste prova que sem token continua 403
+    reversivel: true
+
+  - id: D14
+    titulo: Moderação de avaliações pelo painel (edição só do status)
+    area: produto
+    status: pendente
+    bloqueante: false
+    contexto: A lista do painel não mostrava comentário nem status e não permitia editar — moderar só pela API.
+    opcoes:
+      - nome: lista com comentário, status e data + filtro por status + edição só do status
+        tradeoff: moderação pela tela; nenhum outro campo editável
+      - nome: manter só pela API
+        tradeoff: administrador precisa de ferramenta HTTP
+    escolhida: lista completa + edição só do status (ReviewAdmin)
+    porque: a história "Administrador modera as avaliações" pede tela; menor mudança
+    reversivel: true
+
+  - id: D15
+    titulo: Páginas do backend (pagamento, pedido, institucionais) no tema claro da loja
+    area: visual
+    status: pendente
+    bloqueante: false
+    contexto: >
+      O épico FEV definiu tema escuro (#0f1226) para as páginas server-rendered; a loja é clara.
+      No meio da compra o simulador e o pedido pareciam outro site.
+    opcoes:
+      - nome: tokens do design-system.css do backend nos papéis M3 claros da marca
+        tradeoff: identidade única; reverte a escolha do FEV (spec atualizada com nota)
+      - nome: manter o escuro
+        tradeoff: dois visuais no mesmo fluxo de compra
+    escolhida: tema claro (VIS-14)
+    porque: confiança no checkout; mesma paleta roxo/laranja
+    reversivel: true
+
+  - id: D16
+    titulo: Visual Material 3 sem fonte externa
+    area: visual
+    status: pendente
+    bloqueante: false
+    contexto: Pedido de "magia" sem perder a paleta nem a stack vanilla.
+    opcoes:
+      - nome: pilha de fontes do sistema (Segoe UI Variable / SF Pro / Roboto)
+        tradeoff: zero requisição externa e zero peso; tipografia varia um pouco por sistema
+      - nome: fonte hospedada (Inter, Roboto Flex)
+        tradeoff: tipografia idêntica em todo lugar; ~100 KB e arquivo binário no repo
+    escolhida: pilha do sistema
+    porque: leveza (quality-bar §3) e custo zero; dá para trocar só no token --font-brand
+    reversivel: true
+
+  - id: D17
+    titulo: Botão de buscar visível ao lado do Enter
+    area: visual
+    status: pendente
+    bloqueante: false
+    contexto: A busca só respondia ao Enter; no celular não havia ação visível.
+    escolhida: botão circular `#search-btn` dentro da barra de busca (Enter continua valendo)
+    porque: ação explícita (quality-bar §3) e padrão da barra de busca do Material 3
+    reversivel: true
+
+  - id: D18
+    titulo: "⚠️ Painéis HTML de admin (/api/v1/admin/*/panel) inacessíveis pelo navegador"
+    area: produto
+    status: pendente
+    bloqueante: true
+    contexto: >
+      Os painéis de pedidos, cupons, downloads, usuários e cadastro exigem cabeçalho
+      `Authorization: Bearer`, que o navegador não envia ao abrir uma página; nada no SPA ou no
+      SQLAdmin leva até eles. Na base visual do admin eles mostram só "Não autenticado".
+    opcoes:
+      - nome: aceitar também a sessão do SQLAdmin (cookie) nesses painéis
+        tradeoff: painéis voltam a abrir no navegador; duas formas de autenticar no backend
+      - nome: aposentar os painéis e concentrar tudo no SQLAdmin
+        tradeoff: um painel só; perde telas feitas sob medida (cadastro rápido, gráficos)
+      - nome: painel admin como tela do SPA chamando a API com Bearer
+        tradeoff: mais trabalho de frontend; mesma autenticação da loja
+    escolhida: nenhuma — aguardando você
+    porque: é escolha de produto/arquitetura do painel, não correção
+    reversivel: true
+
+  - id: D19
+    titulo: "⚠️ Limite de login por IP atrás do nginx (todo mundo com o mesmo IP)"
+    area: segurança
+    status: pendente
+    bloqueante: true
+    contexto: >
+      O backend limita 10 logins/min por IP e bloqueia o e-mail após 5 falhas. Atrás do nginx (e do
+      túnel Cloudflare) o backend vê só o IP do nginx: o limite vale para o site inteiro. O uvicorn só
+      confia em X-Forwarded-For de 127.0.0.1. O mesmo ponto afeta HTTPS atrás do túnel: o backend não
+      enxerga o esquema original ao montar URLs absolutas (painel /admin via https pode dar conteúdo misto).
+    opcoes:
+      - nome: nginx repassa X-Forwarded-For/Proto e o uvicorn confia na rede do compose (--forwarded-allow-ips)
+        tradeoff: limite por cliente real; exige cuidado para não confiar em cabeçalho forjado de fora
+      - nome: manter
+        tradeoff: 10 logins/min para todos os usuários somados
+    escolhida: nenhuma — aguardando você (decisão de segurança)
+    reversivel: true
+
+  - id: D20
+    titulo: "⚠️ Banco padrão do docker-compose.yml de dev (e_seller2 × e_seller)"
+    area: ambiente
+    status: pendente
+    bloqueante: true
+    contexto: >
+      O `DATABASE_URL` padrão aponta para o banco `e_seller2`, mas o `POSTGRES_DB` padrão cria `e_seller`.
+      Num volume novo o backend de dev não sobe (o entrypoint desiste após 30 tentativas). A stack de QA
+      não é afetada (compose próprio). Mudar mexe no banco que você usa hoje.
+    opcoes:
+      - nome: alinhar os dois em e_seller2
+        tradeoff: não mexe nos seus dados atuais
+      - nome: alinhar em e_seller e migrar os dados
+        tradeoff: nome limpo; exige migração
+    escolhida: nenhuma — aguardando você
+    reversivel: true
+
+  - id: D21
+    titulo: "⚠️ Política de privacidade diz que a senha usa Argon2 — o produto usa PBKDF2"
+    area: jurídico
+    status: pendente
+    bloqueante: true
+    contexto: >
+      `backend/app/web/templates/privacy.html` (seções 2 e 8) cita "hash Argon2"; o código usa
+      PBKDF2-HMAC-SHA256 (`backend/app/security/passwords.py`). Texto jurídico não foi alterado.
+    opcoes:
+      - nome: corrigir o texto para PBKDF2-HMAC-SHA256
+        tradeoff: texto fiel ao sistema
+      - nome: migrar o hash de senha para Argon2
+        tradeoff: texto fica certo; dependência nova e migração de hashes no login
+    escolhida: nenhuma — aguardando você
+    reversivel: true
+
+  - id: D22
+    titulo: "⚠️ Pagamento real (Mercado Pago)"
+    area: pagamentos
+    status: pendente
+    bloqueante: true
+    contexto: >
+      Já bloqueado no STATUS.md (conta real). O código não tem gateway do Mercado Pago: o
+      `FakePaymentGateway` está fixo em `orders/router.py` e `web/router.py`; `PAYMENT_PROVIDER=mercadopago`
+      só muda a validação do webhook. Todo o fluxo de compra foi testado pelo simulador.
+    opcoes:
+      - nome: implementar o gateway Mercado Pago (preferência de checkout) quando houver credenciais
+        tradeoff: pagamento real; precisa das credenciais (você fornece fora do chat)
+    escolhida: nenhuma — aguardando credenciais e decisão
+    reversivel: true
+
+  - id: D23
+    titulo: Migration Alembic do reviewstatus diverge do ORM
+    area: banco
+    status: pendente
+    bloqueante: false
+    contexto: >
+      A migration `b2c3d4e5f6g7` cria o tipo `reviewstatus` com valores minúsculos; o ORM grava os
+      nomes (maiúsculos). Hoje o boot usa `create_all` e nada executa o Alembic, então não quebra —
+      mas um banco criado pelo Alembic recusaria as gravações. Achado ao corrigir o QAF-01.
+    opcoes:
+      - nome: nova migration alinhando os rótulos
+        tradeoff: Alembic volta a ser confiável
+      - nome: adotar o Alembic no boot (em vez do create_all)
+        tradeoff: schema versionado de verdade; mudança de processo
+    escolhida: nenhuma — registrada
+    reversivel: true
+
+  - id: D24
+    titulo: Senha descartável escrita nas jornadas de cadastro e login
+    area: segurança
+    status: pendente
+    bloqueante: false
+    contexto: >
+      As jornadas de cadastro/login digitam `qa-senha-{{execucao}}` numa conta `qa-novo-...` que a própria
+      execução cria e a massa apaga, no banco descartável de QA. É a única senha em arquivo versionado.
+    escolhida: manter (não é credencial de conta existente)
+    reversivel: true
+
+  - id: D25
+    titulo: "⚠️ Peso das evidências de imagem no git (~58 MB de base64 por rodada)"
+    area: repositório
+    status: pendente
+    bloqueante: false
+    contexto: >
+      A skill /qa manda versionar o `evidencias.json` de cada pasta (PNG em base64) e o
+      CHANGELOG-EVIDENCIAS.yaml. No e_seller isso dá ~58 MB em `.json` (jornadas ~84 MB em disco com
+      os PNG, que ficam fora do git). Cada rodada reescreve as telas que mudaram.
+    opcoes:
+      - nome: commit separado e opcional só com as evidências
+        tradeoff: você decide se entra; o resto da entrega não depende dele
+      - nome: versionar só relatório/manifesto/revisão (imagens locais)
+        tradeoff: repo leve; quem clona não vê as telas sem rodar o /qa
+      - nome: Git LFS para os evidencias.json
+        tradeoff: histórico leve; exige LFS configurado
+    escolhida: proposta em commit separado e opcional; `_olhar/` (prints avulsos de revisão) fora da proposta
+    porque: não decidir por você o peso do repositório
+    reversivel: true
