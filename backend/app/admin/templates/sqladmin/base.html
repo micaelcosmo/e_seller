@@ -1,0 +1,75 @@
+{# Cópia do sqladmin/base.html (SQLAdmin 0.21.0) + script de CSRF do e_seller (QAF-10). #}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/tabler.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/tabler-icons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/select2.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/flatpickr.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/main.css') }}">
+  {% if admin.favicon_url %}
+  <link rel="icon" href="{{ admin.favicon_url }}">
+  {% endif %}
+  {% block head %}
+  {% endblock %}
+  <title>{{ admin.title }}</title>
+  <style>
+    /* Listas do painel sem rolagem horizontal da página (notebook 1366px): a tabela rola
+       dentro do próprio card e o painel de filtros estreita em telas menores. */
+    .d-flex > .flex-grow-1 { min-width: 0; }
+    .d-flex > .flex-grow-1 > .card { overflow-x: auto; }
+    @media (max-width: 1440px) {
+      .d-flex > .col-md-3 { width: 220px !important; }
+    }
+  </style>
+</head>
+
+<body>
+  {% block body %}
+  <main>
+    {% block main %}
+    {% endblock %}
+  </main>
+  {% endblock %}
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/jquery.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/tabler.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/popper.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/select2.full.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/flatpickr.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('admin:statics', path='js/main.js') }}"></script>
+  <script type="text/javascript">
+    /* CSRF double-submit do e_seller: todo POST do painel leva o token do cookie csrftoken
+       (campo csrf_token nos formulários e cabeçalho X-CSRF-Token nas chamadas do jQuery). */
+    (function () {
+      function csrfToken() {
+        var achado = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/);
+        return achado ? decodeURIComponent(achado[1]) : "";
+      }
+      function marcarFormulario(formulario) {
+        if (!formulario || String(formulario.method).toLowerCase() !== "post") { return; }
+        var campo = formulario.querySelector('input[name="csrf_token"]');
+        if (!campo) {
+          campo = document.createElement("input");
+          campo.type = "hidden";
+          campo.name = "csrf_token";
+          formulario.appendChild(campo);
+        }
+        campo.value = csrfToken();
+      }
+      for (const formulario of document.querySelectorAll("form")) { marcarFormulario(formulario); }
+      document.addEventListener("submit", function (evento) { marcarFormulario(evento.target); }, true);
+      if (window.jQuery) {
+        window.jQuery.ajaxSetup({ beforeSend: function (xhr) { xhr.setRequestHeader("X-CSRF-Token", csrfToken()); } });
+      }
+    })();
+  </script>
+  {% block tail %}
+  {% endblock %}
+</body>
+
+</html>

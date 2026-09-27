@@ -1,5 +1,7 @@
 """Montagem do painel SQLAdmin na aplicação FastAPI."""
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from sqladmin import Admin
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -32,6 +34,7 @@ def setup_admin(app: FastAPI, engine: AsyncEngine, auth_backend: AdminAuth) -> A
         engine,
         authentication_backend=auth_backend,
         title="e_seller — Admin",
+        templates_dir=str(Path(__file__).resolve().parent / "templates"),
     )
     admin.add_view(ProductAdmin)
     admin.add_view(CategoryAdmin)

@@ -9,8 +9,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.services import ProductCatalog, ProductNotFound
+from app.core.clock import Clock
 from app.core.config import Settings, get_settings
 from app.core.db import get_session
+from app.coupons.services import CouponService
 from app.delivery.models import DownloadGrant
 from app.orders.services import OrderCreator, OrderNotFound, OrderReader
 from app.payments.gateways import FakePaymentGateway
@@ -147,7 +149,7 @@ async def buy(
     """Cria o pedido e redireciona para o checkout (simulador)."""
     catalog = ProductCatalog(session)
     checkout = CheckoutService(FakePaymentGateway(settings.base_url))
-    creator = OrderCreator(session, catalog, checkout)
+    creator = OrderCreator(session, catalog, checkout, CouponService(session, Clock()))
     try:
         order = await creator.create(slug, email)
     except ProductNotFound as error:

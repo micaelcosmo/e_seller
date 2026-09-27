@@ -16,13 +16,19 @@ from app.core.clock import Clock
 from app.core.config import Settings, get_settings
 from app.core.db import get_session
 from app.coupons.services import CouponService
-from app.orders.schemas import OrderAdminDetailOut, OrderCreateIn, OrderOut
+from app.orders.schemas import (
+    OrderAdminDetailOut,
+    OrderAdminListItemOut,
+    OrderCreateIn,
+    OrderOut,
+)
 from app.orders.services import (
     OrderAdminLister,
     OrderCancellationNotAllowed,
     OrderCanceller,
     OrderCreator,
     OrderReader,
+    PendingCheckoutLinker,
     UserOrderLister,
 )
 from app.payments.gateways import FakePaymentGateway
@@ -42,6 +48,13 @@ def get_order_creator(
     checkout = CheckoutService(gateway)
     coupons = CouponService(session, Clock())
     return OrderCreator(session, catalog, checkout, coupons)
+
+
+def get_pending_checkout_linker(
+    settings: Settings = Depends(get_settings),
+) -> PendingCheckoutLinker:
+    """Monta o PendingCheckoutLinker com o checkout do gateway fake."""
+    return PendingCheckoutLinker(CheckoutService(FakePaymentGateway(settings.base_url)))
 
 
 def get_order_reader(session: AsyncSession = Depends(get_session)) -> OrderReader:
@@ -121,13 +134,16 @@ async def list_my_orders(
     status: str | None = Query(default=None, description="Filtrar por status"),
     user: User = Depends(get_current_user),
     lister: UserOrderLister = Depends(get_user_order_lister),
+    linker: PendingCheckoutLinker = Depends(get_pending_checkout_linker),
 ) -> object:
     """Lista os pedidos do usuário autenticado (mais recentes primeiro).
 
     Requer autenticação; retorna lista vazia se não houver pedidos.
     Filtro opcional ?status= (pending, paid, failed, cancelled, refunded).
+    Pedido pendente volta com `checkout_url` para retomar o pagamento (RF-25).
     """
-    return await lister.list_for_user(user.id, page, page_size, status)
+    orders = await lister.list_for_user(user.id, page, page_size, status)
+    return linker.link(list(orders))
 
 
 _require_staff = RequireRole("staff", "admin")
@@ -174,9 +190,15 @@ async def export_orders_csv(
 async def get_order(
     reference: str,
     reader: OrderReader = Depends(get_order_reader),
+    linker: PendingCheckoutLinker = Depends(get_pending_checkout_linker),
 ) -> object:
-    """Retorna o status de um pedido pela referência pública (404 se não encontrado)."""
-    return await reader.get_by_reference(reference)
+    """Retorna o status de um pedido pela referência pública (404 se não encontrado).
+
+    Pedido pendente volta com `checkout_url` para retomar o pagamento (RF-25).
+    """
+    order = await reader.get_by_reference(reference)
+    linker.link([order])
+    return order
 
 
 @router.get("/admin/{reference}", response_model=OrderAdminDetailOut)
@@ -220,9 +242,11 @@ async def list_orders_admin(
         status, page, page_size, email_filter, ref, date_from, date_to
     )
     total = await lister.count_orders(status, email_filter, ref, date_from, date_to)
-    schemas = [OrderOut.model_validate(o) for o in orders]
+    items = []
+    for order in orders:
+        items.append(OrderAdminListItemOut.model_validate(order).model_dump(mode="json"))
     return Response(
-        content=json.dumps([s.model_dump() for s in schemas], default=str),
+        content=json.dumps(items, default=str),
         media_type="application/json",
         headers={"X-Total-Count": str(total)},
     )

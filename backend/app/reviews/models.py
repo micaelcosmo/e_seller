@@ -40,7 +40,9 @@ class Review(Base):
     rating: Mapped[int] = mapped_column()
     comment: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[ReviewStatus] = mapped_column(
-        Enum(ReviewStatus), default=ReviewStatus.PENDING, server_default="pending"
+        Enum(ReviewStatus),
+        default=ReviewStatus.PENDING,
+        server_default=ReviewStatus.PENDING.name,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

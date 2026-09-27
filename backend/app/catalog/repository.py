@@ -48,11 +48,32 @@ class ProductRepository:
         price_max: Decimal | None = None,
     ) -> list[Product]:
         """Lista produtos publicados com paginação, filtros e ordenação opcionais."""
-        statement = (
-            select(Product)
-            .distinct()
-            .where(Product.status == ProductStatus.PUBLISHED)
+        statement = self.build_list_statement(
+            query, skip, limit, tag_slug, author_slug, sort, featured,
+            price_min, price_max,
         )
+        result = await self.session.scalars(statement)
+        return list(result.all())
+
+    def build_list_statement(
+        self,
+        query: str | None = None,
+        skip: int = 0,
+        limit: int = 20,
+        tag_slug: str | None = None,
+        author_slug: str | None = None,
+        sort: str | None = None,
+        featured: bool | None = None,
+        price_min: Decimal | None = None,
+        price_max: Decimal | None = None,
+    ):
+        """Monta o SELECT da listagem publicada (sem executar).
+
+        Tag e autor filtram por subconsulta `IN`, não por join: cada produto sai
+        uma vez só, sem `DISTINCT` — que no Postgres impediria ordenar pela
+        relevância da busca (expressão fora do select).
+        """
+        statement = select(Product).where(Product.status == ProductStatus.PUBLISHED)
         if featured is not None:
             statement = statement.where(Product.featured == featured)
         if price_min is not None:
@@ -77,19 +98,19 @@ class ProductRepository:
                 else_=1,
             )
         if tag_slug:
-            statement = (
-                statement
-                .join(product_tag, product_tag.c.product_id == Product.id)
+            tagged = (
+                select(product_tag.c.product_id)
                 .join(Tag, Tag.id == product_tag.c.tag_id)
                 .where(Tag.slug == tag_slug)
             )
+            statement = statement.where(Product.id.in_(tagged))
         if author_slug:
-            statement = (
-                statement
-                .join(product_author, product_author.c.product_id == Product.id)
+            authored = (
+                select(product_author.c.product_id)
                 .join(Author, Author.id == product_author.c.author_id)
                 .where(Author.slug == author_slug)
             )
+            statement = statement.where(Product.id.in_(authored))
         order_col = self._SORT_COLUMNS.get(sort or self._SORT_DEFAULT)
         if order_col is None:
             order_col = self._SORT_COLUMNS[self._SORT_DEFAULT]
@@ -97,9 +118,7 @@ class ProductRepository:
             statement = statement.order_by(relevance.desc(), order_col)
         else:
             statement = statement.order_by(order_col)
-        statement = statement.offset(skip).limit(limit)
-        result = await self.session.scalars(statement)
-        return list(result.all())
+        return statement.offset(skip).limit(limit)
 
     async def count_published(
         self,

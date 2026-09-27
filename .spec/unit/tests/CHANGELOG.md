@@ -9,6 +9,19 @@
 
 ## [Não lançado]
 
+### Adicionado — 2026-09-27 (épico QAF — achados do `/qa`)
+- Testes de regressão dos achados que só aparecem no **Postgres** (os testes rodam em SQLite):
+  `test_qa01_enum_server_default` (DDL de coluna enum), `test_qa02_search_postgres` (SQL da busca
+  compilado para o dialeto Postgres — sem `DISTINCT` com `ORDER BY` de relevância),
+  `test_qa03_download_timezone` (validade com fuso, como o Postgres devolve), `test_qa16_wishlist_corrida`
+  (idempotência do favorito na corrida, forçada com a conferência atrasada).
+- Contrato/fluxo: `test_qa04_pedidos_data_e_retomada` (lista do admin com data; pendente com
+  `checkout_url`), `test_qa06_cupom_sem_caixa` (cupom sem diferenciar caixa), `test_qa10_painel_admin`
+  (login do SQLAdmin com CSRF, contraste sem token, moderação com comentário/status, `/comprar`).
+- Lição registrada: teste que "passa" por erro de validação pode esconder quebra real — o
+  `test_sec17_csrf` passava porque o CSRF consumia o corpo e o endpoint nem recebia o formulário.
+- Teste black-box de ponta a ponta agora é a skill `/qa` (`qa-harness/`, ver `.spec/qa/`).
+
 ### Alterado — 2026-06-06 (cobertura dos domínios da visão completa)
 - `security_testing.md`: nova seção 3b com cenários de RBAC, review de comprador
   verificado, abuso de cupom, posse única, reemissão de download, estorno revoga

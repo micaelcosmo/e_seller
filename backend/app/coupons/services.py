@@ -101,9 +101,9 @@ class CouponService:
         await self.session.flush()
 
     async def _require_valid(self, code: str) -> Coupon:
-        """Busca o cupom e valida ativo/expiração/limite."""
+        """Busca o cupom (sem espaços, maiúsculo) e valida ativo/validade/limite."""
         result = await self.session.scalars(
-            select(Coupon).where(Coupon.code == code)
+            select(Coupon).where(Coupon.code == code.strip().upper())
         )
         coupon = result.first()
         if coupon is None or not coupon.active:

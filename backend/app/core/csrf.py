@@ -40,6 +40,9 @@ class CSRFMiddleware(BaseHTTPMiddleware):
             form_token = ""
             header_token = request.headers.get(_HEADER_NAME, "")
             try:
+                # body() guarda o corpo na requisição: o destino (ex.: o login do
+                # SQLAdmin) recebe o mesmo formulário; form() sozinho o consumiria.
+                await request.body()
                 form_data = await request.form()
                 form_token = str(form_data.get(_FIELD_NAME, ""))
             except Exception:

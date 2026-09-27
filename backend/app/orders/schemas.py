@@ -38,6 +38,18 @@ class OrderOut(BaseModel):
     checkout_url: str | None = None
 
 
+class OrderAdminListItemOut(BaseModel):
+    """Item da lista de pedidos do painel: status, valor, data e comprador (US-07)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    reference: str
+    buyer_email: str
+    status: OrderStatus
+    amount: Decimal
+    created_at: datetime
+
+
 class OrderItemAdminOut(BaseModel):
     """Dados de um item de pedido para visão administrativa."""
 

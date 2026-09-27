@@ -5,7 +5,7 @@ from datetime import timedelta
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.catalog.models import Product
+from app.catalog.models import Product, ProductFile
 from app.core.clock import Clock
 from app.delivery.models import DownloadGrant
 from app.orders.models import OrderItem
@@ -73,7 +73,7 @@ class GrantValidator:
         grant = result.first()
         if grant is None:
             raise GrantNotFound(token)
-        if self.clock.now() >= grant.expires_at:
+        if self.clock.now() >= self.clock.as_naive_utc(grant.expires_at):
             raise GrantExpired(token)
         if grant.download_count >= grant.max_downloads:
             raise DownloadLimitReached(token)
@@ -121,9 +121,32 @@ class FileStreamer:
         self.storage = storage
 
     async def read_for_grant(self, grant: DownloadGrant) -> tuple[bytes, str]:
-        """Retorna (conteúdo, nome de arquivo) do produto associado ao grant."""
+        """Retorna (conteúdo, nome de arquivo) do produto associado ao grant.
+
+        A fonte é o arquivo primário (`ProductFile`), que é o que o upload do admin
+        grava; `Product.file_name` fica como alternativa para produtos antigos.
+        """
         product = await self.session.get(Product, grant.product_id)
-        if product is None or not product.file_name:
+        if product is None:
+            raise FileMissing(str(grant.product_id))
+        primary = await self._primary_file(product.id)
+        if primary is not None:
+            content = self.storage.read_bytes(primary.storage_key)
+            extension = primary.storage_key.rsplit(".", 1)[-1].lower()
+            return content, product.slug + "." + extension
+        if not product.file_name:
             raise FileMissing(str(grant.product_id))
         content = self.storage.read_bytes(product.file_name)
         return content, product.file_name
+
+    async def _primary_file(self, product_id: int) -> ProductFile | None:
+        """Arquivo primário do produto (o mais recente, se houver mais de um)."""
+        result = await self.session.scalars(
+            select(ProductFile)
+            .where(
+                ProductFile.product_id == product_id,
+                ProductFile.is_primary.is_(True),
+            )
+            .order_by(ProductFile.id.desc())
+        )
+        return result.first()

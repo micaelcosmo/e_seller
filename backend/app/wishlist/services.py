@@ -1,6 +1,7 @@
 """Serviço de wishlist: adicionar, remover e listar (async)."""
 
 from sqlalchemy import delete, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.catalog.models import Product, ProductStatus
@@ -24,10 +25,15 @@ class WishlistService:
         wishlist = await self._get_or_create(user_id)
         if await self._has_item(wishlist.id, product.id):
             return
-        self.session.add(
-            WishlistItem(wishlist_id=wishlist.id, product_id=product.id)
-        )
-        await self.session.flush()
+        try:
+            # Savepoint: se outra requisição gravou o mesmo item entre a conferência
+            # e o insert, a UNIQUE dispara — e o item já está lá, que é o que se quer.
+            async with self.session.begin_nested():
+                self.session.add(
+                    WishlistItem(wishlist_id=wishlist.id, product_id=product.id)
+                )
+        except IntegrityError:
+            return
 
     async def remove(self, user_id: int, slug: str) -> None:
         """Remove um produto da wishlist."""

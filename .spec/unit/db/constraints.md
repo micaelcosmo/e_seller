@@ -42,6 +42,10 @@ Definir as constraints de integridade que protegem as regras de negócio no nív
 
 - A UNIQUE de `provider_payment_id` é a salvaguarda final de idempotência sob corrida.
 - `ON DELETE`: não permitir apagar `product` com `order_item` (RESTRICT) — proteger histórico.
+- **Enum com `server_default`:** `Enum(<classe>)` do SQLAlchemy cria o tipo do Postgres com os
+  **nomes** dos membros (`PENDING`, `APPROVED`...), não com os valores. O `server_default` de
+  coluna enum usa, portanto, o **nome** do membro — senão o `create_all` num Postgres novo
+  falha (`invalid input value for enum`) e o backend não sobe.
 
 ## 6. Casos de teste (TDD)
 
@@ -51,6 +55,7 @@ Definir as constraints de integridade que protegem as regras de negócio no nív
 | T2 | `product.price = -1` | erro de CHECK |
 | T3 | Apagar produto com venda | bloqueado (RESTRICT) |
 | T4 | `token` duplicado | erro de UNIQUE |
+| T5 | Toda coluna enum com `server_default` (DDL compilado para Postgres) | o default é um dos rótulos do tipo enum |
 
 ## 7. Rastreabilidade
 

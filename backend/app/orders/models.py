@@ -37,7 +37,7 @@ class OrderStatus(enum.StrEnum):
 
 
 class Order(Base):
-    """Pedido de compra (multi-item; no MVP, 1 item)."""
+    """Pedido de compra com um ou mais itens (e-books)."""
 
     __tablename__ = "order"
 

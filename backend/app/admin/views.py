@@ -1,6 +1,7 @@
 """Views do painel administrativo (SQLAdmin)."""
 
 from sqladmin import ModelView
+from sqladmin.filters import StaticValuesFilter
 
 from app.accounts.models import User
 from app.billing.models import BillingProfile
@@ -171,14 +172,64 @@ class UserAdmin(ModelView, model=User):
     column_searchable_list = [User.email]
 
 
+class TruncatedText:
+    """Formatador da lista do painel: texto longo resumido em até `limit` caracteres."""
+
+    def __init__(self, limit: int) -> None:
+        """Guarda o limite de caracteres exibidos."""
+        self.limit = limit
+
+    def __call__(self, model: object, attribute: str) -> str:
+        """Texto do atributo, cortado com reticências quando passa do limite."""
+        text = str(getattr(model, attribute, "") or "")
+        if len(text) <= self.limit:
+            return text
+        return text[: self.limit].rstrip() + "…"
+
+
+class ShortDateTime:
+    """Formatador da lista do painel: data e hora curtas (dd/mm/aaaa hh:mm)."""
+
+    def __call__(self, model: object, attribute: str) -> str:
+        """Data do atributo no formato curto; vazio quando não há data."""
+        moment = getattr(model, attribute, None)
+        if moment is None:
+            return ""
+        return moment.strftime("%d/%m/%Y %H:%M")
+
+
 class ReviewAdmin(ModelView, model=Review):
     """Visualização de avaliações."""
 
     name = "Avaliação"
     name_plural = "Avaliações"
-    column_list = [Review.id, Review.product_id, Review.user_id, Review.rating]
+    column_list = [
+        Review.id,
+        Review.product_id,
+        Review.user_id,
+        Review.rating,
+        Review.comment,
+        Review.status,
+        Review.created_at,
+    ]
+    column_formatters = {
+        Review.comment: TruncatedText(60),
+        Review.created_at: ShortDateTime(),
+    }
+    column_filters = [
+        StaticValuesFilter(
+            Review.status,
+            values=[
+                ("PENDING", "Pendente"),
+                ("APPROVED", "Aprovada"),
+                ("REJECTED", "Recusada"),
+            ],
+            title="Status",
+        )
+    ]
     can_create = False
-    can_edit = False
+    can_edit = True
+    form_columns = [Review.status]
 
 
 class RefundAdmin(ModelView, model=Refund):

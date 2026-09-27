@@ -75,6 +75,27 @@ class OrderCreator:
         return order
 
 
+class PendingCheckoutLinker:
+    """Recalcula o link de pagamento de pedidos ainda pendentes (RF-25).
+
+    O `checkout_url` não é persistido: nasce na criação do pedido e, para quem
+    volta depois, é refeito pelo gateway enquanto o pedido estiver pendente.
+    """
+
+    def __init__(self, checkout: CheckoutService) -> None:
+        """Recebe o serviço de checkout (gateway) por injeção."""
+        self.checkout = checkout
+
+    def link(self, orders: list[Order]) -> list[Order]:
+        """Preenche `checkout_url` dos pendentes; os demais ficam sem link."""
+        for order in orders:
+            if order.status == OrderStatus.PENDING:
+                order.checkout_url = self.checkout.create_for(order).checkout_url
+            else:
+                order.checkout_url = None
+        return orders
+
+
 class OrderReader:
     """Consulta pedidos pela referência pública."""
 
